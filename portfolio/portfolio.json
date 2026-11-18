@@ -1,0 +1,10 @@
+{
+  "note": "AI事業工房のポートフォリオ。stage: 候補 / 開発 / 公開 / 収益化 / 売却準備 / 売却済み",
+  "ventures": [
+    {"slug": "neage-zenya", "name": "値上げ前夜", "stage": "開発", "started": "2026-11-18",
+     "summary": "メーカーの値上げ発表を集めたカレンダーとデータベース",
+     "revenue_plan": "法人向けの仕入れ値上げカレンダー（月額）",
+     "location": "data/hikes.json, site/build.py, docs/",
+     "metrics": []}
+  ]
+}
