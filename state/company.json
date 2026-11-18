@@ -115,9 +115,9 @@
       "action": "Cloudflare のダッシュボード → Workers & Pages → Create → Pages → GitHub の ai-company リポジトリを接続し、ビルドコマンドは空、出力ディレクトリを docs にする（リポジトリが非公開のため GitHub Pages は無料プランでは使えない）",
       "reason": "公開しないと検索流入が始まらないため",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 無料枠の範囲で費用は発生しない",
-      "owner_note": ""
+      "owner_note": "値上げ前夜は不採用"
     },
     {
       "id": 10,
