@@ -1,0 +1,91 @@
+{
+  "name": "GENHAYL AIカンパニー",
+  "founded": "2026-11-18 19:40",
+  "day": 1,
+  "phase": "立ち上げ",
+  "business": {
+    "name": "エチオピア飲食開業ガイド（有料note）",
+    "summary": "アディスアベバで唐揚げ店を立ち上げた実体験と公開情報をもとに、外国人がエチオピアで飲食店を開業する実務手順を有料noteで販売する。YouTube Shortsから集客する。",
+    "target": "アフリカ・新興国で飲食や小売の事業を考える個人・中小企業、海外出店を検討する飲食店",
+    "revenue_model": "有料note 1,480円（早期価格980円）。将来は英語版をGumroad等で、個別相談を高単価で"
+  },
+  "ledger": [],
+  "approvals": [
+    {
+      "id": 1,
+      "day": 1,
+      "role": "product",
+      "title": "ガイド下書きの【オーナー記入】欄を埋める",
+      "action": "workspace/day-001/product/ethiopia_restaurant_guide_v0.md の【オーナー記入】欄に、実体験（選んだ事業形態、各手続きの期間、失敗談など）を箇条書きで書く。箇条書きのメモで十分（AIが文章に仕上げる）",
+      "reason": "体験談がこの商品の価値の中心。AIは体験を作らない",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 事実に基づく記載なら問題なし",
+      "owner_note": ""
+    },
+    {
+      "id": 2,
+      "day": 1,
+      "role": "marketing",
+      "title": "noteで無料の予告記事を公開",
+      "action": "workspace/day-001/marketing/launch_kit.md の『1. 無料note予告記事』をnoteに投稿する（チャンネルURLを差し込む）",
+      "reason": "有料記事の公開前にフォロワーと期待を集めるため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 誇大表現なし。JETROの指摘の引用は出典を明記すること",
+      "owner_note": ""
+    },
+    {
+      "id": 3,
+      "day": 1,
+      "role": "marketing",
+      "title": "YouTube Shortsで告知動画を撮影・投稿",
+      "action": "launch_kit.md の台本（30秒）で撮影し、概要欄にnoteのリンクを入れる",
+      "reason": "既存チャンネルが一番強い集客経路のため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 台本の数字は実体験の値だけを入れること",
+      "owner_note": ""
+    },
+    {
+      "id": 4,
+      "day": 1,
+      "role": "cfo",
+      "title": "販売名義を決める（GENHAYL法人／個人）",
+      "action": "noteの販売者情報を、株式会社GENHAYLか個人のどちらで登録するか決めて、approve のメモに書く",
+      "reason": "税務処理と特定商取引法の表示が変わるため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 有料販売では特定商取引法に基づく表示が必要になる場合がある。note の設定を確認すること",
+      "owner_note": ""
+    }
+  ],
+  "decisions": [
+    {
+      "day": 1,
+      "text": "最初の事業を『エチオピア飲食開業ガイド』に決定。理由：オーナーの実体験は誰にも真似できず、YouTubeという無料の集客経路が既にあり、元手0円で始められるため"
+    },
+    {
+      "day": 1,
+      "text": "競艇・競馬の予想販売は、信用面と景品表示法のリスクが大きいため当面保留"
+    },
+    {
+      "day": 1,
+      "text": "体験談はAIが作らない。下書きの【オーナー記入】欄はオーナーが埋める"
+    },
+    {
+      "day": 1,
+      "text": "販売の順番：無料の予告記事 → YouTube告知 → 有料記事の公開"
+    }
+  ],
+  "history": [
+    {
+      "day": 1,
+      "date": "2026-11-18 19:42",
+      "summary": "# 1日目 日報 ## 今日の結論（3行） - 最初の事業を **『エチオピア飲食開業ガイド』（有料note）** に決めました。元手0円で、中川さんの実体験が他社には真似できない強みになります。 - 商品の下書き、販売ページ、YouTube台本、価格・収支見込みまで、今日中に揃えました。 - 売上が立つまでの残りの作業は、**中川さんの体験メモと公開ボタン**だけです。 ## 進捗と成果物 | 担当 | 成果物 | |---|---| | リサーチ | `workspace/day-001/researcher/business_options.md` 事業3案の比較（出典付き） | | 商品開発 | `workspace/day-001/product/ethiopia_restaurant_guide_v0.md` 有料記事の下書き（全9章とチェックリスト） | | マーケ | `workspace/day-001/marketing/launch_kit.md` 予告記事、Shorts台本、X投稿 | | CFO | `workspace/day-001/cfo/pricing_and_numbers.md` 価格1,480円、収支見込み | ## オーナーにお願いしたいこと（承認待ち4件） 1. **#1 体験メモの記入**（最重要）：下書きの【オーナー記入】欄に箇条書き",
+      "cost_usd": 0,
+      "report": "reports/day-001.md"
+    }
+  ],
+  "owner_messages": []
+}
