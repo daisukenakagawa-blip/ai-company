@@ -1,0 +1,64 @@
+{
+  "updated": "2026-11-18",
+  "note": "一次情報（メーカー発表、またはそれを報じた報道）で確認できたものだけを載せる。推測は禁止。",
+  "items": [
+    {
+      "id": "shikishima-chojuku-202701",
+      "maker": "敷島製パン（Pasco）",
+      "product": "食パン「超熟」など パン・菓子 約180品目",
+      "category": "パン",
+      "effective": "2027-01-01",
+      "basis": "納品分から",
+      "rate_min": 2, "rate_max": 5,
+      "shelf_months": 0.1,
+      "freezable_months": 1,
+      "source": "https://news.nissyoku.co.jp/flash/1331918",
+      "source_name": "日本食糧新聞（時事通信）",
+      "verified": true
+    },
+    {
+      "id": "pietro-dressing-202701",
+      "maker": "ピエトロ",
+      "product": "ドレッシング 280ml 主力7品・30ml 個食3品（計10品目）",
+      "category": "調味料",
+      "effective": "2027-01-01",
+      "basis": "出荷分から",
+      "rate_min": 3.8, "rate_max": 10.0,
+      "shelf_months": 9,
+      "freezable_months": 0,
+      "source": "https://voix.jp/biz/?p=179402",
+      "source_name": "VOIX",
+      "verified": true
+    },
+    {
+      "id": "sagawa-takuhai-202701",
+      "maker": "佐川急便",
+      "product": "飛脚宅配便・飛脚ラージサイズ宅配便・飛脚メール便など（平均約13.8%）",
+      "category": "物流・送料",
+      "effective": "2027-01-01",
+      "basis": "",
+      "rate_min": 1.9, "rate_max": 23.7,
+      "rate_note": "例：関東→関西 60サイズ 1,040円→1,060円、180サイズ 3,660円→4,480円",
+      "shelf_months": null,
+      "freezable_months": 0,
+      "source": "https://www.watch.impress.co.jp/docs/news/2145606.html",
+      "source_name": "Impress Watch",
+      "verified": true
+    },
+    {
+      "id": "ajinomoto-mayo-202612",
+      "maker": "味の素",
+      "product": "マヨネーズ類",
+      "category": "調味料",
+      "effective": "2026-12",
+      "basis": "",
+      "rate_min": null, "rate_max": null,
+      "shelf_months": 10,
+      "freezable_months": 0,
+      "source": "https://voix.jp/biz/?p=179402",
+      "source_name": "VOIX（二次情報）",
+      "verified": false,
+      "todo": "味の素の公式発表で、日付・品目・改定率を確認する"
+    }
+  ]
+}
