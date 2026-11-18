@@ -1,0 +1,1532 @@
+{
+ "summary": {
+  "updated": "2026-11-18T21:42",
+  "since": "2026-11-18",
+  "races_bet": 52,
+  "races_pending": 0,
+  "hits": 0,
+  "hit_rate": 0.0,
+  "stake": 13700,
+  "ret": 0,
+  "roi": 0.0
+ },
+ "races": [
+  {
+   "date": "2026-11-18",
+   "venue": "徳山",
+   "race_no": 3,
+   "deadline": "09:39",
+   "decided_at": "2026-11-18T09:34:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-5-2",
+     "prob": 0.03708,
+     "hash": "3502ba9fe4721af0"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.00684,
+     "hash": "f9ca60f9b3a4109e"
+    },
+    {
+     "combo": "1-4-2",
+     "prob": 0.03718,
+     "hash": "4a19031d5e833e5f"
+    },
+    {
+     "combo": "1-2-4",
+     "prob": 0.03125,
+     "hash": "ae1b30824388f86d"
+    },
+    {
+     "combo": "1-5-4",
+     "prob": 0.05577,
+     "hash": "536ecb71991fea06"
+    },
+    {
+     "combo": "1-2-5",
+     "prob": 0.03091,
+     "hash": "904c719467bd73be"
+    }
+   ],
+   "stake": 600,
+   "result": "3-4-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 2,
+   "deadline": "10:43",
+   "decided_at": "2026-11-18T10:38:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "3-1-4",
+     "prob": 0.05427,
+     "hash": "160e15cbafa22a40"
+    },
+    {
+     "combo": "3-1-5",
+     "prob": 0.02734,
+     "hash": "552522ff6a4762b3"
+    },
+    {
+     "combo": "3-4-1",
+     "prob": 0.02465,
+     "hash": "bc8f90c9e1f04169"
+    },
+    {
+     "combo": "3-4-2",
+     "prob": 0.01005,
+     "hash": "40d172becdab5ce2"
+    },
+    {
+     "combo": "3-1-2",
+     "prob": 0.0112,
+     "hash": "627430aaac861f77"
+    }
+   ],
+   "stake": 500,
+   "result": "1-4-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 1,
+   "deadline": "11:04",
+   "decided_at": "2026-11-18T10:54:13",
+   "mins_before": 9.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "5-4-2",
+     "prob": 0.01557,
+     "hash": "eee0334ade38a4e0"
+    },
+    {
+     "combo": "5-4-3",
+     "prob": 0.01139,
+     "hash": "1face6ba35ba457d"
+    }
+   ],
+   "stake": 200,
+   "result": "3-2-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "常滑",
+   "race_no": 3,
+   "deadline": "11:17",
+   "decided_at": "2026-11-18T11:12:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-5-3",
+     "prob": 0.01038,
+     "hash": "7be7318f5ae1e366"
+    },
+    {
+     "combo": "1-6-3",
+     "prob": 0.01095,
+     "hash": "69d3e13a94c8f1bb"
+    }
+   ],
+   "stake": 200,
+   "result": "1-3-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 2,
+   "deadline": "11:30",
+   "decided_at": "2026-11-18T11:20:12",
+   "mins_before": 9.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-3-4",
+     "prob": 0.05876,
+     "hash": "4ee979c424576b0b"
+    },
+    {
+     "combo": "1-4-2",
+     "prob": 0.05085,
+     "hash": "bf03e68f543e94ff"
+    },
+    {
+     "combo": "1-2-4",
+     "prob": 0.04608,
+     "hash": "4fd79f3c9e02501c"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.04164,
+     "hash": "2098b7e851e03144"
+    },
+    {
+     "combo": "1-4-3",
+     "prob": 0.04739,
+     "hash": "505104e3131f8a46"
+    }
+   ],
+   "stake": 500,
+   "result": "4-2-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "徳山",
+   "race_no": 7,
+   "deadline": "11:35",
+   "decided_at": "2026-11-18T11:30:26",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-4-2",
+     "prob": 0.03698,
+     "hash": "7fa7705e5c1b3a15"
+    },
+    {
+     "combo": "1-2-4",
+     "prob": 0.03002,
+     "hash": "9564d092e7bccda8"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.03977,
+     "hash": "60655a365f04e029"
+    },
+    {
+     "combo": "1-5-4",
+     "prob": 0.00675,
+     "hash": "0184461770ab1e39"
+    }
+   ],
+   "stake": 400,
+   "result": "3-1-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "戸田",
+   "race_no": 3,
+   "deadline": "11:39",
+   "decided_at": "2026-11-18T11:34:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.01297,
+     "hash": "48dcca528f72ee94"
+    }
+   ],
+   "stake": 100,
+   "result": "3-1-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "常滑",
+   "race_no": 4,
+   "deadline": "11:44",
+   "decided_at": "2026-11-18T11:39:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-3-4",
+     "prob": 0.00601,
+     "hash": "7771e2987b6230ac"
+    }
+   ],
+   "stake": 100,
+   "result": "1-3-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "平和島",
+   "race_no": 3,
+   "deadline": "11:46",
+   "decided_at": "2026-11-18T11:41:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-3-5",
+     "prob": 0.02437,
+     "hash": "d3cd4a21a403f22c"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.02652,
+     "hash": "54a22b1df3a5f70a"
+    }
+   ],
+   "stake": 200,
+   "result": "4-5-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 3,
+   "deadline": "11:55",
+   "decided_at": "2026-11-18T11:46:13",
+   "mins_before": 8.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-4-2",
+     "prob": 0.01909,
+     "hash": "c6d6e16c0bd230e0"
+    },
+    {
+     "combo": "1-3-2",
+     "prob": 0.02829,
+     "hash": "dfc31041164d66ac"
+    },
+    {
+     "combo": "1-3-4",
+     "prob": 0.03881,
+     "hash": "474e98f1ef0a11a9"
+    }
+   ],
+   "stake": 300,
+   "result": "2-3-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "びわこ",
+   "race_no": 4,
+   "deadline": "11:56",
+   "decided_at": "2026-11-18T11:51:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-4",
+     "prob": 0.0166,
+     "hash": "ac954abeb0c64163"
+    },
+    {
+     "combo": "1-6-2",
+     "prob": 0.01261,
+     "hash": "82e3fa41b93f92df"
+    }
+   ],
+   "stake": 200,
+   "result": "6-3-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "鳴門",
+   "race_no": 8,
+   "deadline": "12:01",
+   "decided_at": "2026-11-18T11:56:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "6-4-1",
+     "prob": 0.009,
+     "hash": "edbb863ba023bb64"
+    }
+   ],
+   "stake": 100,
+   "result": "1-3-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "平和島",
+   "race_no": 4,
+   "deadline": "12:13",
+   "decided_at": "2026-11-18T12:08:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-2-3",
+     "prob": 0.04399,
+     "hash": "c948dcf59e24c29a"
+    }
+   ],
+   "stake": 100,
+   "result": "1-6-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 4,
+   "deadline": "12:20",
+   "decided_at": "2026-11-18T12:12:13",
+   "mins_before": 7.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "6-1-4",
+     "prob": 0.01012,
+     "hash": "7591e0f1bd0ff558"
+    },
+    {
+     "combo": "1-6-4",
+     "prob": 0.0224,
+     "hash": "38e91e106f3bde81"
+    },
+    {
+     "combo": "2-1-6",
+     "prob": 0.03934,
+     "hash": "4a9fcd4488b204d0"
+    },
+    {
+     "combo": "1-4-2",
+     "prob": 0.01813,
+     "hash": "ef9c49a3b9f4e17e"
+    },
+    {
+     "combo": "2-1-4",
+     "prob": 0.01967,
+     "hash": "b9e00d71215c11ef"
+    }
+   ],
+   "stake": 500,
+   "result": "3-2-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "平和島",
+   "race_no": 5,
+   "deadline": "12:40",
+   "decided_at": "2026-11-18T12:35:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-1-3",
+     "prob": 0.02814,
+     "hash": "0dd327fa3b1977e2"
+    },
+    {
+     "combo": "2-1-6",
+     "prob": 0.02594,
+     "hash": "8714d21215d7190d"
+    },
+    {
+     "combo": "2-1-4",
+     "prob": 0.02232,
+     "hash": "e6101c51de8a83c5"
+    }
+   ],
+   "stake": 300,
+   "result": "1-2-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 5,
+   "deadline": "12:45",
+   "decided_at": "2026-11-18T12:38:14",
+   "mins_before": 6.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "4-1-3",
+     "prob": 0.01796,
+     "hash": "fb53a86920caebdc"
+    }
+   ],
+   "stake": 100,
+   "result": "1-3-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "常滑",
+   "race_no": 6,
+   "deadline": "12:50",
+   "decided_at": "2026-11-18T12:45:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.03749,
+     "hash": "dc69b99d55562902"
+    }
+   ],
+   "stake": 100,
+   "result": "1-2-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 7,
+   "deadline": "12:57",
+   "decided_at": "2026-11-18T12:52:25",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "6-1-4",
+     "prob": 0.02117,
+     "hash": "9a308819e59abe04"
+    },
+    {
+     "combo": "1-4-6",
+     "prob": 0.02345,
+     "hash": "d00939d3080d31dc"
+    }
+   ],
+   "stake": 200,
+   "result": "1-2-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "鳴門",
+   "race_no": 10,
+   "deadline": "13:06",
+   "decided_at": "2026-11-18T13:01:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "5-4-2",
+     "prob": 0.00969,
+     "hash": "ab41814eb77db3e3"
+    },
+    {
+     "combo": "5-2-4",
+     "prob": 0.00712,
+     "hash": "d92f45f750e44bfa"
+    },
+    {
+     "combo": "5-1-4",
+     "prob": 0.00871,
+     "hash": "697533163437938f"
+    },
+    {
+     "combo": "5-3-2",
+     "prob": 0.00832,
+     "hash": "c4bfd8ba66b66cef"
+    },
+    {
+     "combo": "2-5-4",
+     "prob": 0.00933,
+     "hash": "5f5e5efc0f5e60e3"
+    },
+    {
+     "combo": "5-2-3",
+     "prob": 0.00713,
+     "hash": "8d7d66cba6cb4abe"
+    }
+   ],
+   "stake": 600,
+   "result": "4-2-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 6,
+   "deadline": "13:10",
+   "decided_at": "2026-11-18T13:04:14",
+   "mins_before": 5.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "4-5-2",
+     "prob": 0.00559,
+     "hash": "9ed7b6f29bee196e"
+    },
+    {
+     "combo": "1-4-2",
+     "prob": 0.01857,
+     "hash": "82e1684b57a4d6f1"
+    }
+   ],
+   "stake": 200,
+   "result": "1-5-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "徳山",
+   "race_no": 10,
+   "deadline": "13:18",
+   "decided_at": "2026-11-18T13:13:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-4-3",
+     "prob": 0.02689,
+     "hash": "1338fb200af91b0f"
+    }
+   ],
+   "stake": 100,
+   "result": "3-2-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 8,
+   "deadline": "13:21",
+   "decided_at": "2026-11-18T13:16:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-5-6",
+     "prob": 0.02425,
+     "hash": "51e9e76f839d88da"
+    },
+    {
+     "combo": "1-6-5",
+     "prob": 0.01549,
+     "hash": "0e723cd88f3d5760"
+    },
+    {
+     "combo": "5-1-6",
+     "prob": 0.01067,
+     "hash": "40265821983847b2"
+    }
+   ],
+   "stake": 300,
+   "result": "4-1-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "びわこ",
+   "race_no": 7,
+   "deadline": "13:22",
+   "decided_at": "2026-11-18T13:17:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "3-2-5",
+     "prob": 0.00536,
+     "hash": "17396d96cc092203"
+    }
+   ],
+   "stake": 100,
+   "result": "1-3-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "戸田",
+   "race_no": 7,
+   "deadline": "13:30",
+   "decided_at": "2026-11-18T13:25:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.01817,
+     "hash": "6f2329cffe4923da"
+    }
+   ],
+   "stake": 100,
+   "result": "1-5-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "鳴門",
+   "race_no": 11,
+   "deadline": "13:34",
+   "decided_at": "2026-11-18T13:29:25",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.01464,
+     "hash": "c64e4b38060ff617"
+    }
+   ],
+   "stake": 100,
+   "result": "1-2-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 7,
+   "deadline": "13:35",
+   "decided_at": "2026-11-18T13:30:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "3-6-1",
+     "prob": 0.00592,
+     "hash": "5c96dbbcb8ca056d"
+    }
+   ],
+   "stake": 100,
+   "result": "2-1-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 9,
+   "deadline": "13:48",
+   "decided_at": "2026-11-18T13:43:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-3-5",
+     "prob": 0.00568,
+     "hash": "5d731571a41fbd7d"
+    },
+    {
+     "combo": "2-1-3",
+     "prob": 0.02097,
+     "hash": "a8a02506e5103ef8"
+    }
+   ],
+   "stake": 200,
+   "result": "5-1-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "徳山",
+   "race_no": 11,
+   "deadline": "13:50",
+   "decided_at": "2026-11-18T13:45:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-2-6",
+     "prob": 0.03747,
+     "hash": "144dedd68f33e0bb"
+    }
+   ],
+   "stake": 100,
+   "result": "2-3-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "びわこ",
+   "race_no": 8,
+   "deadline": "13:52",
+   "decided_at": "2026-11-18T13:47:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-3-4",
+     "prob": 0.0061,
+     "hash": "09d4aa1b63fa793a"
+    },
+    {
+     "combo": "2-1-4",
+     "prob": 0.01546,
+     "hash": "b7b13f31794d3af6"
+    }
+   ],
+   "stake": 200,
+   "result": "3-5-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "常滑",
+   "race_no": 8,
+   "deadline": "14:03",
+   "decided_at": "2026-11-18T13:56:13",
+   "mins_before": 6.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-5",
+     "prob": 0.0264,
+     "hash": "c8e5ff2f496147a3"
+    },
+    {
+     "combo": "1-6-3",
+     "prob": 0.02225,
+     "hash": "71bc8dc740df4afa"
+    },
+    {
+     "combo": "1-6-4",
+     "prob": 0.04076,
+     "hash": "59a12ad657689a20"
+    },
+    {
+     "combo": "6-1-4",
+     "prob": 0.01535,
+     "hash": "279b0da213d3e54a"
+    },
+    {
+     "combo": "6-1-5",
+     "prob": 0.00888,
+     "hash": "05fbaf118f3ec08f"
+    },
+    {
+     "combo": "5-1-6",
+     "prob": 0.01727,
+     "hash": "37ce5f314bba23c3"
+    },
+    {
+     "combo": "1-5-6",
+     "prob": 0.0245,
+     "hash": "a711271d2acc2e67"
+    }
+   ],
+   "stake": 700,
+   "result": "1-5-4",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 10,
+   "deadline": "14:20",
+   "decided_at": "2026-11-18T14:15:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "4-1-3",
+     "prob": 0.01062,
+     "hash": "ba0078d9af4ba9b0"
+    },
+    {
+     "combo": "4-1-6",
+     "prob": 0.03512,
+     "hash": "60916ad66fb7216b"
+    },
+    {
+     "combo": "1-4-6",
+     "prob": 0.11049,
+     "hash": "d5aa35675a42dfed"
+    }
+   ],
+   "stake": 300,
+   "result": "1-6-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "徳山",
+   "race_no": 12,
+   "deadline": "14:26",
+   "decided_at": "2026-11-18T14:21:28",
+   "mins_before": 4.5,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-2-5",
+     "prob": 0.05066,
+     "hash": "dd89124edf497e28"
+    },
+    {
+     "combo": "1-5-2",
+     "prob": 0.04621,
+     "hash": "f5b73396610fc949"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.0075,
+     "hash": "fd921bfc78fe252e"
+    },
+    {
+     "combo": "2-1-4",
+     "prob": 0.00557,
+     "hash": "a6f6c72580727d2c"
+    }
+   ],
+   "stake": 400,
+   "result": "1-4-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "戸田",
+   "race_no": 9,
+   "deadline": "14:28",
+   "decided_at": "2026-11-18T14:23:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.00821,
+     "hash": "72f872d7327dd708"
+    }
+   ],
+   "stake": 100,
+   "result": "5-1-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "常滑",
+   "race_no": 9,
+   "deadline": "14:30",
+   "decided_at": "2026-11-18T14:23:30",
+   "mins_before": 6.5,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-1-5",
+     "prob": 0.0117,
+     "hash": "e4b2888289490821"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.05165,
+     "hash": "82a00ee2b2384fc6"
+    }
+   ],
+   "stake": 200,
+   "result": "1-5-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "宮島",
+   "race_no": 11,
+   "deadline": "14:48",
+   "decided_at": "2026-11-18T14:43:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.00679,
+     "hash": "21d4dd1e151a2707"
+    }
+   ],
+   "stake": 100,
+   "result": "2-6-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "戸田",
+   "race_no": 10,
+   "deadline": "14:56",
+   "decided_at": "2026-11-18T14:51:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-4-2",
+     "prob": 0.05827,
+     "hash": "aa0df87edcf4dc07"
+    },
+    {
+     "combo": "1-4-3",
+     "prob": 0.04419,
+     "hash": "a2d911ba4b637327"
+    }
+   ],
+   "stake": 200,
+   "result": "1-4-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 10,
+   "deadline": "14:59",
+   "decided_at": "2026-11-18T14:54:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-4-2",
+     "prob": 0.07067,
+     "hash": "75880430f8494bfa"
+    },
+    {
+     "combo": "4-1-2",
+     "prob": 0.02355,
+     "hash": "1e5a43c358849789"
+    },
+    {
+     "combo": "2-1-3",
+     "prob": 0.03482,
+     "hash": "d5a3a2f3bac37374"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.01142,
+     "hash": "868297d33a7ee7c6"
+    },
+    {
+     "combo": "4-2-1",
+     "prob": 0.01186,
+     "hash": "fe0986d5496a9cb4"
+    }
+   ],
+   "stake": 500,
+   "result": "1-4-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "平和島",
+   "race_no": 10,
+   "deadline": "15:04",
+   "decided_at": "2026-11-18T14:59:32",
+   "mins_before": 4.5,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-3-2",
+     "prob": 0.0308,
+     "hash": "841af980df6f6c38"
+    }
+   ],
+   "stake": 100,
+   "result": "1-2-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 11,
+   "deadline": "15:29",
+   "decided_at": "2026-11-18T15:24:26",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.0142,
+     "hash": "cc63805d07b47804"
+    },
+    {
+     "combo": "1-6-3",
+     "prob": 0.0153,
+     "hash": "7dc13aa182372584"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.01974,
+     "hash": "70fa9db91456d48a"
+    },
+    {
+     "combo": "2-6-3",
+     "prob": 0.00504,
+     "hash": "9143ee6f43b670ce"
+    }
+   ],
+   "stake": 400,
+   "result": "2-4-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "びわこ",
+   "race_no": 11,
+   "deadline": "15:34",
+   "decided_at": "2026-11-18T15:29:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "4-2-3",
+     "prob": 0.00562,
+     "hash": "1eede8512d8f6200"
+    }
+   ],
+   "stake": 100,
+   "result": "3-1-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "平和島",
+   "race_no": 11,
+   "deadline": "15:37",
+   "decided_at": "2026-11-18T15:32:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-2-4",
+     "prob": 0.04761,
+     "hash": "3b9cc0479f71a5b5"
+    }
+   ],
+   "stake": 100,
+   "result": "4-6-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 2,
+   "deadline": "15:49",
+   "decided_at": "2026-11-18T15:44:23",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "5-6-1",
+     "prob": 0.00695,
+     "hash": "e9024546df00cc79"
+    }
+   ],
+   "stake": 100,
+   "result": "1-2-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "戸田",
+   "race_no": 12,
+   "deadline": "15:55",
+   "decided_at": "2026-11-18T15:50:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-5-1",
+     "prob": 0.01258,
+     "hash": "a48f7429cdda68f0"
+    },
+    {
+     "combo": "5-2-1",
+     "prob": 0.00668,
+     "hash": "985a754578f78f7c"
+    },
+    {
+     "combo": "2-5-4",
+     "prob": 0.00611,
+     "hash": "bfb193503e345873"
+    },
+    {
+     "combo": "2-5-3",
+     "prob": 0.0092,
+     "hash": "8b2f674c9dde6cbe"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.02787,
+     "hash": "e39aefdb6aa92558"
+    },
+    {
+     "combo": "5-1-2",
+     "prob": 0.00912,
+     "hash": "4f243ee642831e40"
+    }
+   ],
+   "stake": 600,
+   "result": "5-2-3",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "江戸川",
+   "race_no": 12,
+   "deadline": "16:00",
+   "decided_at": "2026-11-18T15:55:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-3",
+     "prob": 0.01398,
+     "hash": "4591e08d63abee1c"
+    },
+    {
+     "combo": "1-6-4",
+     "prob": 0.02176,
+     "hash": "b22034abd37105e3"
+    },
+    {
+     "combo": "1-6-2",
+     "prob": 0.02517,
+     "hash": "dad7af2b37f9de5a"
+    }
+   ],
+   "stake": 300,
+   "result": "1-4-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 3,
+   "deadline": "16:23",
+   "decided_at": "2026-11-18T16:18:23",
+   "mins_before": 4.6,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-2",
+     "prob": 0.00851,
+     "hash": "003303215351b759"
+    }
+   ],
+   "stake": 100,
+   "result": "4-3-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "桐生",
+   "race_no": 4,
+   "deadline": "16:43",
+   "decided_at": "2026-11-18T16:38:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-1-4",
+     "prob": 0.00674,
+     "hash": "423fd95bd66653b1"
+    },
+    {
+     "combo": "1-5-4",
+     "prob": 0.00582,
+     "hash": "0f2a0ab6f75bd93e"
+    }
+   ],
+   "stake": 200,
+   "result": "4-1-5",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 4,
+   "deadline": "16:52",
+   "decided_at": "2026-11-18T16:47:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-6-3",
+     "prob": 0.02268,
+     "hash": "890c9366c089a20a"
+    },
+    {
+     "combo": "1-6-4",
+     "prob": 0.02871,
+     "hash": "8d1cbb69f79cbcc1"
+    },
+    {
+     "combo": "6-1-3",
+     "prob": 0.00519,
+     "hash": "191e8cc91a1ed2b1"
+    },
+    {
+     "combo": "6-1-4",
+     "prob": 0.00605,
+     "hash": "981960910428ca36"
+    }
+   ],
+   "stake": 400,
+   "result": "2-5-1",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "桐生",
+   "race_no": 5,
+   "deadline": "17:10",
+   "decided_at": "2026-11-18T17:05:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "6-4-5",
+     "prob": 0.00818,
+     "hash": "6e8751e9323257f9"
+    },
+    {
+     "combo": "6-4-2",
+     "prob": 0.00566,
+     "hash": "0fa993030ffa1fc8"
+    },
+    {
+     "combo": "6-3-4",
+     "prob": 0.00682,
+     "hash": "4e141fdbd6f21446"
+    },
+    {
+     "combo": "3-4-2",
+     "prob": 0.0056,
+     "hash": "e8c5edd6cbdffc65"
+    },
+    {
+     "combo": "3-4-5",
+     "prob": 0.00685,
+     "hash": "84dcbf9cb728e1f4"
+    },
+    {
+     "combo": "3-4-6",
+     "prob": 0.00687,
+     "hash": "3254290c9fa5206f"
+    },
+    {
+     "combo": "6-2-4",
+     "prob": 0.00747,
+     "hash": "76c2203c35756c0b"
+    },
+    {
+     "combo": "6-2-3",
+     "prob": 0.01851,
+     "hash": "08dd5df57c8e216a"
+    }
+   ],
+   "stake": 800,
+   "result": "2-1-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 6,
+   "deadline": "17:46",
+   "decided_at": "2026-11-18T17:41:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "1-5-3",
+     "prob": 0.03327,
+     "hash": "9215bb95ddab875f"
+    },
+    {
+     "combo": "1-5-2",
+     "prob": 0.04584,
+     "hash": "826c7d5542c2e26c"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.06321,
+     "hash": "548dcf724808172d"
+    }
+   ],
+   "stake": 300,
+   "result": "1-4-2",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 7,
+   "deadline": "18:13",
+   "decided_at": "2026-11-18T18:08:14",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-1-3",
+     "prob": 0.03484,
+     "hash": "43e3988e798737c5"
+    },
+    {
+     "combo": "2-1-4",
+     "prob": 0.02716,
+     "hash": "9a82583378a94ff3"
+    },
+    {
+     "combo": "2-1-5",
+     "prob": 0.01877,
+     "hash": "0c8e48e786749cb3"
+    },
+    {
+     "combo": "1-2-3",
+     "prob": 0.0998,
+     "hash": "8f81837f86405460"
+    },
+    {
+     "combo": "2-4-1",
+     "prob": 0.00854,
+     "hash": "9a567fe9784a836a"
+    },
+    {
+     "combo": "2-1-6",
+     "prob": 0.01729,
+     "hash": "f80e7055c782809f"
+    }
+   ],
+   "stake": 600,
+   "result": "1-3-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "丸亀",
+   "race_no": 9,
+   "deadline": "19:14",
+   "decided_at": "2026-11-18T19:09:13",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "4-2-3",
+     "prob": 0.00636,
+     "hash": "0d448f8d3114c74e"
+    },
+    {
+     "combo": "4-2-6",
+     "prob": 0.00568,
+     "hash": "41c2dfae23fac508"
+    }
+   ],
+   "stake": 200,
+   "result": "1-5-6",
+   "hit": false,
+   "ret": 0
+  },
+  {
+   "date": "2026-11-18",
+   "venue": "桐生",
+   "race_no": 11,
+   "deadline": "20:07",
+   "decided_at": "2026-11-18T20:02:12",
+   "mins_before": 4.8,
+   "model": "v2.3-2026-11-16",
+   "rule": "r1(ev_cons>=1.20,prob>=0.5%,<=10min,exhibit)",
+   "picks": [
+    {
+     "combo": "2-6-4",
+     "prob": 0.00619,
+     "hash": "edc02983469e94d9"
+    }
+   ],
+   "stake": 100,
+   "result": "1-3-6",
+   "hit": false,
+   "ret": 0
+  }
+ ]
+}
