@@ -1,13 +1,13 @@
 {
   "name": "GENHAYL AIカンパニー",
   "founded": "2026-11-18 19:40",
-  "day": 1,
+  "day": 2,
   "phase": "立ち上げ",
   "business": {
-    "name": "エチオピア飲食開業ガイド（有料note）",
-    "summary": "アディスアベバで唐揚げ店を立ち上げた実体験と公開情報をもとに、外国人がエチオピアで飲食店を開業する実務手順を有料noteで販売する。YouTube Shortsから集客する。",
-    "target": "アフリカ・新興国で飲食や小売の事業を考える個人・中小企業、海外出店を検討する飲食店",
-    "revenue_model": "有料note 1,480円（早期価格980円）。将来は英語版をGumroad等で、個別相談を高単価で"
+    "name": "唐揚げ指数（Karaage Index）",
+    "summary": "アディスアベバの唐揚げ店の実際の仕入れ値から、唐揚げ1皿の原価を指数にして毎週発表する。データのない都市の、民間で最速の食品物価指標にする。",
+    "target": "国際機関・NGO・大使館、投資家、食品メーカー、駐在予定者、アフリカ経済に関心のある読者",
+    "revenue_model": "無料の週報で読者を集め、有料の月次レポート、法人向けデータ（CSV/API）、現地物価調査の受託で稼ぐ"
   },
   "ledger": [],
   "approvals": [
@@ -19,9 +19,9 @@
       "action": "workspace/day-001/product/ethiopia_restaurant_guide_v0.md の【オーナー記入】欄に、実体験（選んだ事業形態、各手続きの期間、失敗談など）を箇条書きで書く。箇条書きのメモで十分（AIが文章に仕上げる）",
       "reason": "体験談がこの商品の価値の中心。AIは体験を作らない",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 事実に基づく記載なら問題なし",
-      "owner_note": ""
+      "owner_note": "オーナー却下：もっと革新的で誰も思いつかないアイデアを"
     },
     {
       "id": 2,
@@ -31,9 +31,9 @@
       "action": "workspace/day-001/marketing/launch_kit.md の『1. 無料note予告記事』をnoteに投稿する（チャンネルURLを差し込む）",
       "reason": "有料記事の公開前にフォロワーと期待を集めるため",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 誇大表現なし。JETROの指摘の引用は出典を明記すること",
-      "owner_note": ""
+      "owner_note": "オーナー却下：もっと革新的で誰も思いつかないアイデアを"
     },
     {
       "id": 3,
@@ -43,9 +43,9 @@
       "action": "launch_kit.md の台本（30秒）で撮影し、概要欄にnoteのリンクを入れる",
       "reason": "既存チャンネルが一番強い集客経路のため",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 台本の数字は実体験の値だけを入れること",
-      "owner_note": ""
+      "owner_note": "オーナー却下：もっと革新的で誰も思いつかないアイデアを"
     },
     {
       "id": 4,
@@ -55,8 +55,44 @@
       "action": "noteの販売者情報を、株式会社GENHAYLか個人のどちらで登録するか決めて、approve のメモに書く",
       "reason": "税務処理と特定商取引法の表示が変わるため",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 有料販売では特定商取引法に基づく表示が必要になる場合がある。note の設定を確認すること",
+      "owner_note": "オーナー却下：もっと革新的で誰も思いつかないアイデアを"
+    },
+    {
+      "id": 5,
+      "day": 2,
+      "role": "product",
+      "title": "唐揚げ指数の開始を決める（最重要）",
+      "action": "inbox に『#5 承認』と書く。あわせて、仕様書の【オーナー記入】欄（1皿あたりの使用量）を記入する（非公開で、計算にだけ使う）",
+      "reason": "事業の方向を確定するため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 自社の仕入れデータの公開なので問題なし。仕入れ先名は非公開にすること",
+      "owner_note": ""
+    },
+    {
+      "id": 6,
+      "day": 2,
+      "role": "product",
+      "title": "仕入れレシートの撮影を始める",
+      "action": "店のスタッフに、仕入れのたびにレシートを撮影し、共有フォルダ（または Telegram のグループ）に入れるよう指示する。レシートが出ない仕入れは data/purchases.csv に記入する",
+      "reason": "指数の元データ。2週分たまれば第1号を出せる",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: スタッフの個人情報が写り込まないよう注意すること",
+      "owner_note": ""
+    },
+    {
+      "id": 7,
+      "day": 2,
+      "role": "marketing",
+      "title": "予告の Shorts を撮影・投稿",
+      "action": "workspace/day-002/marketing/launch_story.md の台本で撮影し、投稿する",
+      "reason": "第1号の前に注目を集めるため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 『統計より正確』と断定しないこと（『かもしれない』の表現は可）",
       "owner_note": ""
     }
   ],
@@ -76,6 +112,22 @@
     {
       "day": 1,
       "text": "販売の順番：無料の予告記事 → YouTube告知 → 有料記事の公開"
+    },
+    {
+      "day": 2,
+      "text": "オーナーの却下を受け、事業を『唐揚げ指数（Karaage Index）』に変更"
+    },
+    {
+      "day": 2,
+      "text": "理由：AIだけの会社の多くは集客と一次データがなく売上0で終わっている。オーナーだけが持つ一次データ（仕入れ伝票）にAIの処理能力を掛け合わせれば、誰にも真似できない"
+    },
+    {
+      "day": 2,
+      "text": "最初の8週は無料で発行して信用を作る。8週で読者が伸びなければ見直す"
+    },
+    {
+      "day": 2,
+      "text": "数量・仕入れ先は非公開とし、公開は指数と変化率に限定する"
     }
   ],
   "history": [
@@ -85,7 +137,20 @@
       "summary": "# 1日目 日報 ## 今日の結論（3行） - 最初の事業を **『エチオピア飲食開業ガイド』（有料note）** に決めました。元手0円で、中川さんの実体験が他社には真似できない強みになります。 - 商品の下書き、販売ページ、YouTube台本、価格・収支見込みまで、今日中に揃えました。 - 売上が立つまでの残りの作業は、**中川さんの体験メモと公開ボタン**だけです。 ## 進捗と成果物 | 担当 | 成果物 | |---|---| | リサーチ | `workspace/day-001/researcher/business_options.md` 事業3案の比較（出典付き） | | 商品開発 | `workspace/day-001/product/ethiopia_restaurant_guide_v0.md` 有料記事の下書き（全9章とチェックリスト） | | マーケ | `workspace/day-001/marketing/launch_kit.md` 予告記事、Shorts台本、X投稿 | | CFO | `workspace/day-001/cfo/pricing_and_numbers.md` 価格1,480円、収支見込み | ## オーナーにお願いしたいこと（承認待ち4件） 1. **#1 体験メモの記入**（最重要）：下書きの【オーナー記入】欄に箇条書き",
       "cost_usd": 0,
       "report": "reports/day-001.md"
+    },
+    {
+      "day": 2,
+      "date": "2026-11-18 19:46",
+      "summary": "# 2日目 日報 ## 今日の結論（3行） - 却下を受けて、事業を **『唐揚げ指数（Karaage Index）』** に変えました。唐揚げ店の仕入れレシートから、アディスアベバの物価を毎週測る指標です。 - 物価が年15%前後で動いているのに、細かいデータが存在しない都市です。この空白を、オーナーにしかない一次データとAIの集計で埋めます。 - 仕様書、ローンチ素材、収益化計画まで揃えました。元手は0円、オーナーの手間は週5分です。 ## なぜこれが『誰も思いつかない』か - ビッグマック指数は『売値』で通貨を比べる。唐揚げ指数は『仕入れ値』で、データの空白地帯の物価を測る - データは店の毎日の営業から生まれるので、AIにも他社にも真似できない - AIだけの会社の多くは売上0で終わっている（集客と一次データがないため）。この案はその弱点を両方埋める ## 成果物 - `workspace/day-002/researcher/innovation_scan.md` 調査と候補3案 - `workspace/day-002/product/karaage_index_spec.md` 指数の仕様書 - `workspace/day-002/marketing/launch_story.md` Shorts台本・告知文 - `workspace/day-002/cfo/mon",
+      "cost_usd": 0,
+      "report": "reports/day-002.md"
     }
   ],
-  "owner_messages": []
+  "owner_messages": [
+    {
+      "date": "2026-11-18 19:45",
+      "text": "1日目の事業案（エチオピア飲食開業ガイド）は却下。もっと革新的で、誰も思いつかないアイデアにすること",
+      "read": true
+    }
+  ]
 }
