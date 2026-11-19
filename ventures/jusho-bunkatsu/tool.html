@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>住所の列分割</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e;--ng:#fee2e2;--guess:#e0f2fe}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+label{font-size:14px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.tabs button.on{background:var(--accent);color:#fff}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:24px;text-align:center;color:var(--sub)}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+textarea{width:100%;min-height:140px;font-size:14px;font-family:inherit;border:1px solid var(--line);border-radius:8px;padding:8px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+select{font-size:14px}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+tr.ng td{background:var(--ng)}
+td.guess{background:var(--guess)}
+th.new{background:#ccfbf1}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>住所の列分割</h1>
+<p class="lead">1つの列に入った住所を「都道府県／市区町村／町域・番地／建物名」の4列に分けます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. 住所を入れる</h2>
+  <div class="tabs"><button id="tabCsv" class="on">CSV ファイル</button><button id="tabText">貼り付け（1行に1件）</button></div>
+  <div id="paneCsv">
+    <div class="drop" id="drop">ここに CSV をドラッグ&ドロップ、または <input type="file" id="file" accept=".csv,.txt,text/csv"></div>
+    <p class="note">文字コード（UTF-8 / Shift_JIS）は自動で判定します。<label><input type="checkbox" id="hasHeader" checked> 1行目は見出し</label></p>
+    <div class="row">
+      <label>住所の列 <select id="col" disabled></select></label>
+      <label>分けた列の置き場所 <select id="place"><option value="after">住所の列のすぐ右</option><option value="end">いちばん右</option><option value="replace">住所の列と置き換え</option></select></label>
+    </div>
+    <div class="stat" id="info"></div>
+  </div>
+  <div id="paneText" class="hide">
+    <textarea id="text" placeholder="東京都千代田区丸の内1-9-2 グラントウキョウサウスタワー&#10;横浜市中区本町6-50-10"></textarea>
+    <p><button id="runText">分ける</button></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. オプション</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_bld" checked> 建物名・部屋番号を別の列に分ける</label>
+    <label><input type="checkbox" id="o_fill" checked> 都道府県が書かれていないとき、政令指定都市と東京23区だけ補う（青色）</label>
+  </div>
+  <p class="note">市区町村は「○○市」「○○郡○○町」「政令指定都市の区」「東京23区」の形で切り出します。四日市市・大和郡山市・余市郡余市町のように名前の途中に「市・町・村・郡」を含むものも区別します。先頭の郵便番号（〒123-4567 など）は分けた列には入れません（元の列はそのまま残ります）。切り出せなかった行は赤色で表示し、元の住所を「町域・番地」の列に残します。</p>
+</div>
+
+<div class="card">
+  <h2>3. 確認してダウンロード</h2>
+  <div class="row">
+    <button id="dlBtn" disabled>CSV をダウンロード（Excel 向け UTF-8）</button>
+    <label><input type="checkbox" id="bom" checked> BOM を付ける（Excel で文字化けしない）</label>
+    <button id="copyBtn" disabled style="background:#fff;color:var(--accent);border:1px solid var(--accent)">表をコピー（Excel に貼り付け用）</button>
+  </div>
+  <div class="stat" id="stat"></div>
+  <p class="note">先頭の200行を表示しています。赤色の行は手で確認してください。</p>
+  <div class="tbl" id="preview"></div>
+</div>
+</main>
+
+<script src="split.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const line=text.split("\n",1)[0];
+  const d=line.split("\t").length>line.split(",").length?"\t":",";
+  const rows=[];let row=[],f="",q=false,i=0;
+  while(i<text.length){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue;} f+=c;i++;continue; }
+    if(c==='"'&&f===""){q=true;i++;continue;}
+    if(c===d){row.push(f);f="";i++;continue;}
+    if(c==="\r"){i++;continue;}
+    if(c==="\n"){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(v=>v!==""));
+}
+function toCSV(rows){return rows.map(r=>r.map(v=>/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n")+"\r\n";}
+function decode(buf){
+  try{return{text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"};}
+  catch(e){return{text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"};}
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+let mode="csv", data=null, header=null, fileName="住所";
+let result=null; // {rows, newCols:[index...], ngRows:Set, guessRows:Set, prefCol}
+const NEW=["都道府県","市区町村","町域・番地","建物名"];
+
+function guessCol(hdr,rows){
+  let best=0,bestScore=-1;
+  const n=Math.max(hdr?hdr.length:0,...rows.slice(0,50).map(r=>r.length));
+  for(let c=0;c<n;c++){
+    let score=0;
+    if(hdr&&/住所|所在地|address/i.test(hdr[c]||"")) score+=100;
+    for(const r of rows.slice(0,50)){const v=(r[c]||"").trim();if(JushoSplit.PREFS.some(p=>v.replace(/^〒?\s*[0-9０-９-]{7,8}\s*/,"").startsWith(p))||/^[^\d]{1,6}[市区郡]/.test(v))score++;}
+    if(score>bestScore){bestScore=score;best=c;}
+  }
+  return best;
+}
+function opt(){return{splitBuilding:$("o_bld").checked,fillPref:$("o_fill").checked};}
+function run(){
+  if(mode==="text"){
+    const lines=$("text").value.split(/\r?\n/).filter(l=>l.trim()!=="");
+    header=["元の住所"];data=lines.map(l=>[l]);
+    build(0,"after");
+  }else if(data){ build(+$("col").value,$("place").value); }
+}
+function build(col,place){
+  const o=opt();const cols=o.splitBuilding?NEW:NEW.slice(0,3);
+  const ng=new Set(),guess=new Set();
+  const mk=(r)=>{
+    let v=r[col]||"";
+    const s=JushoSplit.splitAddress(v,o);
+    const vals=[s.pref,s.city,s.town,s.building].slice(0,cols.length);
+    return {vals,ok:s.ok||v.trim()==="",guessed:s.guessed};
+  };
+  const place3=(r,vals)=>{
+    const a=r.slice();while(a.length<=col)a.push("");
+    if(place==="after") a.splice(col+1,0,...vals);
+    else if(place==="end") a.push(...vals);
+    else a.splice(col,1,...vals);
+    return a;
+  };
+  const width=Math.max(header?header.length:0,...data.map(r=>r.length),col+1);
+  const pad=r=>{const a=r.slice();while(a.length<width)a.push("");return a;};
+  const rows=[];
+  if(header) rows.push(place3(pad(header),cols));
+  data.forEach((r,i)=>{const m=mk(r);if(!m.ok)ng.add(i);if(m.guessed)guess.add(i);rows.push(place3(pad(r),m.vals));});
+  const start=place==="end"?width:(place==="after"?col+1:col);
+  result={rows,start,n:cols.length,ng,guess,hasHeader:!!header};
+  render();
+}
+function render(){
+  if(!result) return;
+  const {rows,start,n,ng,guess,hasHeader}=result;
+  const body=hasHeader?rows.slice(1):rows;
+  let h="<table><thead><tr><th>#</th>";
+  const hdr=hasHeader?rows[0]:rows[0].map((_,i)=>"列"+(i+1));
+  hdr.forEach((v,i)=>{h+=`<th class="${i>=start&&i<start+n?"new":""}">${esc(v)}</th>`;});
+  h+="</tr></thead><tbody>";
+  body.slice(0,200).forEach((r,i)=>{
+    h+=`<tr class="${ng.has(i)?"ng":""}"><td>${i+1}</td>`;
+    r.forEach((v,c)=>{h+=`<td class="${c===start&&guess.has(i)?"guess":""}">${esc(v)}</td>`;});
+    h+="</tr>";
+  });
+  h+="</tbody></table>";
+  $("preview").innerHTML=h;
+  $("stat").textContent=`${body.length}件を処理：分割できた ${body.length-ng.size}件 ／ 要確認 ${ng.size}件`+(guess.size?` ／ 都道府県を補った ${guess.size}件`:"");
+  $("dlBtn").disabled=false;$("copyBtn").disabled=false;
+}
+async function load(file){
+  const buf=await file.arrayBuffer();
+  if(!buf.byteLength){$("info").textContent="空のファイルです";return;}
+  const {text,enc}=decode(buf);
+  const rows=parseCSV(text);
+  if(!rows.length){$("info").textContent="空のファイルです";return;}
+  fileName=file.name.replace(/\.[^.]+$/,"");
+  if($("hasHeader").checked){header=rows[0];data=rows.slice(1);}else{header=null;data=rows;}
+  const n=Math.max(...rows.map(r=>r.length));
+  const g=guessCol(header,data);
+  $("col").innerHTML=Array.from({length:n},(_,i)=>`<option value="${i}" ${i===g?"selected":""}>${esc(header?(header[i]||"列"+(i+1)):"列"+(i+1))}</option>`).join("");
+  $("col").disabled=false;
+  $("info").textContent=`${file.name}（${enc}）：${data.length}行、${n}列。住所の列は「${$("col").selectedOptions[0].textContent}」と推定しました。違う場合は選び直してください。`;
+  run();
+}
+$("file").addEventListener("change",e=>{if(e.target.files[0])load(e.target.files[0]);});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
+["col","place","o_bld","o_fill"].forEach(id=>$(id).addEventListener("change",run));
+$("hasHeader").addEventListener("change",()=>{const f=$("file").files[0];if(f)load(f);});
+$("runText").addEventListener("click",()=>{fileName="住所";run();});
+$("tabCsv").addEventListener("click",()=>{mode="csv";$("tabCsv").classList.add("on");$("tabText").classList.remove("on");$("paneCsv").classList.remove("hide");$("paneText").classList.add("hide");result=null;$("preview").innerHTML="";$("stat").textContent="";$("dlBtn").disabled=true;$("copyBtn").disabled=true;data=null;const f=$("file").files[0];if(f)load(f);});
+$("tabText").addEventListener("click",()=>{mode="text";$("tabText").classList.add("on");$("tabCsv").classList.remove("on");$("paneText").classList.remove("hide");$("paneCsv").classList.add("hide");result=null;$("preview").innerHTML="";$("stat").textContent="";$("dlBtn").disabled=true;$("copyBtn").disabled=true;});
+$("dlBtn").addEventListener("click",()=>{
+  const csv=toCSV(result.rows);
+  const blob=new Blob([($("bom").checked?"﻿":"")+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fileName+"_住所分割.csv";document.body.appendChild(a);a.click();a.remove();
+});
+$("copyBtn").addEventListener("click",async()=>{
+  const tsv=result.rows.map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
+  try{await navigator.clipboard.writeText(tsv);$("copyBtn").textContent="コピーしました";}catch(e){$("copyBtn").textContent="コピーできませんでした";}
+  setTimeout(()=>$("copyBtn").textContent="表をコピー（Excel に貼り付け用）",2000);
+});
+</script>
+</body>
+</html>
