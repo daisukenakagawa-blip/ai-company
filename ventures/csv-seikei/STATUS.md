@@ -43,3 +43,7 @@ Shift_JIS のテストCSV（7行：見出し、全角数字の電話、〒付き
 
 ## Stripe
 - 未作成（デプロイ先がないため、販売の条件を満たさない）
+
+## 7日目（2026-11-19 朝の会議）
+- `tool.html` に `noindex` を追加（検索に出さない。静的ページなので URL を知っていれば開ける点は変わらない）。`ventures/_shop/` 側も同じ内容
+- GitHub Pages は規約上、販売用の店に使えない可能性が高い（`workspace/day-007/researcher/hosting_terms_check.md`）。置き場所を Cloudflare Pages（ai-company を接続、出力 `ventures/_shop`）に変える案を承認依頼 #14 にした
