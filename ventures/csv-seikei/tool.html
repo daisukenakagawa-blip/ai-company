@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSV 表記ゆれ整形</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e;--chg:#fef3c7}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+label{font-size:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 16px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:24px;text-align:center;color:var(--sub)}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sec{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6;z-index:1;vertical-align:top}
+td.chg{background:var(--chg)}
+td.chg[title]{cursor:help}
+select{font-size:13px;margin-top:4px;max-width:150px}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+<h1>CSV 表記ゆれ整形</h1>
+<p class="lead">名簿・受注データなどの CSV の表記をそろえます。ファイルはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV を選ぶ</h2>
+  <div class="drop" id="drop">ここに CSV をドラッグ&ドロップ、または <input type="file" id="file" accept=".csv,.txt,text/csv"></div>
+  <p class="note">文字コード（UTF-8 / Shift_JIS）は自動で判定します。1行目は見出しとして扱います（<label><input type="checkbox" id="hasHeader" checked> 1行目は見出し</label>）。</p>
+  <div class="stat" id="info"></div>
+</div>
+
+<div class="card">
+  <h2>2. 全体のルール</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_trim" checked> 前後の空白を削除</label>
+    <label><input type="checkbox" id="o_space" checked> 連続する空白を1つにまとめる</label>
+    <label><input type="checkbox" id="o_zen2han" checked> 全角の英数字・記号を半角に</label>
+    <label><input type="checkbox" id="o_kana" checked> 半角カタカナを全角に</label>
+    <label><input type="checkbox" id="o_dash" checked> 長音・ダッシュ記号のゆれを直す（数字の間は「-」）</label>
+    <label><input type="checkbox" id="o_empty" checked> 空の行を削除</label>
+    <label><input type="checkbox" id="o_dup"> 全く同じ行を削除（最初の1行を残す）</label>
+  </div>
+  <p class="note">「全角スペース」は半角スペースにそろえます（全角→半角がオンのとき）。</p>
+</div>
+
+<div class="card">
+  <h2>3. 列ごとの形式（見出しの下で選びます）</h2>
+  <div class="row">
+    <label>日付の出力形式
+      <select id="dateFmt"><option value="-">2024-04-01</option><option value="/">2024/04/01</option><option value="jp">2024年4月1日</option></select>
+    </label>
+    <label><input type="checkbox" id="telDigits"> 電話番号を数字だけにする</label>
+    <button class="sec" id="autoBtn" disabled>列の形式を自動で推定</button>
+  </div>
+  <p class="note">電話番号：区切りを「-」に統一し、携帯（070/080/090）・IP電話（050）・フリーダイヤル（0120）の11桁/10桁はハイフンを補います。郵便番号：「〒」を外して 123-4567 に。日付：西暦・和暦（令和・平成・昭和、R6.4.1 なども）を西暦にそろえます。会社名：（株）・㈱ などを「株式会社」に。読み取れない値は変えずに残します。</p>
+</div>
+
+<div class="card">
+  <h2>4. 確認してダウンロード</h2>
+  <div class="row">
+    <button id="dlBtn" disabled>整形した CSV をダウンロード（Excel 向け UTF-8）</button>
+    <label><input type="checkbox" id="bom" checked> BOM を付ける（Excel で文字化けしない）</label>
+  </div>
+  <div class="stat" id="stat"></div>
+  <p class="note">変更したセルは黄色で表示します（マウスを乗せると元の値）。先頭の200行を表示しています。</p>
+  <div class="tbl" id="preview"></div>
+</div>
+</main>
+
+<script>
+"use strict";
+// ---------- CSV ----------
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const rows=[];let row=[],f="",q=false,i=0;
+  const comma = guessDelim(text);
+  while(i<text.length){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue; }
+      f+=c;i++;continue;
+    }
+    if(c==='"' && f===""){q=true;i++;continue;}
+    if(c===comma){row.push(f);f="";i++;continue;}
+    if(c==="\r"){i++;continue;}
+    if(c==="\n"){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return {rows,delim:comma};
+}
+function guessDelim(t){
+  const line=t.split("\n",1)[0];
+  const n=(ch)=>line.split(ch).length;
+  return n("\t")>n(",")?"\t":",";
+}
+function toCSV(rows){
+  return rows.map(r=>r.map(v=>/[",\r\n]/.test(v)||/^\s|\s$/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n")+"\r\n";
+}
+function decode(buf){
+  try{ return {text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"}; }
+  catch(e){ return {text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"}; }
+}
+
+// ---------- 変換 ----------
+const HK="ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ｡｢｣､･";
+const ZK="ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜。「」、・";
+const DAKU={"カ":"ガ","キ":"ギ","ク":"グ","ケ":"ゲ","コ":"ゴ","サ":"ザ","シ":"ジ","ス":"ズ","セ":"ゼ","ソ":"ゾ","タ":"ダ","チ":"ヂ","ツ":"ヅ","テ":"デ","ト":"ド","ハ":"バ","ヒ":"ビ","フ":"ブ","ヘ":"ベ","ホ":"ボ","ウ":"ヴ"};
+const HANDAKU={"ハ":"パ","ヒ":"ピ","フ":"プ","ヘ":"ペ","ホ":"ポ"};
+function hanKana2Zen(s){
+  let out="";
+  for(let i=0;i<s.length;i++){
+    const k=HK.indexOf(s[i]);
+    if(k<0){out+=s[i];continue;}
+    let z=ZK[k];const nx=s[i+1];
+    if(nx==="ﾞ"&&DAKU[z]){z=DAKU[z];i++;}
+    else if(nx==="ﾟ"&&HANDAKU[z]){z=HANDAKU[z];i++;}
+    out+=z;
+  }
+  return out;
+}
+function zen2han(s){
+  return s.replace(/[！-～]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/　/g," ");
+}
+function toHalfDigits(s){return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));}
+const DASHES=/[‐‑‒–—―−ｰー─━－﹣]/g;
+function fixDash(s){
+  // 数字(または英字)の間のダッシュ類は「-」、カタカナの後は長音「ー」
+  return s.replace(/([0-9A-Za-z０-９])[‐‑‒–—―−ｰー─━－﹣]+(?=[0-9A-Za-z０-９])/g,"$1-")
+          .replace(/([ァ-ヴ])[‐‑‒–—―−─━－]/g,"$1ー");
+}
+function normGlobal(v,o){
+  let s=v;
+  if(o.kana) s=hanKana2Zen(s);
+  if(o.zen2han) s=zen2han(s);
+  if(o.dash) s=fixDash(s);
+  if(o.space) s=s.replace(/[ 　\t]{2,}/g,m=>m.includes("　")&&!o.zen2han?"　":" ");
+  if(o.trim) s=s.replace(/^[\s　]+|[\s　]+$/g,"");
+  return s;
+}
+function fmtTel(v,digitsOnly){
+  let s=toHalfDigits(v).replace(DASHES,"-").replace(/[()（）]/g,"-").replace(/\s+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
+  if(!/^\+?[0-9-]+$/.test(s)) return v;
+  const d=s.replace(/-/g,"");
+  if(digitsOnly) return d;
+  if(/^(070|080|090|050)\d{8}$/.test(d)) return d.slice(0,3)+"-"+d.slice(3,7)+"-"+d.slice(7);
+  if(/^0120\d{6}$/.test(d)) return d.slice(0,4)+"-"+d.slice(4,7)+"-"+d.slice(7);
+  if(/^0[36]\d{8}$/.test(d)&&!s.includes("-")) return d.slice(0,2)+"-"+d.slice(2,6)+"-"+d.slice(6);
+  return s;
+}
+function fmtZip(v){
+  const s=toHalfDigits(v).replace(/〒|\s/g,"").replace(DASHES,"-");
+  const d=s.replace(/-/g,"");
+  if(/^\d{7}$/.test(d)) return d.slice(0,3)+"-"+d.slice(3);
+  return v;
+}
+const ERA={"令和":2018,"R":2018,"平成":1988,"H":1988,"昭和":1925,"S":1925};
+function fmtDate(v,fmt){
+  let s=toHalfDigits(v).trim().replace(/元年/,"1年");
+  let y,m,d,mm;
+  if((mm=s.match(/^(令和|平成|昭和)\s*(\d{1,2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日?$/))){y=ERA[mm[1]]+ +mm[2];m=+mm[3];d=+mm[4];}
+  else if((mm=s.match(/^([RHSrhs])\s*(\d{1,2})[.\/\-](\d{1,2})[.\/\-](\d{1,2})$/))){y=ERA[mm[1].toUpperCase()]+ +mm[2];m=+mm[3];d=+mm[4];}
+  else if((mm=s.match(/^(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日?$/))){y=+mm[1];m=+mm[2];d=+mm[3];}
+  else if((mm=s.match(/^(\d{4})[.\/\-](\d{1,2})[.\/\-](\d{1,2})(?:[ T].*)?$/))){y=+mm[1];m=+mm[2];d=+mm[3];}
+  else if((mm=s.match(/^(\d{4})(\d{2})(\d{2})$/))){y=+mm[1];m=+mm[2];d=+mm[3];}
+  else return v;
+  const dt=new Date(y,m-1,d);
+  if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d) return v;
+  const p=n=>String(n).padStart(2,"0");
+  if(fmt==="jp") return `${y}年${m}月${d}日`;
+  return [y,p(m),p(d)].join(fmt);
+}
+function fmtCompany(v){
+  return v.replace(/[（(]\s*株\s*[）)]|㈱/g,"株式会社").replace(/[（(]\s*有\s*[）)]|㈲/g,"有限会社").replace(/[（(]\s*同\s*[）)]/g,"合同会社");
+}
+const TYPES={none:"そのまま",tel:"電話番号",zip:"郵便番号",date:"日付",company:"会社名"};
+function guessType(header,values){
+  const h=header||"";
+  if(/電話|TEL|tel|携帯|FAX|fax/.test(h)) return "tel";
+  if(/郵便|〒|zip|ZIP|postal/i.test(h)) return "zip";
+  if(/日付|年月日|日時|生年月日|date|Date|日$/.test(h)) return "date";
+  if(/会社|法人|社名|企業|勤務先/.test(h)) return "company";
+  const sample=values.filter(Boolean).slice(0,50);
+  if(!sample.length) return "none";
+  const ratio=fn=>sample.filter(fn).length/sample.length;
+  if(ratio(x=>/^〒?\s*[0-9０-９]{3}[-ー－]?[0-9０-９]{4}$/.test(x.trim()))>.8) return "zip";
+  if(ratio(x=>fmtDate(x,"-")!==x||/^\d{4}-\d{2}-\d{2}$/.test(x))>.8) return "date";
+  if(ratio(x=>/^[0０][0-9０-９\-－ー()（）\s]{8,14}$/.test(x.trim()))>.8) return "tel";
+  return "none";
+}
+
+// ---------- 画面 ----------
+const $=id=>document.getElementById(id);
+let src=null, colTypes=[];
+function opts(){return{trim:$("o_trim").checked,space:$("o_space").checked,zen2han:$("o_zen2han").checked,kana:$("o_kana").checked,dash:$("o_dash").checked};}
+function transform(){
+  const o=opts(),fmt=$("dateFmt").value,td=$("telDigits").checked,hh=$("hasHeader").checked;
+  const out=[],orig=[];let changed=0,removedEmpty=0,removedDup=0;const seen=new Set();
+  src.rows.forEach((r,ri)=>{
+    if(hh&&ri===0){out.push(r.map(v=>normGlobal(v,o)));orig.push(r);return;}
+    const nr=r.map((v,ci)=>{
+      let s=normGlobal(v,o);
+      const t=colTypes[ci]||"none";
+      if(t==="tel")s=fmtTel(s,td);else if(t==="zip")s=fmtZip(s);else if(t==="date")s=fmtDate(s,fmt);else if(t==="company")s=fmtCompany(s);
+      return s;
+    });
+    if($("o_empty").checked&&nr.every(v=>v==="")){removedEmpty++;return;}
+    if($("o_dup").checked){const k=JSON.stringify(nr);if(seen.has(k)){removedDup++;return;}seen.add(k);}
+    nr.forEach((v,ci)=>{if(v!==(r[ci]??""))changed++;});
+    out.push(nr);orig.push(r);
+  });
+  return {out,orig,changed,removedEmpty,removedDup};
+}
+function render(){
+  if(!src) return;
+  const {out,orig,changed,removedEmpty,removedDup}=transform();
+  const hh=$("hasHeader").checked;
+  const ncol=Math.max(...src.rows.map(r=>r.length));
+  let h="<table><thead><tr><th>#</th>";
+  for(let c=0;c<ncol;c++){
+    const name=hh?(out[0]?.[c]??""):`列${c+1}`;
+    h+=`<th>${esc(name)}<br><select data-col="${c}">${Object.entries(TYPES).map(([k,l])=>`<option value="${k}"${(colTypes[c]||"none")===k?" selected":""}>${l}</option>`).join("")}</select></th>`;
+  }
+  h+="</tr></thead><tbody>";
+  const start=hh?1:0;
+  for(let r=start;r<Math.min(out.length,start+200);r++){
+    h+=`<tr><th>${r}</th>`;
+    for(let c=0;c<ncol;c++){
+      const v=out[r][c]??"",o=orig[r][c]??"";
+      h+=v!==o?`<td class="chg" title="元：${esc(o)}">${esc(v)}</td>`:`<td>${esc(v)}</td>`;
+    }
+    h+="</tr>";
+  }
+  h+="</tbody></table>";
+  $("preview").innerHTML=h;
+  $("preview").querySelectorAll("select").forEach(s=>s.onchange=e=>{colTypes[+e.target.dataset.col]=e.target.value;render();});
+  $("stat").textContent=`データ ${out.length-start} 行 ／ 変更したセル ${changed} 件 ／ 削除した空行 ${removedEmpty} 行 ／ 削除した重複行 ${removedDup} 行`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function autoTypes(){
+  const hh=$("hasHeader").checked,ncol=Math.max(...src.rows.map(r=>r.length));
+  const body=src.rows.slice(hh?1:0);
+  colTypes=[];for(let c=0;c<ncol;c++) colTypes[c]=guessType(hh?src.rows[0][c]:"",body.map(r=>r[c]||""));
+}
+async function load(file){
+  const buf=await file.arrayBuffer();
+  const {text,enc}=decode(buf);
+  const parsed=parseCSV(text);
+  if(!parsed.rows.length){$("info").textContent=`${file.name} は空のファイルです。中身のある CSV を選んでください。`;return;}
+  src=parsed;src.name=file.name;
+  autoTypes();
+  $("info").textContent=`${file.name}（${enc}、${src.delim==="\t"?"タブ区切り":"カンマ区切り"}、${src.rows.length} 行）を読み込みました。`;
+  $("dlBtn").disabled=false;$("autoBtn").disabled=false;
+  render();
+}
+$("file").onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+const drop=$("drop");
+drop.ondragover=e=>{e.preventDefault();drop.classList.add("over");};
+drop.ondragleave=()=>drop.classList.remove("over");
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");e.dataTransfer.files[0]&&load(e.dataTransfer.files[0]);};
+document.querySelectorAll("input[type=checkbox],#dateFmt").forEach(el=>{if(el.id!=="bom")el.addEventListener("change",render);});
+$("autoBtn").onclick=()=>{autoTypes();render();};
+$("dlBtn").onclick=()=>{
+  const {out}=transform();
+  const blob=new Blob([($("bom").checked?"﻿":"")+toCSV(out)],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=(src.name||"data.csv").replace(/\.(csv|txt)$/i,"")+"_整形済み.csv";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+</script>
+</body>
+</html>
