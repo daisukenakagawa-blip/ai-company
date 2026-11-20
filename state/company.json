@@ -383,6 +383,11 @@
       "date": "2026-11-19 19:50",
       "text": "genhayl-shop（GitHub Pages）をオーナーが作成済み。販売の準備が整った",
       "read": true
+    },
+    {
+      "date": "2026-11-20 09:20",
+      "text": "Search Console に genhayl-shop.pages.dev（URLプレフィックス）を登録し、sitemap.xml を送信済み（7日目、オーナー作業完了）",
+      "read": false
     }
   ]
 }
