@@ -11,3 +11,4 @@
 - `shimei-bunkatsu/index.html` と `tool.html`・`shimei.js` … 氏名の姓名分割・ふりがな統一（500円）
 - `csv-sabun/index.html` と `tool.html`・`sabun.js` … 2つの CSV の差分比較（980円）
 - `csv-ketsugo/index.html` と `tool.html`・`ketsugo.js` … 複数 CSV の結合（500円）
+- `csv-bunkatsu/index.html` と `tool.html`・`bunkatsu.js` … 大きな CSV の分割（500円）

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>大きな CSV の分割</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button.mini{padding:2px 8px;font-size:13px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:6px}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:7em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+input[type=text]{width:12em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+</style>
+</head>
+<body>
+<main>
+<h1>大きな CSV の分割</h1>
+<p class="lead">1つの CSV を「N行ごと」「ファイルの大きさごと」「列の値ごと」に分けて、見出し付きの複数のファイルにします。まとめて ZIP でダウンロードできます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV を入れる</h2>
+  <div class="drop" id="drop"><b>ここに CSV をドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.txt,.tsv,text/csv"></div>
+  <p class="note">文字コード（UTF-8 / Shift_JIS）と区切り（カンマ / タブ）は自動で判定します。</p>
+  <div class="stat" id="info"></div>
+</div>
+
+<div class="card">
+  <h2>2. 分け方</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_header" checked> 1行目は見出し（分けたすべてのファイルの1行目に付ける）</label>
+    <label><input type="radio" name="mode" value="rows" checked> 行の数で分ける：1ファイル <input type="number" id="o_n" value="10000" min="1" step="1"> 行まで（見出しの行は数えない）</label>
+    <label><input type="radio" name="mode" value="size"> ファイルの大きさで分ける：1ファイル <input type="number" id="o_mb" value="2" min="0.01" step="0.1"> MB まで（行の途中では切りません）</label>
+    <label><input type="radio" name="mode" value="col"> 列の値ごとに分ける：<select id="o_col"></select>（同じ値の行を1つのファイルに）</label>
+  </div>
+  <h2 style="margin-top:16px">保存のしかた</h2>
+  <div class="opts">
+    <label>ファイル名の頭：<input type="text" id="o_base" value="data"></label>
+    <label><input type="checkbox" id="o_ascii"> ファイル名を半角英数字だけにする（part_001.csv …）</label>
+    <label>文字コード：<select id="o_bom"><option value="1">UTF-8（BOM 付き・Excel で文字化けしない）</option><option value="0">UTF-8（BOM なし・システムへの取込向け）</option></select></label>
+    <label>区切り：<select id="o_delim"><option value=",">カンマ（.csv）</option><option value="tab">タブ（.tsv）</option></select></label>
+  </div>
+  <p class="note">ファイル名は「data_001.csv」のような連番になります。列の値ごとに分けたときは「data_東京都.csv」のように値が入ります。使えない記号は「_」に置き換えます。古い解凍ソフトで日本語のファイル名が化ける場合は、半角英数字だけにしてください。</p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div id="warns"></div>
+  <div class="row">
+    <button id="zipBtn" disabled>まとめて ZIP でダウンロード</button>
+  </div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="list"></div>
+</div>
+</main>
+
+<script src="bunkatsu.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function decode(buf){
+  try{return{text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"};}
+  catch(e){return{text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"};}
+}
+function fmtSize(b){return b>=1048576?(b/1048576).toFixed(2)+" MB":b>=1024?(b/1024).toFixed(1)+" KB":b+" B";}
+const te=new TextEncoder();
+let src=null,res=null;
+async function load(file){
+  const buf=await file.arrayBuffer();
+  if(!buf.byteLength){src=null;$("info").textContent="空のファイルです。";update();return;}
+  const {text,enc}=decode(buf);
+  const p=Bunkatsu.parseCSV(text);
+  const base=file.name.replace(/\.(csv|tsv|txt)$/i,"")||"data";
+  src={name:file.name,enc,delim:p.delim,rows:p.rows,size:buf.byteLength};
+  $("o_base").value=Bunkatsu.safeName(base);
+  $("info").textContent=`${file.name}：${enc}・${p.delim==="\t"?"タブ区切り":"カンマ区切り"}・${p.rows.length}行（見出しを含む）・${fmtSize(buf.byteLength)}`;
+  fillCols();update();
+}
+function fillCols(){
+  const h=src&&src.rows[0]||[];const hdr=$("o_header").checked;
+  const w=src?Math.max(0,...src.rows.slice(0,50).map(r=>r.length)):0;
+  const cur=$("o_col").value;
+  $("o_col").innerHTML=Array.from({length:w},(_,i)=>`<option value="${i}">${i+1}列目${hdr&&h[i]!=null&&h[i]!==""?"：「"+esc(h[i])+"」":""}</option>`).join("");
+  if(cur!==""&&+cur<w) $("o_col").value=cur;
+}
+function opt(){return{header:$("o_header").checked,mode:document.querySelector("input[name=mode]:checked").value,n:+$("o_n").value,mb:+$("o_mb").value,col:+$("o_col").value||0,base:$("o_base").value.trim()||"data",ascii:$("o_ascii").checked,bom:$("o_bom").value==="1",delim:$("o_delim").value==="tab"?"\t":","};}
+function update(){
+  if(!src){res=null;$("warns").innerHTML="";$("list").innerHTML="";$("stat").textContent="";$("zipBtn").disabled=true;return;}
+  const o=opt();
+  const w=[];
+  if(o.mode==="rows"&&!(o.n>=1)) w.push("行の数は1以上にしてください");
+  if(o.mode==="size"&&!(o.mb>0)) w.push("大きさは0より大きくしてください");
+  if(w.length){res=null;$("warns").innerHTML=w.map(x=>`<div class="warn">${esc(x)}</div>`).join("");$("list").innerHTML="";$("stat").textContent="";$("zipBtn").disabled=true;return;}
+  res=Bunkatsu.split(src.rows,o);
+  res.parts.forEach(p=>{p.text=Bunkatsu.partText(p,o);p.bytes=te.encode(p.text).length;});
+  $("warns").innerHTML=res.warns.map(x=>`<div class="warn">${esc(x)}</div>`).join("");
+  const total=res.parts.reduce((a,p)=>a+p.rows.length,0);
+  $("stat").textContent=res.parts.length?`${res.parts.length}個のファイルに分けました（データ ${total}行${o.header?"、各ファイルに見出し1行":""}）。`+(res.parts.length>500?"先頭の500個を表示しています（ZIP にはすべて入ります）。":""):"";
+  let h='<table><thead><tr><th>#</th><th>ファイル名</th><th>中身</th><th>行数</th><th>大きさ</th><th></th></tr></thead><tbody>';
+  res.parts.slice(0,500).forEach((p,i)=>{h+=`<tr><td class="num">${i+1}</td><td>${esc(p.name)}</td><td>${esc(p.label)}</td><td class="num">${p.rows.length}</td><td class="num">${fmtSize(p.bytes)}</td><td><button class="mini" data-i="${i}">保存</button></td></tr>`;});
+  h+="</tbody></table>";
+  $("list").innerHTML=res.parts.length?h:"";
+  $("zipBtn").disabled=!res.parts.length;
+}
+function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),10000);}
+$("list").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const p=res.parts[+b.dataset.i];save(new Blob([p.text],{type:"text/csv;charset=utf-8"}),p.name);});
+$("zipBtn").addEventListener("click",()=>{
+  const o=opt();const folder=o.ascii?"split":(Bunkatsu.safeName(o.base)+"_分割");
+  const z=Bunkatsu.zip(res.parts.map(p=>({name:folder+"/"+p.name,data:p.text})));
+  save(new Blob([z],{type:"application/zip"}),folder+".zip");
+});
+$("file").addEventListener("change",e=>{if(e.target.files[0])load(e.target.files[0]);});
+const d=$("drop");
+d.addEventListener("dragover",e=>{e.preventDefault();d.classList.add("over");});
+d.addEventListener("dragleave",()=>d.classList.remove("over"));
+d.addEventListener("drop",e=>{e.preventDefault();d.classList.remove("over");if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
+$("o_header").addEventListener("change",()=>{fillCols();update();});
+document.querySelectorAll("input[name=mode],#o_col,#o_ascii,#o_bom,#o_delim").forEach(el=>el.addEventListener("change",update));
+["o_n","o_mb","o_base"].forEach(id=>$(id).addEventListener("input",update));
+</script>
+</body>
+</html>
