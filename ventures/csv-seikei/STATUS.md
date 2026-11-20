@@ -38,7 +38,7 @@ Shift_JIS のテストCSV（7行：見出し、全角数字の電話、〒付き
 
 ## 販売に足りないもの
 1. **genhayl-shop へのデプロイができない**：工房のセッションから `daisukenakagawa-blip/genhayl-shop` に push できない（2026-11-19：「このセッションの許可リポジトリに含まれていない」として拒否）。→ オーナー作業：claude.ai の新しいチャットで、`ai-company` と `genhayl-shop` の両方を追加してもらい、工房の定期タスクをそのチャットで作り直す。または `ventures/_shop/` の中身を手で genhayl-shop の直下にコピーする
-2. デプロイ後：公開URL（https://daisukenakagawa-blip.github.io/genhayl-shop/csv-seikei/tool.html）を完了後リダイレクト先にして、Stripe で商品（980円）と Payment Link を作る
+2. デプロイ後：公開URL（https://genhayl-shop.pages.dev/csv-seikei/tool.html）を完了後リダイレクト先にして、Stripe で商品（980円）と Payment Link を作る
 3. Payment Link 作成後：`index.html` の購入ボタン（`#buy`）の href を差し替えて再デプロイ
 
 ## Stripe

@@ -175,9 +175,9 @@
       "action": "workspace/day-007/product/cloudflare_pages_setup.md のとおり、Cloudflare の Workers & Pages → Pages → Git に接続で ai-company を選び、ビルドコマンド空欄・出力ディレクトリ ventures/_shop で保存。終わったら inbox に『#14 やった 公開URL』と書く",
       "reason": "genhayl-shop には push できず、GitHub Pages は規約上販売用の店に使えない可能性が高い。これで1件目の販売を始められる",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "done",
       "review": "ok: 無料プランで費用0円。公開されるのは ventures/_shop のみ。特商法表記は Stripe 登録情報のまま。商品は禁止事項に該当しない",
-      "owner_note": ""
+      "owner_note": "Cloudflare Pages 公開済み https://genhayl-shop.pages.dev （ai-company 接続、出力 ventures/_shop）"
     }
   ],
   "decisions": [

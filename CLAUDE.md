@@ -36,7 +36,7 @@
 別の定期タスク「アイデア工房」が2時間ごとに動き、下の手順を1サイクル行う。毎朝の「1営業日の手順」では、工房の成果をまとめて日報に載せる。
 
 ### 1サイクルの手順
-0. genhayl-shop をクローンする。`tokushoho.html` と商品一覧のトップ（`index.html`）がまだなければ、最初に置く
+0. 店の置き場所は `ventures/_shop/`（push で https://genhayl-shop.pages.dev/ に自動公開）
 1. `ventures/IDEAS.md`（アイデア台帳）と `ventures/*/STATUS.md` を読む
 2. 新しいアイデアを5件出し、台帳に追記する（誰が・何に困っていて・いくらなら払うか・AIだけで作れて納品まで自動か）
 3. 1件だけ選んで作る。または作りかけを1段階進める。**動く完成品**を `ventures/<slug>/` に置く（静的な HTML/JS を基本にし、サーバー代0円で動く形にする）
@@ -47,7 +47,7 @@
 
 ### 販売の条件（全部満たすこと）
 - 買った人が、払った直後に使える（Payment Link の完了後リダイレクト先に、動く納品物がある）
-- 公開されている置き場所にデプロイ済み。置き場所は公開リポジトリ `daisukenakagawa-blip/genhayl-shop` の GitHub Pages（6日目にオーナーが作成済み。公開URL：https://daisukenakagawa-blip.github.io/genhayl-shop/ 。工房のセッションから push できない場合は販売せず、オーナーに知らせる）。今つながっている Cloudflare のコネクタにはデプロイ機能がないため使わない
+- 公開されている置き場所にデプロイ済み。置き場所は Cloudflare Pages（プロジェクト genhayl-shop、公開URL：https://genhayl-shop.pages.dev/ 。7日目にオーナーが ai-company を接続、出力ディレクトリ `ventures/_shop`）。**`ventures/_shop/` に置いて ai-company に push すれば自動で公開される**。GitHub Pages は規約上、販売用の店に使えないため使わない（genhayl-shop リポジトリは使わない）
 - 特定商取引法に基づく表記のページがある。`ventures/_legal/tokushoho.html` をそのまま一緒にデプロイし、各商品ページからリンクする（オーナー指示：Stripe 登録済みの情報をそのまま使う。中身は書き換えない）
 - 返金は「説明どおりに動かない場合、7日以内なら返金」で統一する（表記ページのとおり）
 - 価格は1件 3,000円以下、買い切り。サブスクと返金なしの条件はオーナー承認が必要
