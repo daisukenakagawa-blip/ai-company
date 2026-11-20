@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>縦持ち⇔横持ち変換（クロス表）</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:4.5em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.ok{color:#047857}.ng{color:#b91c1c;font-weight:700}
+.b{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px}
+.b.fixed{background:#d1fae5;color:#065f46}.b.lost{background:#fee2e2;color:#991b1b}.b.check{background:#fef3c7;color:#92400e}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+td.wrap{white-space:normal;min-width:16em}
+</style>
+<style>
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.tabs label{border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;background:#fff;font-size:14px}
+.tabs label.on{border-color:var(--accent);background:#f0fdfa;font-weight:700}
+.tabs input{margin-right:4px}
+.chk{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}
+.chk label{display:flex;gap:4px;align-items:center}
+input[type=text]{font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;width:8em}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>縦持ち⇔横持ち変換（クロス表）</h1>
+<p class="lead">「日付・商品・数量」のように1行に1件ずつ並んだ縦長の表を、「商品×日付」のクロス表（集計表）にします。その逆に、月が横に並んだ表を1行1件の縦長の表に戻すこともできます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px"><label><input type="checkbox" id="o_head" checked> 1行目は見出し</label><button class="sub" id="sample" type="button">見本のデータで試す</button></div>
+  <p class="stat" id="finfo"></p>
+  <div class="tbl hide" id="peek"></div>
+</div>
+
+<div class="card">
+  <h2>2. 変換のしかたを選ぶ</h2>
+  <div class="tabs" id="tabs">
+    <label class="on"><input type="radio" name="mode" value="pivot" checked>縦 → 横（クロス表にする）</label>
+    <label><input type="radio" name="mode" value="unpivot">横 → 縦（1行1件に戻す）</label>
+  </div>
+
+  <div id="m_pivot" class="opts" style="margin-top:10px">
+    <div><b>行に並べる列</b>（複数選べます。例：店舗、商品）<div class="chk" id="p_rows"></div></div>
+    <label><b>列（横）に並べる列</b>：<select id="p_col"></select></label>
+    <label><b>集計のしかた</b>：<select id="p_agg">
+      <option value="sum">合計</option><option value="count">件数（行の数）</option><option value="avg">平均</option>
+      <option value="max">最大</option><option value="min">最小</option><option value="first">最初の値（集計しない）</option><option value="join">値をつなぐ（文字のまま）</option>
+    </select></label>
+    <label id="p_valL"><b>集計する値の列</b>：<select id="p_val"></select></label>
+    <label id="p_sepL" class="hide">つなぐ記号：<input type="text" id="p_sep" value="、" style="width:4em"></label>
+    <label><input type="checkbox" id="p_tot" checked> 合計の行と列を付ける</label>
+    <label>値がないマス：<select id="p_fill"><option value="">空欄のまま</option><option value="0">0 を入れる</option></select></label>
+    <label>横に並ぶ見出しの順：<select id="p_corder"><option value="asc">小さい順・あいうえお順</option><option value="appear">ファイルに出てきた順</option></select></label>
+    <label>行の順：<select id="p_rorder"><option value="appear">ファイルに出てきた順</option><option value="asc">小さい順・あいうえお順</option></select></label>
+    <label>小数点以下：<select id="p_dec"><option value="">そのまま</option><option value="0">0桁に四捨五入</option><option value="1">1桁に四捨五入</option><option value="2">2桁に四捨五入</option><option value="3">3桁に四捨五入</option></select></label>
+  </div>
+
+  <div id="m_unpivot" class="opts hide" style="margin-top:10px">
+    <div><b>そのまま残す列</b>（各行の見出しになる列。例：店舗、商品コード）<div class="chk" id="u_keep"></div></div>
+    <div><b>縦に並べ直す列</b>（例：1月、2月、3月…。残す列以外は最初からチェックしています）<div class="chk" id="u_melt"></div></div>
+    <label>新しい列の名前：<input type="text" id="u_item" value="項目"> と <input type="text" id="u_val" value="値"></label>
+    <label><input type="checkbox" id="u_skip" checked> 値が空欄のマスは行にしない</label>
+    <label>並び順：<select id="u_order"><option value="row">元の行ごと（本店の1月、本店の2月…）</option><option value="col">列ごと（本店の1月、駅前店の1月…）</option></select></label>
+  </div>
+  <p style="margin-top:12px"><button id="go" disabled>変換する</button></p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row" style="margin-top:8px">
+    <label>文字コード：<select id="o_enc"><option value="same">読み込んだファイルと同じ</option><option value="utf8bom">UTF-8・BOM 付き（Excel で開ける）</option><option value="utf8">UTF-8・BOM なし</option><option value="sjis">Shift_JIS</option></select></label>
+    <button id="saveBtn" disabled>変換した CSV をダウンロード</button>
+  </div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="out"></div>
+  <p class="note">数値として読める値：「1200」「1,200」「１２００」「¥1,200」「1200円」「▲300」「(300)」（後ろの2つはマイナス）。数値として読めない値は、合計・平均・最大・最小では数えずに一覧に出します。</p>
+</div>
+</main>
+
+<script src="tateyoko.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n){return n.toLocaleString("ja-JP");}
+let file=null,parsed=null,cols=[],result=null;
+const mode=()=>document.querySelector("input[name=mode]:checked").value;
+
+function loadText(name,enc,text){
+  parsed=TateYoko.parseCSV(text);file={name,enc};result=null;setup();
+}
+function load(f){
+  const r=new FileReader();
+  r.onload=()=>{const t=TateYoko.readText(new Uint8Array(r.result));loadText(f.name,t.enc,t.text);};
+  r.readAsArrayBuffer(f);
+}
+function opt(sel,list,def){sel.innerHTML=list.map((c,i)=>`<option value="${i}"${i===def?" selected":""}>${esc(c.name)}</option>`).join("");}
+function boxes(el,cls,list,checked){el.innerHTML=list.map((c,i)=>`<label><input type="checkbox" class="${cls}" value="${i}"${checked(i)?" checked":""}>${esc(c.name)}</label>`).join("");}
+function setup(){
+  if(!parsed) return;
+  const head=$("o_head").checked;
+  cols=TateYoko.profile(parsed.rows,head);
+  $("finfo").textContent=`${file.name}：${num(parsed.rows.length)}行・${cols.length}列（${file.enc==="utf-8"?"UTF-8":"Shift_JIS"}・区切り「${parsed.delim===","?"カンマ":"タブ"}」）`;
+  // 先頭5行ののぞき見
+  let h="<table><thead><tr>"+cols.map(c=>`<th>${esc(c.name)}</th>`).join("")+"</tr></thead><tbody>";
+  parsed.rows.slice(head?1:0,(head?1:0)+5).forEach(r=>{h+="<tr>"+cols.map((c,i)=>`<td>${esc(r[i]==null?"":r[i])}</td>`).join("")+"</tr>";});
+  $("peek").innerHTML=h+"</tbody></table>";$("peek").classList.remove("hide");
+  // 初期値：数値の列のうち最後のものを「値」、値の種類が少ない文字の列を行・列に
+  const numIdx=cols.map((c,i)=>c.numeric?i:-1).filter(i=>i>=0);
+  const valDef=numIdx.length?numIdx[numIdx.length-1]:cols.length-1;
+  const textIdx=cols.map((c,i)=>i).filter(i=>i!==valDef);
+  const colDef=textIdx.length?textIdx[textIdx.length-1]:0;
+  const rowDef=textIdx.length>1?textIdx[0]:-1;
+  boxes($("p_rows"),"pr",cols,i=>i===rowDef);
+  opt($("p_col"),cols,colDef);opt($("p_val"),cols,valDef);
+  // 横→縦：数値の列を並べ直す列、それ以外を残す列に
+  const keepDef=i=>!cols[i].numeric;
+  boxes($("u_keep"),"uk",cols,keepDef);boxes($("u_melt"),"um",cols,i=>!keepDef(i));
+  $("go").disabled=false;render();
+}
+function checked(cls){return [...document.querySelectorAll("input."+cls+":checked")].map(x=>+x.value);}
+document.querySelectorAll("input[name=mode]").forEach(r=>r.addEventListener("change",()=>{
+  document.querySelectorAll("#tabs label").forEach(l=>l.classList.toggle("on",l.querySelector("input").checked));
+  $("m_pivot").classList.toggle("hide",mode()!=="pivot");$("m_unpivot").classList.toggle("hide",mode()!=="unpivot");
+  result=null;render();
+}));
+$("p_agg").addEventListener("change",()=>{
+  const a=$("p_agg").value;
+  $("p_valL").classList.toggle("hide",a==="count");$("p_sepL").classList.toggle("hide",a!=="join");
+  if(a==="avg"&&$("p_dec").value==="") $("p_dec").value="2";
+});
+// 「残す列」にチェックしたら「並べ直す列」から外す
+$("u_keep").addEventListener("change",e=>{const m=document.querySelector(`input.um[value="${e.target.value}"]`);if(m&&e.target.checked)m.checked=false;});
+$("u_melt").addEventListener("change",e=>{const k=document.querySelector(`input.uk[value="${e.target.value}"]`);if(k&&e.target.checked)k.checked=false;});
+$("o_head").addEventListener("change",setup);
+
+$("go").addEventListener("click",()=>{
+  const head=$("o_head").checked;
+  if(mode()==="pivot"){
+    const rk=checked("pr"),ck=+$("p_col").value,agg=$("p_agg").value,val=+$("p_val").value;
+    if(!rk.length){alert("「行に並べる列」を1つ以上選んでください。");return;}
+    if(rk.includes(ck)){alert("「列（横）に並べる列」は、「行に並べる列」と別の列を選んでください。");return;}
+    if(agg!=="count"&&(rk.includes(val)||val===ck)){alert("「集計する値の列」は、行・列に並べる列と別の列を選んでください。");return;}
+    const dec=$("p_dec").value===""?null:+$("p_dec").value;
+    result={mode:"pivot",agg,...TateYoko.pivot(parsed.rows,{header:head,rowKeys:rk,colKey:ck,val,agg,fill:$("p_fill").value,totals:$("p_tot").checked,colOrder:$("p_corder").value,rowOrder:$("p_rorder").value,dec,sep:$("p_sep").value})};
+  }else{
+    const keep=checked("uk"),melt=checked("um");
+    if(!melt.length){alert("「縦に並べ直す列」を1つ以上選んでください。");return;}
+    result={mode:"unpivot",...TateYoko.unpivot(parsed.rows,{header:head,keep,melt,itemName:$("u_item").value.trim()||"項目",valueName:$("u_val").value.trim()||"値",skipEmpty:$("u_skip").checked,order:$("u_order").value})};
+  }
+  render();
+});
+
+function render(){
+  $("saveBtn").disabled=!result;
+  if(!result){$("sum").innerHTML="";$("warns").innerHTML="";$("out").innerHTML="";$("stat").textContent="";return;}
+  const i=result.info;let w="";
+  if(result.mode==="pivot"){
+    $("sum").innerHTML=`<div>元の行 <b>${num(i.inRows)}</b></div><div>集計に使った行 <b>${num(i.used)}</b></div><div>できた表 <b>${num(i.outRows)}</b> 行 × <b>${num(i.outCols)}</b> 列</div>`;
+    if(i.skipped) w+=`<div class="warn">値の列が空欄の行が ${num(i.skipped)} 行あり、集計に入れていません。</div>`;
+    if(i.bad.length) w+=`<div class="warn">数値として読めない値が ${num(i.bad.length)} 行あり、集計に入れていません：${i.bad.slice(0,20).map(b=>`${b.row}行目「${esc(b.value)}」`).join("、")}${i.bad.length>20?" ほか":""}（行番号は見出しを1行目として数えます）</div>`;
+    if(i.multi) w+=`<div class="warn">同じ行と列の組み合わせに値が2つ以上ある箇所が ${num(i.multi)} 件あり、最初の値だけを使いました。すべて足すなら「合計」、すべて残すなら「値をつなぐ」を選んでください。</div>`;
+    if(i.outCols>200) w+=`<div class="warn">横に ${num(i.outCols)} 列並びました。「列（横）に並べる列」に値の種類が多い列を選んでいないか確認してください。</div>`;
+  }else{
+    $("sum").innerHTML=`<div>元の行 <b>${num(i.inRows)}</b></div><div>できた行 <b>${num(i.outRows)}</b></div>`;
+    if(i.skipped) w+=`<div class="warn">空欄のマス ${num(i.skipped)} 個は行にしていません。</div>`;
+  }
+  $("warns").innerHTML=w;
+  const MAX=300,R=result.rows;
+  $("stat").textContent=R.length-1>MAX?`先頭${num(MAX)}行を表示しています（ダウンロードするとすべて入っています）`:"";
+  let h="<table><thead><tr>"+R[0].map(v=>`<th>${esc(v)}</th>`).join("")+"</tr></thead><tbody>";
+  R.slice(1,MAX+1).forEach(r=>{h+="<tr>"+r.map(v=>{const n=TateYoko.toNum(v);return `<td${!isNaN(n)?' class="num"':""}>${esc(v)}</td>`;}).join("")+"</tr>";});
+  $("out").innerHTML=h+"</tbody></table>";
+}
+function save(name,data){
+  const b=new Blob([data],{type:"text/csv"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("saveBtn").addEventListener("click",()=>{
+  const text=TateYoko.toCSV(result.rows,parsed.delim);
+  const enc=$("o_enc").value==="same"?(file.enc==="shift_jis"?"sjis":"utf8bom"):$("o_enc").value;
+  let bytes;
+  if(enc==="sjis"){const r=TateYoko.encodeSJIS(text);bytes=r.bytes;if(r.bad) alert(`Shift_JIS にできない文字が ${r.bad} 個あったため「?」にしました。`);}
+  else bytes=TateYoko.encodeUTF8(text,enc==="utf8bom");
+  save(file.name.replace(/\.[^.]+$/,"")+(result.mode==="pivot"?"_クロス表":"_縦持ち")+(parsed.delim==="\t"?".tsv":".csv"),bytes);
+});
+$("sample").addEventListener("click",()=>{
+  const s="日付,店舗,商品,数量\n2026/11/01,本店,りんご,3\n2026/11/01,本店,みかん,5\n2026/11/01,駅前店,りんご,2\n2026/11/02,本店,りんご,4\n2026/11/02,駅前店,みかん,1\n2026/11/02,駅前店,ぶどう,6\n2026/11/03,本店,ぶどう,2\n2026/11/03,駅前店,りんご,1\n";
+  $("o_head").checked=true;loadText("見本.csv","utf-8",s);
+});
+$("file").addEventListener("change",e=>{if(e.target.files[0]) load(e.target.files[0]);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);});
+</script>
+</body>
+</html>

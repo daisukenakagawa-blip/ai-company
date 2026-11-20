@@ -14,6 +14,7 @@
 - `csv-bunkatsu/index.html` と `tool.html`・`bunkatsu.js` … 大きな CSV の分割（500円）
 - `mojicode-henkan/index.html` と `tool.html`・`henkan.js` … 文字コード・改行コードの変換（500円）
 - `bangou-fukugen/index.html` と `tool.html`・`fukugen.js` … Excel で壊れた番号の検出と復元（500円）
+- `tate-yoko/index.html` と `tool.html`・`tateyoko.js` … 縦持ち⇔横持ち変換（クロス表）（980円）
 
 ## 消さないこと
 - `index.html` の `<meta name="google-site-verification" ...>` は Google Search Console の所有権確認用（7日目にオーナーが登録）。トップを作り直すときも必ず残す
