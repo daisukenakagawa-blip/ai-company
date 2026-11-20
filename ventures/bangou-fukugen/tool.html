@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Excel で壊れた番号の検出と復元</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:4.5em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.ok{color:#047857}.ng{color:#b91c1c;font-weight:700}
+.b{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px}
+.b.fixed{background:#d1fae5;color:#065f46}.b.lost{background:#fee2e2;color:#991b1b}.b.check{background:#fef3c7;color:#92400e}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+td.wrap{white-space:normal;min-width:16em}
+</style>
+</head>
+<body>
+<main>
+<h1>Excel で壊れた番号の検出と復元</h1>
+<p class="lead">CSV を Excel で開いて保存したときに起きる「先頭の0が消えた郵便番号・電話番号・コード」「4.90E+12 のような指数表記」「1234.0 のような小数点」を列ごとに見つけ、直せるものは直し、直せないものは一覧にします。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px"><label><input type="checkbox" id="o_head" checked> 1行目は見出し</label></div>
+  <p class="stat" id="finfo"></p>
+</div>
+
+<div class="card">
+  <h2>2. 列ごとに、何の番号かを選ぶ</h2>
+  <p class="note">見出しの名前（「郵便番号」「電話」「JAN」など）から自動で選んでいます。社員番号・会員番号・商品コードなど決まった桁数の番号は「桁数を指定」を選んで桁数を入れてください。「数字だけの値の桁数」に桁数の違う値が混ざっている列は、先頭の0が消えている可能性があります。</p>
+  <div class="tbl" id="cols"><p class="stat" style="padding:8px">ファイルを入れると列の一覧が出ます。</p></div>
+</div>
+
+<div class="card">
+  <h2>3. 保存のしかた</h2>
+  <div class="opts">
+    <label>文字コード：<select id="o_enc">
+      <option value="same">読み込んだファイルと同じ</option>
+      <option value="utf8bom">UTF-8・BOM 付き</option>
+      <option value="sjis">Shift_JIS</option>
+    </select></label>
+    <label><input type="checkbox" id="o_excel"> <span style="flex:1;min-width:0">Excel で開いても0が消えない形（<code>="0123"</code>）で保存する。<b>Excel で見るためだけのファイル</b>です。ほかのシステムに取り込むファイルでは、このチェックを外してください</span></label>
+  </div>
+  <p style="margin-top:12px"><button id="go" disabled>調べて直す</button></p>
+</div>
+
+<div class="card">
+  <h2>4. 結果</h2>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row" style="margin-top:8px">
+    <button id="saveBtn" disabled>直した CSV をダウンロード</button>
+    <button id="listBtn" class="sub" disabled>一覧を CSV で保存</button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <label><input type="radio" name="show" value="all" checked> すべて</label>
+    <label><input type="radio" name="show" value="fixed"> 直した</label>
+    <label><input type="radio" name="show" value="lost"> 元に戻せない</label>
+    <label><input type="radio" name="show" value="check"> 要確認</label>
+  </div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="list"></div>
+  <p class="note">「行」は CSV の行番号（見出しを1行目として数えます）です。「元に戻せない」値は、元のシステムから CSV を書き出し直すか、元の資料を見て手で直してください。</p>
+</div>
+</main>
+
+<script src="fukugen.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n){return n.toLocaleString("ja-JP");}
+const TYPES=[["","対象外"],["zip","郵便番号（7桁）"],["tel","電話番号（10・11桁）"],["jan","JAN・商品バーコード（8・13桁）"],["fixed","桁数を指定"]];
+let file=null,parsed=null,cols=[],settings=[],result=null;
+
+function load(f){
+  const r=new FileReader();
+  r.onload=()=>{
+    const u8=new Uint8Array(r.result);
+    const t=Fukugen.readText(u8);
+    const p=Fukugen.parseCSV(t.text);
+    file={name:f.name,enc:t.enc};parsed=p;result=null;
+    analyze(true);
+  };
+  r.readAsArrayBuffer(f);
+}
+function analyze(reset){
+  if(!parsed) return;
+  const head=$("o_head").checked;
+  cols=Fukugen.profile(parsed.rows,head);
+  if(reset||settings.length!==cols.length){
+    settings=cols.map(c=>{
+      const t=head?Fukugen.guessType(c.name):"";
+      // 最も多い桁数を「桁数を指定」の初期値に
+      let w=0,best=0;Object.entries(c.lens).forEach(([k,v])=>{if(v>best){best=v;w=+k;}});
+      return {type:t,width:w||6};
+    });
+  }
+  $("finfo").textContent=`${file.name}：${num(parsed.rows.length)}行・${cols.length}列（${file.enc==="utf-8"?"UTF-8":"Shift_JIS"}・区切り「${parsed.delim===","?"カンマ":"タブ"}」）`;
+  renderCols();renderResult();
+  $("go").disabled=false;
+}
+function lensText(l){
+  const e=Object.entries(l).sort((a,b)=>b[1]-a[1]);
+  if(!e.length) return "—";
+  return e.slice(0,4).map(([k,v])=>`${k}桁×${num(v)}`).join("、")+(e.length>4?" ほか":"");
+}
+function renderCols(){
+  let h="<table><thead><tr><th>列</th><th>値の例</th><th>数字だけの値の桁数</th><th>指数表記</th><th>末尾 .0</th><th>何の番号か</th></tr></thead><tbody>";
+  cols.forEach((c,i)=>{
+    const s=settings[i];
+    const mixed=Object.keys(c.lens).length>1;
+    h+=`<tr><td>${esc(c.name)}</td><td>${esc(c.examples.join(" / ").slice(0,40))}</td><td>${mixed?'<span class="ng">'+lensText(c.lens)+"</span>":lensText(c.lens)}</td><td class="num">${c.exp?'<span class="ng">'+num(c.exp)+"</span>":"0"}</td><td class="num">${c.dot0?'<span class="ng">'+num(c.dot0)+"</span>":"0"}</td><td><select data-t="${i}">${TYPES.map(([v,l])=>`<option value="${v}"${s.type===v?" selected":""}>${l}</option>`).join("")}</select>${s.type==="fixed"?` <input type="number" min="1" max="30" data-w="${i}" value="${s.width}"> 桁`:""}</td></tr>`;
+  });
+  $("cols").innerHTML=h+"</tbody></table>";
+}
+$("cols").addEventListener("change",e=>{
+  const t=e.target.dataset.t,w=e.target.dataset.w;
+  if(t!=null){settings[+t].type=e.target.value;renderCols();}
+  if(w!=null){settings[+w].width=+e.target.value;}
+  result=null;renderResult();
+});
+$("o_head").addEventListener("change",()=>analyze(true));
+$("go").addEventListener("click",()=>{
+  if(!settings.some(s=>s.type)){alert("「何の番号か」を1つ以上の列で選んでください。");return;}
+  result=Fukugen.run(parsed.rows,$("o_head").checked,settings,cols);
+  renderResult();
+});
+document.querySelectorAll("input[name=show]").forEach(r=>r.addEventListener("change",renderList));
+
+function renderResult(){
+  $("saveBtn").disabled=$("listBtn").disabled=!result;
+  if(!result){$("sum").innerHTML="";$("warns").innerHTML="";$("list").innerHTML="";$("stat").textContent="";return;}
+  const c=result.cnt;
+  $("sum").innerHTML=`<div>問題なし <b>${num(c.ok)}</b></div><div><span class="b fixed">直した</span> <b>${num(c.fixed)}</b></div><div><span class="b lost">元に戻せない</span> <b>${num(c.lost)}</b></div><div><span class="b check">要確認</span> <b>${num(c.check)}</b></div>`;
+  let w="";
+  if(c.lost) w+=`<div class="warn">指数表記で桁が失われた値が ${num(c.lost)} 件あります。この値は元に戻せないため、そのまま残しています。元のシステムから CSV を書き出し直すか、元の資料で確認してください。</div>`;
+  if($("o_excel").checked) w+=`<div class="warn">「Excel で開いても0が消えない形」で保存します。取込用のファイルには使わないでください。</div>`;
+  $("warns").innerHTML=w;
+  renderList();
+}
+function renderList(){
+  if(!result) return;
+  const f=document.querySelector("input[name=show]:checked").value;
+  const items=result.list.filter(x=>f==="all"||x.status===f);
+  const MAX=1000;
+  $("stat").textContent=items.length?`${num(items.length)}件`+(items.length>MAX?`（先頭${num(MAX)}件を表示。すべては「一覧を CSV で保存」で確認できます）`:""):"該当する値はありません。";
+  let h="<table><thead><tr><th>行</th><th>列</th><th>元の値</th><th>直した値</th><th>結果</th><th>内容</th></tr></thead><tbody>";
+  items.slice(0,MAX).forEach(x=>{
+    h+=`<tr><td class="num">${x.row}</td><td>${esc(x.colName)}</td><td>${esc(x.before)}</td><td>${esc(x.after)}</td><td><span class="b ${x.status}">${Fukugen.STATUS_NAME[x.status]}</span></td><td class="wrap">${esc(x.note)}</td></tr>`;
+  });
+  $("list").innerHTML=items.length?h+"</tbody></table>":"";
+}
+function baseName(){return file.name.replace(/\.[^.]+$/,"");}
+function save(name,data,type){
+  const b=new Blob([data],{type});const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("saveBtn").addEventListener("click",()=>{
+  const head=$("o_head").checked;
+  const codeCols=new Set(settings.map((s,i)=>s.type?i:-1).filter(i=>i>=0));
+  const text=Fukugen.toCSV(result.rows,parsed.delim,$("o_excel").checked,codeCols,head);
+  const enc=$("o_enc").value==="same"?(file.enc==="shift_jis"?"sjis":"utf8bom"):$("o_enc").value;
+  let bytes;
+  if(enc==="sjis"){const r=Fukugen.encodeSJIS(text);bytes=r.bytes;if(r.bad) alert(`Shift_JIS にできない文字が ${r.bad} 個あったため「?」にしました。`);}
+  else bytes=Fukugen.encodeUTF8(text,true);
+  save(baseName()+($("o_excel").checked?"_excel表示用":"_復元")+(parsed.delim==="\t"?".tsv":".csv"),bytes,"text/csv");
+});
+$("listBtn").addEventListener("click",()=>{
+  const rows=[["行","列","元の値","直した値","結果","内容"]].concat(result.list.map(x=>[x.row,x.colName,x.before,x.after,Fukugen.STATUS_NAME[x.status],x.note]));
+  save(baseName()+"_番号チェック一覧.csv",Fukugen.encodeUTF8(Fukugen.toCSV(rows,","),true),"text/csv");
+});
+$("o_excel").addEventListener("change",()=>{if(result) renderResult();});
+$("file").addEventListener("change",e=>{if(e.target.files[0]) load(e.target.files[0]);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);});
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excel で壊れた番号の検出と復元｜GENHAYL</title>
+<meta name="description" content="CSV を Excel で開いて保存したら、郵便番号・電話番号・JAN の先頭の0が消えた、4.90E+12 のような指数表記になった――そんな番号を列ごとに見つけて直します。ブラウザ内で完結。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>Excel で壊れた番号の検出と復元</h1>
+<p>CSV を一度 Excel で開いて保存したら、郵便番号「060-0001」が「600001」に、電話番号の先頭の0が消えた、JAN コードが「4.90E+12」になった――取込先のシステムで「形式が正しくありません」と言われる原因の多くはこれです。このツールは、そうした番号を列ごとに見つけ、直せるものは直し、直せないものは行と列の一覧にします。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/3cI00k3Cw0vpaM46ce1gs08">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>先頭の0を補う</b>：郵便番号（7桁）、電話番号（10・11桁）、JAN・商品バーコード（13桁）、社員番号・会員番号など桁数を指定した番号の、消えた先頭の0を補います</li>
+<li><b>指数表記を見分ける</b>：「4.90E+12」のような値を見つけます。桁がすべて残っているもの（例：4.901234567894E+12）は数字に戻し、桁が失われたものは「元に戻せない」として一覧にします</li>
+<li><b>「1234.0」の小数点を取る</b>：数値として保存されて付いた末尾の「.0」を取り除きます</li>
+<li><b>おかしな値の一覧</b>：桁数が合わない番号、JAN のチェックデジット（最後の1桁）が合わない番号、日付に変わってしまった値（「1月2日」など）を「要確認」として一覧にします</li>
+<li><b>列ごとの点検</b>：ファイルを入れると、列ごとに「数字だけの値の桁数」と指数表記の数を表示します。桁数が混ざっている列はすぐ分かります</li>
+<li>直した CSV（UTF-8・BOM 付き／Shift_JIS）と、直した場所・直せなかった場所の一覧 CSV を保存できます。Excel で開いても0が消えない形（<code>="0123"</code>）でも保存できます（Excel で見るためだけの形です）</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>困っていること</th><th>このツールでの結果</th></tr>
+<tr><td>顧客名簿の郵便番号が「600001」「1000001」と6桁・7桁で混ざっている</td><td>「0600001」に補い、もともと7桁の値はそのまま</td></tr>
+<tr><td>電話番号の列が「9012345678」になっている</td><td>「09012345678」に補う。補っても電話番号の形にならないものは「要確認」</td></tr>
+<tr><td>商品マスタの JAN が「4.90E+12」になっている</td><td>桁が失われているため「元に戻せない」として行番号つきで一覧。元のデータから書き出し直す行が分かる</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li><b>指数表記で失われた桁は戻せません</b>。「4.90E+12」のように上の数桁しか残っていない値は、元のシステムから書き出し直すか、元の資料で確認していただく必要があります（このツールはその行を見つけます）</li>
+<li>補った0が正しいかどうかは、桁数の決まりから判断しています。番号そのものが実在するか、正しいかは確かめません</li>
+<li>電話番号のハイフンの付け方、郵便番号と住所の食い違いなど、番号の中身の整形・照合はしません</li>
+<li>Excel ファイル（.xlsx）は読み込めません。CSV・TSV が対象です（UTF-8・Shift_JIS）</li>
+<li>日付に変わってしまった値は、元の番号を推測できないため直しません（一覧に出します）</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
