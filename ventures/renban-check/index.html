@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>番号の抜け・重複チェック｜GENHAYL</title>
+<meta name="description" content="請求書番号・注文番号・伝票番号の CSV から、抜けている番号、二重に使われている番号、桁数の違う番号を一覧にします。INV-2026-0001 のような書き出し付きの番号にも対応。ブラウザ内で完結。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>番号の抜け・重複チェック</h1>
+<p>月末に、請求書番号や注文番号の一覧を目で追って「抜けている番号はないか」「同じ番号を二度使っていないか」を探していませんか。このツールに CSV を入れると、抜けている番号を「INV-0004 〜 INV-0005（2件）」のようにまとめて表示し、重複している番号や桁数の違う番号を行番号つきで一覧にします。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/6oU14oa0UemfdYgasu1gs0d">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>抜けている番号</b>：一番小さい番号から一番大きい番号までの間で、使われていない番号を範囲でまとめて表示します。範囲（例：1〜500）を指定すれば、最初や最後の番号の抜けも分かります</li>
+<li><b>重複している番号</b>：同じ番号が出てくる行をすべて表示します。「INV-0006」と「INV-006」、全角の「ＩＮＶ－０００６」のように書き方が違っても同じ番号として見つけます</li>
+<li><b>桁数の違う番号</b>：「0001」の形でそろえている中に混ざった「001」「1」を見つけます</li>
+<li><b>書き出し付きの番号</b>：「INV-2026-0001」「A-0001」「0001-W」のような番号は、数字の前後の文字ごとに系列を分けて数えます（年が変わって番号が1に戻る場合も、年ごとに調べられます）</li>
+<li><b>打ち間違いの手がかり</b>：数件しかない系列（「INV」の中の「IVN」など）、1,000件以上とんでいる番号、数字のない値を知らせます</li>
+<li>発行日順に並んだ一覧なら、番号の並びが前後している行も調べられます</li>
+<li>結果は、一覧の CSV、抜けている番号を1件ずつ並べた CSV、元の CSV の右端に結果の列を足した CSV で保存できます（UTF-8・BOM 付き。Excel でそのまま開けます）</li>
+<li>CSV がなくても、番号を1行ずつ貼り付けて調べられます</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>こんな一覧</th><th>このツールでの結果</th></tr>
+<tr><td>今月発行した請求書の一覧（INV-0001〜INV-0120）</td><td>抜け「INV-0045」「INV-0101 〜 INV-0102」、重複「INV-0077（12行目・58行目）」のように表示</td></tr>
+<tr><td>ネットショップの受注一覧（注文番号が数字だけ）</td><td>番号の範囲を指定して、最初の番号からの抜けを確認</td></tr>
+<tr><td>店舗ごとに書き出しの違う伝票番号（A-、B-、C-）</td><td>店舗ごとに分けて、それぞれの抜け・重複を表示</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>番号が抜けている理由（取り消し・書き損じ・欠番の決まり）や、どちらの番号が正しいかは判断しません。見つけた番号の確認は、お手元の帳簿・システムでお願いします</li>
+<li>会計・税務上の判断や助言はしません（帳簿の要件を満たしているかどうかなど）</li>
+<li>番号の中の最後の数字の部分を連番として数えます。「2026-0001-01」のように枝番がある番号は、枝番の部分で数えることになります</li>
+<li>数字が16桁以上の番号、Excel ファイル（.xlsx）は扱えません。CSV・TSV（UTF-8・Shift_JIS）が対象です</li>
+<li>とても大きなファイル（数十万行以上）は、お使いのパソコンによっては処理できない場合があります</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

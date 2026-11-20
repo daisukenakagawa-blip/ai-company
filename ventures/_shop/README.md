@@ -18,6 +18,7 @@
 - `csv-tenken/index.html` と `tool.html`・`tenken.js` … 壊れた CSV の点検と修復（500円）
 - `json-csv/index.html` と `tool.html`・`jsoncsv.js` … JSON ⇔ CSV 変換（500円）
 - `retsu-soroe/index.html` と `tool.html`・`soroe.js` … 列そろえ（取込形式テンプレート）（980円）
+- `renban-check/index.html` と `tool.html`・`renban.js` … 番号の抜け・重複チェック（500円）
 
 ## 消さないこと
 - `index.html` の `<meta name="google-site-verification" ...>` は Google Search Console の所有権確認用（7日目にオーナーが登録）。トップを作り直すときも必ず残す

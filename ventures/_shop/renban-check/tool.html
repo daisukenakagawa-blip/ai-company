@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>番号の抜け・重複チェック</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:16px 0 6px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:10px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:8em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.good{font-size:14px;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.ng{color:#b91c1c;font-weight:700}
+.b{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px;background:#fef3c7;color:#92400e}
+.b.k重複,.b.k読めない{background:#fee2e2;color:#991b1b}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+td.wrap{white-space:normal;min-width:16em}
+.ex{font-size:13px;color:var(--sub);margin-top:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<h1>番号の抜け・重複チェック</h1>
+<p class="lead">請求書番号・注文番号・伝票番号などの CSV を入れると、抜けている番号、二重に使われている番号、桁数の違う番号を一覧にします。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px"><label><input type="checkbox" id="o_head" checked> 1行目は見出し</label></div>
+  <p class="stat" id="finfo"></p>
+  <details style="font-size:13px"><summary>ファイルがない場合：番号を貼り付ける</summary>
+    <p class="note">1行に1つずつ番号を貼り付けて「貼り付けた番号を使う」を押してください。</p>
+    <textarea id="paste" rows="6" style="width:100%;font-size:14px" placeholder="INV-0001&#10;INV-0002&#10;INV-0004"></textarea>
+    <p><button class="sub" id="pasteBtn">貼り付けた番号を使う</button></p>
+  </details>
+</div>
+
+<div class="card">
+  <h2>2. 調べ方</h2>
+  <div class="opts">
+    <label>番号の列：<select id="o_col" disabled><option>ファイルを入れてください</option></select></label>
+    <div class="ex" id="colEx"></div>
+    <label>系列の分け方：<select id="o_split">
+      <option value="prefix">数字の前後の文字ごとに分ける</option>
+      <option value="none">分けない（最後の数字だけで数える）</option>
+    </select></label>
+    <p class="note" style="margin:-4px 0 0">「分ける」では、例えば「INV-2025-0001」と「INV-2026-0001」を別々の系列として数えます。</p>
+    <label>番号の範囲（任意）：<input type="number" id="o_start" placeholder="始まり"> 〜 <input type="number" id="o_end" placeholder="終わり"></label>
+    <p class="note" style="margin:-4px 0 0">数字の部分で指定します（例：1 〜 500）。空欄なら、ファイルの中の一番小さい番号〜一番大きい番号の間を調べます。月初めの番号や月末の番号の抜けも見たいときに入れてください。</p>
+    <label><input type="checkbox" id="o_order"> ファイルの並び順どおりに番号が増えているかも調べる（発行日順に並んだ一覧のとき）</label>
+  </div>
+  <p style="margin-top:12px"><button id="go" disabled>調べる</button></p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row" style="margin-top:8px">
+    <button id="listBtn" disabled>一覧を CSV で保存</button>
+    <button id="missBtn" class="sub" disabled>抜けている番号を1件ずつ CSV で保存</button>
+    <button id="annBtn" class="sub" disabled>元の CSV に結果の列を足して保存</button>
+  </div>
+  <h3>系列ごとのまとめ</h3>
+  <div class="tbl" id="groups"></div>
+  <h3>抜けている番号</h3>
+  <div class="tbl" id="miss"></div>
+  <h3>確認が必要な行</h3>
+  <div class="row" id="filters"></div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="list"></div>
+  <p class="note">「行」は CSV の行番号（見出しを1行目として数えます。空の行は数えません）です。番号が抜けている理由（取り消し・欠番の決まりなど）や、どちらの番号が正しいかは、このツールでは判断しません。</p>
+</div>
+</main>
+
+<script src="renban.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n){return Number(n).toLocaleString("ja-JP");}
+let file=null,parsed=null,result=null,filter="all";
+
+function setData(name,enc,p){
+  file={name,enc};parsed=p;result=null;
+  const head=$("o_head").checked;
+  const ncol=p.rows.reduce((a,r)=>Math.max(a,r.length),0);
+  const guess=head?Renban.guessCol(p.rows[0]):-1;
+  let h="";
+  for(let c=0;c<ncol;c++){const n=head?(p.rows[0][c]||`列${c+1}`):`列${c+1}`;h+=`<option value="${c}"${c===(guess<0?0:guess)?" selected":""}>${esc(n)}</option>`;}
+  $("o_col").innerHTML=h;$("o_col").disabled=false;
+  $("finfo").textContent=`${name}：${num(p.rows.length)}行・${ncol}列（${enc==="utf-8"?"UTF-8":"Shift_JIS"}・区切り「${p.delim===","?"カンマ":"タブ"}」）`;
+  showEx();$("go").disabled=false;render();
+}
+function showEx(){
+  if(!parsed) return;
+  const c=+$("o_col").value,start=$("o_head").checked?1:0,ex=[];
+  for(let r=start;r<parsed.rows.length&&ex.length<5;r++){const v=(parsed.rows[r][c]||"").trim();if(v&&!ex.includes(v)) ex.push(v);}
+  $("colEx").textContent=ex.length?"値の例："+ex.join(" / "):"この列は空です";
+}
+function load(f){
+  const r=new FileReader();
+  r.onload=()=>{const t=Renban.readText(new Uint8Array(r.result));setData(f.name,t.enc,Renban.parseCSV(t.text));};
+  r.readAsArrayBuffer(f);
+}
+$("pasteBtn").addEventListener("click",()=>{
+  const lines=$("paste").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){alert("番号を貼り付けてください。");return;}
+  $("o_head").checked=true;
+  setData("貼り付けた番号","utf-8",{rows:[["番号"]].concat(lines.map(s=>[s])),delim:","});
+});
+$("o_col").addEventListener("change",()=>{showEx();result=null;render();});
+$("o_head").addEventListener("change",()=>{if(parsed) setData(file.name,file.enc,parsed);});
+["o_split","o_start","o_end","o_order"].forEach(id=>$(id).addEventListener("change",()=>{result=null;render();}));
+$("go").addEventListener("click",()=>{
+  const st=$("o_start").value.trim(),en=$("o_end").value.trim();
+  const opt={split:$("o_split").value,order:$("o_order").checked,start:st===""?null:Math.floor(+st),end:en===""?null:Math.floor(+en)};
+  if(opt.start!=null&&opt.end!=null&&opt.start>opt.end){alert("範囲の「始まり」が「終わり」より大きくなっています。");return;}
+  result=Renban.check(parsed.rows,$("o_head").checked,+$("o_col").value,opt);
+  filter="all";render();
+});
+const KINDS=["重複","桁数違い","読めない","大きな飛び","少ない系列","並び順"];
+function render(){
+  ["listBtn","missBtn","annBtn"].forEach(id=>$(id).disabled=!result);
+  if(!result){["sum","warns","groups","miss","list","filters"].forEach(id=>$(id).innerHTML="");$("stat").textContent="";return;}
+  const r=result,c=r.cnt;
+  $("sum").innerHTML=`<div>番号のある行 <b>${num(r.total)}</b></div><div>系列 <b>${num(r.groups.length)}</b></div><div>抜け <b class="${r.missingTotal?"ng":""}">${num(r.missingTotal)}</b> 件</div><div>重複 <b class="${c.dup?"ng":""}">${num(c.dup)}</b> 件</div><div>桁数違い <b class="${c.width?"ng":""}">${num(c.width)}</b></div><div>読めない <b class="${c.bad?"ng":""}">${num(c.bad)}</b></div>`;
+  let w="";
+  if(!r.missingTotal&&!r.issues.length) w+=`<div class="good">抜け・重複・桁数違いは見つかりませんでした。</div>`;
+  if(r.empty) w+=`<div class="warn">番号の列が空の行が ${num(r.empty)} 行あります（数に入れていません）。</div>`;
+  if(c.jump) w+=`<div class="warn">1,000件以上とんでいる番号が ${num(c.jump)} か所あります。打ち間違いだと、その間がすべて「抜け」に数えられます。下の一覧の「大きな飛び」を確かめてください。</div>`;
+  if(c.few) w+=`<div class="warn">数件しかない系列があります（「少ない系列」）。書き出しの文字の打ち間違い（例：INV と IVN）の可能性があります。</div>`;
+  if(r.truncated) w+=`<div class="warn">抜けている番号が多いため、1件ずつの CSV は先頭 ${num(r.missingEach.length)} 件までにしています。</div>`;
+  $("warns").innerHTML=w;
+  let g="<table><thead><tr><th>系列</th><th>件数</th><th>最小</th><th>最大</th><th>抜け</th><th>重複</th><th>数字の桁数</th></tr></thead><tbody>";
+  r.groups.forEach(x=>{
+    const ws=Object.entries(x.widths).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}桁×${num(v)}`).join("、");
+    g+=`<tr><td>${esc(x.name)}${x.few?' <span class="b">少ない系列</span>':""}</td><td class="num">${num(x.count)}</td><td>${esc(x.minText)}</td><td>${esc(x.maxText)}</td><td class="num${x.missing?" ng":""}">${num(x.missing)}</td><td class="num${x.dup?" ng":""}">${num(x.dup)}</td><td>${ws}</td></tr>`;
+  });
+  $("groups").innerHTML=g+"</tbody></table>";
+  const MAXM=500;
+  if(r.missing.length){
+    let m="<table><thead><tr><th>系列</th><th>抜けている番号</th><th>件数</th></tr></thead><tbody>";
+    r.missing.slice(0,MAXM).forEach(x=>{m+=`<tr><td>${esc(x.group)}</td><td>${esc(x.text)}</td><td class="num">${num(x.count)}</td></tr>`;});
+    $("miss").innerHTML=m+"</tbody></table>"+(r.missing.length>MAXM?`<p class="stat" style="padding:0 8px">ほか ${num(r.missing.length-MAXM)} か所。すべては「一覧を CSV で保存」で確認できます。</p>`:"");
+  } else $("miss").innerHTML=`<p class="stat" style="padding:0 8px">抜けている番号はありません。</p>`;
+  const counts={};r.issues.forEach(x=>counts[x.kind]=(counts[x.kind]||0)+1);
+  $("filters").innerHTML=`<label><input type="radio" name="show" value="all"${filter==="all"?" checked":""}> すべて（${num(r.issues.length)}）</label>`+KINDS.filter(k=>counts[k]).map(k=>`<label><input type="radio" name="show" value="${k}"${filter===k?" checked":""}> ${k}（${num(counts[k])}）</label>`).join("");
+  renderList();
+}
+$("filters").addEventListener("change",e=>{if(e.target.name==="show"){filter=e.target.value;renderList();}});
+function renderList(){
+  const items=result.issues.filter(x=>filter==="all"||x.kind===filter);
+  const MAX=1000;
+  $("stat").textContent=items.length?`${num(items.length)}件`+(items.length>MAX?`（先頭${num(MAX)}件を表示。すべては「一覧を CSV で保存」で確認できます）`:""):"確認が必要な行はありません。";
+  let h="<table><thead><tr><th>行</th><th>番号</th><th>種類</th><th>系列</th><th>内容</th></tr></thead><tbody>";
+  items.slice(0,MAX).forEach(x=>{h+=`<tr><td class="num">${x.row}</td><td>${esc(x.value)}</td><td><span class="b k${esc(x.kind)}">${esc(x.kind)}</span></td><td>${esc(x.group)}</td><td class="wrap">${esc(x.note)}</td></tr>`;});
+  $("list").innerHTML=items.length?h+"</tbody></table>":"";
+}
+function baseName(){return file.name.replace(/\.[^.]+$/,"");}
+function save(name,rows){
+  const b=new Blob([Renban.encodeUTF8(Renban.toCSV(rows,","),true)],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("listBtn").addEventListener("click",()=>{
+  const rows=[["種類","系列","番号","行","件数","内容"]];
+  result.missing.forEach(m=>rows.push(["抜け",m.group,m.text,"",m.count,""]));
+  result.issues.forEach(x=>rows.push([x.kind,x.group,x.value,x.row,"",x.note]));
+  save(baseName()+"_番号チェック一覧.csv",rows);
+});
+$("missBtn").addEventListener("click",()=>{
+  save(baseName()+"_抜けている番号.csv",[["系列","抜けている番号"]].concat(result.missingEach.map(x=>[x.group,x.value])));
+});
+$("annBtn").addEventListener("click",()=>{
+  save(baseName()+"_番号チェック付き.csv",Renban.annotate(parsed.rows,$("o_head").checked,result,"番号チェック"));
+});
+$("file").addEventListener("change",e=>{if(e.target.files[0]) load(e.target.files[0]);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);});
+</script>
+</body>
+</html>
