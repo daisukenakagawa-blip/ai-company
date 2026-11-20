@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>営業日の計算（CSV に「N営業日後」の列を足す）｜GENHAYL</title>
+<meta name="description" content="受注日・締め日の CSV に、土日祝を除いた「N営業日後」の出荷予定日や、休みなら前営業日に寄せた支払期日、2つの日付の間の営業日数を列として足します。振替休日・国民の休日・年末年始・独自の休業日に対応。ブラウザ内で完結。1件だけなら無料で計算できます。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;font-size:15px}
+.try input,.try select{font-size:15px;padding:3px 6px;border:1px solid #d1d5db;border-radius:6px;max-width:100%}
+.try input[type=number]{width:5em}
+.try .ans{font-size:18px;font-weight:700;margin:10px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>営業日の計算</h1>
+<p>受注日から「3営業日後」の出荷予定日、締め日から「休みなら前の営業日」の支払期日……。カレンダーと祝日表を見ながら1件ずつ数えていませんか。このツールに CSV を入れると、土日・祝日（振替休日・国民の休日を含む）・年末年始・お店の休業日を除いて計算し、結果の列を足した CSV にします。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/14AfZi4GAce71bu3021gs0e">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>1件だけなら、ここで無料で計算できます</h2>
+<div class="try">
+  <label>日付 <input type="date" id="t_date"></label>
+  から <input type="number" id="t_days" value="3" min="0" max="999"> 営業日
+  <select id="t_dir"><option value="1">後</option><option value="-1">前</option></select>
+  <div style="margin-top:6px;font-size:14px"><label><input type="checkbox" id="t_sat" checked> 土曜休み</label>　<label><input type="checkbox" id="t_sun" checked> 日曜休み</label>　<label><input type="checkbox" id="t_hol" checked> 祝日休み</label>　<label><input type="checkbox" id="t_nen"> 年末年始（12/29〜1/3）休み</label></div>
+  <div class="ans" id="t_ans"></div>
+  <div class="note" id="t_note"></div>
+</div>
+<p class="note">CSV の全行をまとめて計算する、休みなら前（後）の営業日に寄せる、2つの日付の間の営業日数を数える、独自の休業日を指定する、は購入後のツールでできます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>N営業日後・N営業日前</b>：日付の列から、休みの日を除いて数えた日付の列を足します。行ごとに違う日数（「リードタイム」の列など）も使えます</li>
+<li><b>休みの日を営業日に寄せる</b>：支払期日や引き落とし日が土日祝にあたる行だけ、前の営業日（または後の営業日）に直した列を足します</li>
+<li><b>営業日数を数える</b>：「受付日」と「完了日」のような2つの列の間が何営業日かを数えます</li>
+<li><b>休みの日の決め方</b>：休む曜日（土日以外も可）、日本の祝日、年末年始（12/29〜1/3 または 12/31〜1/3）、夏季休業などの独自の休業日、祝日でも営業する日を指定できます</li>
+<li><b>いろいろな日付の書き方</b>：「2026/11/20」「2026-11-20」「20261120」「2026年11月20日」「令和8年11月20日」「R8.11.20」、時刻付き、Excel の日付の番号（46346 など）を読めます。読めない日付は行番号つきで一覧にします</li>
+<li>出力の書き方（2026/11/20、20261120、2026年11月20日 など）を選べます。曜日の列も足せます</li>
+<li>結果は元の CSV の右端に列を足して保存します（UTF-8・BOM 付き。Excel でそのまま開けます）。CSV がなくても、日付を貼り付けて計算できます</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>こんな一覧</th><th>このツールでの計算</th></tr>
+<tr><td>ネットショップの受注一覧（受注日）</td><td>「受注日から2営業日後」の出荷予定日の列を足す</td></tr>
+<tr><td>請求の一覧（月末の支払期日）</td><td>支払期日が土日祝なら「前の営業日」に直した列を足す</td></tr>
+<tr><td>問い合わせの一覧（受付日・回答日）</td><td>回答までにかかった営業日数の列を足す</td></tr>
+</table></div>
+
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>Excel の WORKDAY 関数との違い</b>：WORKDAY 関数は、祝日の一覧を自分で用意して範囲を指定する必要があります。このツールは日本の祝日（振替休日・国民の休日を含む）を最初から入れてあり、年末年始や独自の休業日もチェックや貼り付けで指定できます。数式を使わないので、CSV のまま取り込み先のシステムに戻せます</li>
+<li><b>シルバーウィークや年末年始で数え間違える</b>：例えば 2026年9月は 21日（敬老の日）・22日（国民の休日）・23日（秋分の日）が続きます。こうした連休もまとめて計算します</li>
+<li><b>日付の書き方がバラバラ</b>：「2026/1/5」「20260105」「令和8年1月5日」が混ざっていても、同じ列のまま計算できます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>祝日は「国民の祝日に関する法律」の決まりから計算しています（2010〜2099年）。春分の日・秋分の日は、正式には前の年の2月に発表されるため、まだ発表されていない年は計算による見込みの日付です。法律が変わって祝日が増えた・動いた場合は、ツールを更新するまで反映されません</li>
+<li>銀行・取引先ごとの休業日（臨時休業など）は知りません。必要な日は「ほかの休業日」に入れてください</li>
+<li>契約や法令で決まる期日の数え方（初日を数えるかなど）の判断・助言はしません。数え方は契約書や窓口でご確認ください</li>
+<li>時刻（何時以降の受注は翌日扱い など）は計算に使いません。日付だけで計算します</li>
+<li>Excel ファイル（.xlsx）は扱えません。CSV・TSV（UTF-8・Shift_JIS）が対象です。とても大きなファイル（数十万行以上）は、お使いのパソコンによっては処理できない場合があります</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+<script src="eigyo.js"></script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const t=new Date();$("t_date").value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+  function calc(){
+    const p=Eigyo.parseDate($("t_date").value),k=Math.floor(+$("t_days").value);
+    $("t_note").textContent="";
+    if(p.n==null){$("t_ans").textContent="日付を選んでください";return;}
+    if(!(k>=0&&k<=999)){$("t_ans").textContent="日数は 0〜999 で入れてください";return;}
+    const y=Eigyo.ymd(p.n).y;
+    if(y<Eigyo.MIN_Y||y>Eigyo.MAX_Y){$("t_ans").textContent="2010〜2099年の日付で計算できます";return;}
+    const weekly=[];if($("t_sun").checked) weekly.push(0);if($("t_sat").checked) weekly.push(6);
+    const cal=Eigyo.makeCal({weekly,holidays:$("t_hol").checked,nenmatsu:$("t_nen").checked?"12/29-1/3":"none"});
+    const n=k===0?p.n:Eigyo.addBiz(p.n,k*+$("t_dir").value,cal);
+    if(n==null){$("t_ans").textContent="計算できる範囲（2010〜2099年）を超えます";return;}
+    const w=Eigyo.ymd(n).w;
+    $("t_ans").textContent=`${Eigyo.fmt(n,"jp")}（${Eigyo.WD[w]}）`;
+    const lo=Math.min(p.n,n),hi=Math.max(p.n,n),skip=[];
+    for(let d=lo;d<=hi;d++){const h=Eigyo.holidayName(d);if(h&&$("t_hol").checked&&d!==p.n) skip.push(`${Eigyo.fmt(d,"short").slice(5)} ${h}`);}
+    if(skip.length) $("t_note").textContent="間にある祝日："+skip.slice(0,8).join("、")+(skip.length>8?" ほか":"");
+  }
+  ["t_date","t_days","t_dir","t_sat","t_sun","t_hol","t_nen"].forEach(id=>$(id).addEventListener("input",calc));
+  ["t_sat","t_sun","t_hol","t_nen","t_dir"].forEach(id=>$(id).addEventListener("change",calc));
+  calc();
+})();
+</script>
+</body>
+</html>

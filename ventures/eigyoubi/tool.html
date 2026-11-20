@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>営業日の計算</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:16px 0 6px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:10px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:8em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.good{font-size:14px;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.ng{color:#b91c1c;font-weight:700}
+.b{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px;background:#fef3c7;color:#92400e}
+.b.k重複,.b.k読めない{background:#fee2e2;color:#991b1b}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+td.wrap{white-space:normal;min-width:16em}
+.ex{font-size:13px;color:var(--sub);margin-top:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<h1>営業日の計算</h1>
+<p class="lead">受注日・締め日などの日付が入った CSV に、「土日祝を除いて N 営業日後」の日付や、「休みなら前の営業日」に寄せた日付、2つの日付の間の営業日数を列として足します。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px"><label><input type="checkbox" id="o_head" checked> 1行目は見出し</label></div>
+  <p class="stat" id="finfo"></p>
+  <details style="font-size:13px"><summary>ファイルがない場合：日付を貼り付ける</summary>
+    <p class="note">1行に1つずつ日付を貼り付けて「貼り付けた日付を使う」を押してください（Excel の列をコピーして貼り付けても使えます）。</p>
+    <textarea id="paste" rows="6" style="width:100%;font-size:14px" placeholder="2026/11/20&#10;2026/11/21&#10;2026/12/28"></textarea>
+    <p><button class="sub" id="pasteBtn">貼り付けた日付を使う</button></p>
+  </details>
+</div>
+
+<div class="card">
+  <h2>2. 計算のしかた</h2>
+  <div class="opts">
+    <label>計算：<select id="o_mode">
+      <option value="add">N 営業日後（前）の日付を出す</option>
+      <option value="shift">休みの日なら、前（後）の営業日に寄せる</option>
+      <option value="count">2つの日付の間の営業日数を数える</option>
+    </select></label>
+    <label>日付の列：<select id="o_col" disabled><option>ファイルを入れてください</option></select></label>
+    <div class="ex" id="colEx"></div>
+    <div id="m_add" class="opts">
+      <label>日数：<input type="number" id="o_days" value="3" min="0" max="9999"> 営業日
+        <select id="o_dir"><option value="1">後</option><option value="-1">前</option></select></label>
+      <label>行ごとに違う日数を使う：<select id="o_dcol"><option value="-1">使わない（上の日数）</option></select></label>
+      <p class="note" style="margin:-4px 0 0">基準の日は数えません。例：金曜日の「1営業日後」は、月曜日が営業日なら月曜日です。基準の日が休みの日でも、その翌日から数えます。0 を入れると基準の日をそのまま出します。</p>
+    </div>
+    <div id="m_shift" class="opts" hidden>
+      <label>休みの日だったら：<select id="o_sdir"><option value="-1">前の営業日にする（例：支払期日）</option><option value="1">後の営業日にする（例：振込・引き落とし日）</option></select></label>
+    </div>
+    <div id="m_count" class="opts" hidden>
+      <label>終わりの日付の列：<select id="o_col2"><option>ファイルを入れてください</option></select></label>
+      <label><input type="checkbox" id="o_incl"> 始まりの日も数える</label>
+      <p class="note" style="margin:-4px 0 0">ふつうは「始まりの日の翌日〜終わりの日」を数えます（例：11/20 → 11/24 は 1）。終わりの日が始まりの日より前なら、マイナスの数になります。</p>
+    </div>
+    <h3 style="margin-bottom:0">休みの日</h3>
+    <div class="row" id="o_week"></div>
+    <label><input type="checkbox" id="o_hol" checked> 日本の祝日（振替休日・国民の休日を含む）</label>
+    <label>年末年始：<select id="o_nen"><option value="none">休みにしない</option><option value="12/29-1/3">12月29日〜1月3日を休み</option><option value="12/31-1/3">12月31日〜1月3日を休み</option></select></label>
+    <label style="display:block">ほかの休業日（任意・1行に1つ。「2026/8/12〜2026/8/14」のような範囲も可）：<br><textarea id="o_off" rows="3" style="width:100%;font-size:14px" placeholder="2026/8/12〜2026/8/14&#10;2026/12/25"></textarea></label>
+    <label style="display:block">休みの曜日・祝日でも営業する日（任意）：<br><textarea id="o_on" rows="2" style="width:100%;font-size:14px" placeholder="2026/11/23"></textarea></label>
+    <details style="font-size:13px"><summary>祝日の一覧を見る</summary>
+      <p><label>年：<input type="number" id="o_hy" min="2010" max="2099"></label></p>
+      <div class="tbl" id="hlist" style="max-height:300px"></div>
+      <p class="note">祝日は「国民の祝日に関する法律」の決まりから計算しています（2010〜2099年）。春分の日・秋分の日は、正式には前の年の2月に官報で発表されます。まだ発表されていない年は計算による見込みの日付です。法律が変わったときは、このツールを更新します。</p>
+    </details>
+    <h3 style="margin-bottom:0">出力</h3>
+    <label>日付の書き方：<select id="o_fmt"><option value="slash">2026/11/20</option><option value="short">2026/11/2</option><option value="iso">2026-11-20</option><option value="num">20261120</option><option value="jp">2026年11月20日</option></select></label>
+    <label>足す列の名前：<input type="text" id="o_name" style="font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px"></label>
+    <label><input type="checkbox" id="o_wd"> 曜日の列も足す</label>
+  </div>
+  <p style="margin-top:12px"><button id="go" disabled>計算する</button></p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row" style="margin-top:8px">
+    <button id="saveBtn" disabled>結果の列を足した CSV を保存</button>
+    <button id="issBtn" class="sub" disabled>計算できなかった行を CSV で保存</button>
+  </div>
+  <h3>結果（先頭 300 行）</h3>
+  <div class="tbl" id="list"></div>
+  <h3>計算できなかった行</h3>
+  <div class="tbl" id="iss"></div>
+  <p class="note">「行」は CSV の行番号（見出しを1行目として数えます。空の行は数えません）です。取引先との約束・法令で決まる期日の扱い（初日を数えるかなど）は、契約や窓口でご確認ください。</p>
+</div>
+</main>
+
+<script src="eigyo.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n){return Number(n).toLocaleString("ja-JP");}
+let file=null,parsed=null,result=null,lastOpt=null;
+$("o_week").innerHTML=[..."日月火水木金土"].map((w,i)=>`<label><input type="checkbox" class="wk" value="${i}"${i===0||i===6?" checked":""}> ${w}</label>`).join("");
+$("o_hy").value=new Date().getFullYear();
+function showHol(){
+  const y=+$("o_hy").value;
+  if(!(y>=Eigyo.MIN_Y&&y<=Eigyo.MAX_Y)){$("hlist").innerHTML='<p class="stat" style="padding:0 8px">2010〜2099年を入れてください。</p>';return;}
+  $("hlist").innerHTML="<table><thead><tr><th>日付</th><th>曜日</th><th>名前</th></tr></thead><tbody>"+Eigyo.holidayList(y).map(h=>`<tr><td>${h.date}</td><td>${h.w}</td><td>${esc(h.name)}</td></tr>`).join("")+"</tbody></table>";
+}
+$("o_hy").addEventListener("input",showHol);showHol();
+
+function colOptions(sel,ncol,head,selected,extra){
+  let h=extra||"";
+  for(let c=0;c<ncol;c++){const n=head?(parsed.rows[0][c]||`列${c+1}`):`列${c+1}`;h+=`<option value="${c}"${c===selected?" selected":""}>${esc(n)}</option>`;}
+  $(sel).innerHTML=h;$(sel).disabled=false;
+}
+function setData(name,enc,p){
+  file={name,enc};parsed=p;result=null;
+  const head=$("o_head").checked;
+  const ncol=p.rows.reduce((a,r)=>Math.max(a,r.length),0);
+  const guess=head?Eigyo.guessCol(p.rows[0]):-1,g=guess<0?0:guess;
+  colOptions("o_col",ncol,head,g);
+  colOptions("o_col2",ncol,head,Math.min(ncol-1,g+1));
+  colOptions("o_dcol",ncol,head,-99,'<option value="-1" selected>使わない（上の日数）</option>');
+  $("finfo").textContent=`${name}：${num(p.rows.length)}行・${ncol}列（${enc==="utf-8"?"UTF-8":"Shift_JIS"}・区切り「${p.delim===","?"カンマ":"タブ"}」）`;
+  showEx();$("go").disabled=false;defName();render();
+}
+function showEx(){
+  if(!parsed) return;
+  const c=+$("o_col").value,start=$("o_head").checked?1:0,ex=[];
+  for(let r=start;r<parsed.rows.length&&ex.length<5;r++){const v=(parsed.rows[r][c]||"").trim();if(v&&!ex.includes(v)) ex.push(v);}
+  $("colEx").textContent=ex.length?"値の例："+ex.join(" / "):"この列は空です";
+}
+let nameEdited=false;
+$("o_name").addEventListener("input",()=>nameEdited=true);
+function defName(){
+  if(nameEdited) return;
+  const m=$("o_mode").value;
+  $("o_name").value=m==="add"?(+$("o_dcol").value>=0?"営業日"+($("o_dir").value==="1"?"後":"前"):`${$("o_days").value||0}営業日${$("o_dir").value==="1"?"後":"前"}`):m==="shift"?($("o_sdir").value==="-1"?"前営業日に調整":"翌営業日に調整"):"営業日数";
+}
+function modeUI(){
+  const m=$("o_mode").value;
+  $("m_add").hidden=m!=="add";$("m_shift").hidden=m!=="shift";$("m_count").hidden=m!=="count";
+  $("o_wd").disabled=m==="count";$("o_fmt").disabled=m==="count";
+}
+$("o_mode").addEventListener("change",()=>{modeUI();defName();result=null;render();});
+["o_days","o_dir","o_dcol","o_sdir"].forEach(id=>$(id).addEventListener("change",()=>{defName();result=null;render();}));
+function load(f){
+  const r=new FileReader();
+  r.onload=()=>{const t=Eigyo.readText(new Uint8Array(r.result));setData(f.name,t.enc,Eigyo.parseCSV(t.text));};
+  r.readAsArrayBuffer(f);
+}
+$("pasteBtn").addEventListener("click",()=>{
+  const lines=$("paste").value.split(/\r?\n/).map(s=>s.split("\t")[0].trim()).filter(Boolean);
+  if(!lines.length){alert("日付を貼り付けてください。");return;}
+  $("o_head").checked=true;
+  setData("貼り付けた日付","utf-8",{rows:[["日付"]].concat(lines.map(s=>[s])),delim:","});
+});
+$("o_col").addEventListener("change",()=>{showEx();result=null;render();});
+$("o_head").addEventListener("change",()=>{if(parsed) setData(file.name,file.enc,parsed);});
+$("go").addEventListener("click",()=>{
+  const weekly=[...document.querySelectorAll(".wk:checked")].map(x=>+x.value);
+  const off=Eigyo.parseDayList($("o_off").value),on=Eigyo.parseDayList($("o_on").value);
+  const bad=off.bad.concat(on.bad);
+  if(bad.length){alert("休業日・営業日の欄に、読めない行があります：\n"+bad.slice(0,5).join("\n"));return;}
+  const mode=$("o_mode").value;
+  const days=Math.floor(+$("o_days").value);
+  if(mode==="add"&&+$("o_dcol").value<0&&!(days>=0&&days<=9999)){alert("日数は 0〜9999 の整数で入れてください。");return;}
+  const opt={mode,col:+$("o_col").value,col2:+$("o_col2").value,days,daysCol:+$("o_dcol").value,
+    dir:mode==="add"?+$("o_dir").value:+$("o_sdir").value,fmt:$("o_fmt").value,includeStart:$("o_incl").checked,
+    cal:{weekly,holidays:$("o_hol").checked,nenmatsu:$("o_nen").value,extraOff:off.set,extraOn:on.set}};
+  if(mode==="count"&&opt.col===opt.col2){alert("始まりと終わりに同じ列が選ばれています。");return;}
+  const r=Eigyo.run(parsed.rows,$("o_head").checked,opt);
+  if(r.error){alert(r.error);return;}
+  result=r;lastOpt=opt;render();
+});
+function render(){
+  ["saveBtn","issBtn"].forEach(id=>$(id).disabled=!result);
+  $("issBtn").disabled=!result||!result.issues.length;
+  if(!result){["sum","warns","list","iss"].forEach(id=>$(id).innerHTML="");return;}
+  const r=result,o=lastOpt,rows=parsed.rows;
+  $("sum").innerHTML=`<div>計算した行 <b>${num(r.ok)}</b></div><div>計算できなかった行 <b class="${r.issues.length?"ng":""}">${num(r.issues.length)}</b></div><div>空欄 <b>${num(r.empty)}</b></div>`+(o.mode==="shift"?`<div>休みの日だったので寄せた行 <b>${num(r.shifted)}</b></div>`:"");
+  let w="";
+  if(r.hows["年2桁"]) w+=`<div class="warn">年が2桁の日付が ${num(r.hows["年2桁"])} 行あります。「26/11/20」は 2026年11月20日 として計算しました。</div>`;
+  if(r.hows["Excelの日付の番号"]) w+=`<div class="warn">「46346」のような数字が ${num(r.hows["Excelの日付の番号"])} 行あります。Excel の日付の番号（シリアル値）として読みました（46346 → 2026/11/20）。日付でない数字の列なら、列の選び方を確かめてください。</div>`;
+  if(r.hows["和暦"]) w+=`<div class="warn">和暦の日付が ${num(r.hows["和暦"])} 行あり、西暦に直して計算しました。</div>`;
+  const yrs=new Set();r.out.forEach(x=>{if(x.to!=null) yrs.add(Eigyo.ymd(x.to).y);if(x.from!=null) yrs.add(Eigyo.ymd(x.from).y);});
+  const now=new Date().getFullYear();
+  if([...yrs].some(y=>y>now+1)) w+=`<div class="warn">${now+2}年以降の日付があります。その年の春分の日・秋分の日は計算による見込みです（正式には前の年の2月に発表されます）。</div>`;
+  if(!r.issues.length&&r.ok) w+=`<div class="good">すべての行を計算しました。</div>`;
+  $("warns").innerHTML=w;
+  const head=$("o_head").checked,cn=i=>head?(rows[0][i]||`列${i+1}`):`列${i+1}`;
+  let h=`<table><thead><tr><th>行</th><th>${esc(cn(o.col))}</th>`+(o.mode==="count"?`<th>${esc(cn(o.col2))}</th>`:"")+(o.mode==="add"&&o.daysCol>=0?`<th>${esc(cn(o.daysCol))}</th>`:"")+`<th>${esc($("o_name").value||"結果")}</th>`+(o.mode!=="count"?"<th>曜日</th><th>基準の日</th>":"")+"</tr></thead><tbody>";
+  for(let i=0;i<Math.min(300,r.out.length);i++){
+    const x=r.out[i],row=rows[i+r.start];
+    let base="";
+    if(x.from!=null){const t=Eigyo.ymd(x.from);base=Eigyo.WD[t.w]+(x.off?`・<span class="b">${esc(x.off)}</span>`:"");}
+    h+=`<tr><td class="num">${i+r.start+1}</td><td>${esc(row[o.col]||"")}</td>`+(o.mode==="count"?`<td>${esc(row[o.col2]||"")}</td>`:"")+(o.mode==="add"&&o.daysCol>=0?`<td>${esc(row[o.daysCol]||"")}</td>`:"")+`<td${x.res===""?' class="ng"':""}>${x.res===""?"—":esc(x.res)}</td>`+(o.mode!=="count"?`<td>${x.wd}</td><td>${base}</td>`:"")+"</tr>";
+  }
+  $("list").innerHTML=h+"</tbody></table>";
+  $("iss").innerHTML=r.issues.length?"<table><thead><tr><th>行</th><th>値</th><th>理由</th></tr></thead><tbody>"+r.issues.slice(0,1000).map(x=>`<tr><td class="num">${x.row}</td><td>${esc(x.value)}</td><td>${esc(x.why)}</td></tr>`).join("")+"</tbody></table>":'<p class="stat" style="padding:0 8px">ありません。</p>';
+}
+function baseName(){return file.name.replace(/\.[^.]+$/,"");}
+function save(name,rows){
+  const b=new Blob([Eigyo.encodeUTF8(Eigyo.toCSV(rows,","),true)],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("saveBtn").addEventListener("click",()=>{
+  const nm=$("o_name").value||"結果",wd=$("o_wd").checked&&lastOpt.mode!=="count";
+  save(baseName()+"_営業日.csv",Eigyo.annotate(parsed.rows,$("o_head").checked,result,[nm,nm+"の曜日"],wd));
+});
+$("issBtn").addEventListener("click",()=>{
+  save(baseName()+"_計算できなかった行.csv",[["行","値","理由"]].concat(result.issues.map(x=>[x.row,x.value,x.why])));
+});
+$("file").addEventListener("change",e=>{if(e.target.files[0]) load(e.target.files[0]);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);});
+modeUI();defName();
+</script>
+</body>
+</html>
