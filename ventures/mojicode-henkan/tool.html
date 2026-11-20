@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>文字コード・改行コードの変換</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button.mini{padding:2px 8px;font-size:13px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:6px}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:7em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+input[type=text]{width:12em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.prev{white-space:pre;overflow:auto;max-height:260px;background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.ok{color:#047857}.ng{color:#b91c1c;font-weight:700}
+td.ch{font-size:16px}
+.opts select{max-width:calc(100vw - 72px)}
+</style>
+</head>
+<body>
+<main>
+<h1>文字コード・改行コードの変換</h1>
+<p class="lead">CSV やテキストファイルを Shift_JIS ⇔ UTF-8 に変換し、改行コード（CRLF / LF）をそろえます。Shift_JIS にできない文字（絵文字・一部の旧字体など）がある場所は、行と文字の位置まで一覧にします。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. ファイルを入れる（複数可）</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" multiple accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <p class="note">読み込む文字コード（UTF-8・Shift_JIS・EUC-JP・UTF-16）と改行コードは自動で判定します。下のプレビューが文字化けしているときは、表の「読み込む文字コード」を変えてください。</p>
+  <div class="tbl" id="files"></div>
+  <div id="prevBox" style="display:none">
+    <p class="stat" id="prevTitle"></p>
+    <div class="prev" id="prev"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. 変換のしかた</h2>
+  <div class="opts">
+    <label>保存する文字コード：<select id="o_out">
+      <option value="sjis">Shift_JIS（Windows の古いシステム・取込が「Shift_JIS のみ」の場合）</option>
+      <option value="utf8bom">UTF-8・BOM 付き（Excel でそのまま開いても文字化けしない）</option>
+      <option value="utf8">UTF-8・BOM なし（Web サービス・Mac・Linux 向け）</option>
+    </select></label>
+    <label>改行コード：<select id="o_eol">
+      <option value="keep">変えない</option>
+      <option value="crlf">CRLF（Windows）</option>
+      <option value="lf">LF（Mac・Linux・Web サービス）</option>
+    </select></label>
+    <label><input type="checkbox" id="o_nfc" checked> <span style="flex:1;min-width:0">濁点・半濁点が分かれた文字（「か」＋「゛」など。Mac で作ったファイルに多い）を1文字にまとめる</span></label>
+    <label class="sj"><input type="checkbox" id="o_common" checked> <span style="flex:1;min-width:0">Shift_JIS にない記号を、見た目の近い文字に置き換える（〜→～、−→－、‖→∥、—→―、¢£¬→全角、改行しない空白→半角空白、幅のない文字・異体字セレクタは削除）</span></label>
+    <label class="sj">それでも Shift_JIS にできない文字は：<select id="o_repl">
+      <option value="?">「?」に置き換える</option>
+      <option value="〓">「〓」に置き換える（目立つ印）</option>
+      <option value="">削除する</option>
+      <option value="custom">次の文字に置き換える →</option>
+    </select><input type="text" id="o_custom" value="■" style="width:4em"></label>
+    <label><input type="checkbox" id="o_suffix" checked> <span style="flex:1;min-width:0">保存するファイル名の末尾に「_sjis」「_utf8」を付ける（元のファイルと区別するため）</span></label>
+  </div>
+  <p class="note">Shift_JIS は、Windows で使われている範囲（①・㈱・髙・﨑 などの「機種依存文字」を含む）で書き出します。取込先が機種依存文字を受け付けない場合に備えて、その場所も一覧にします。</p>
+  <p style="margin-top:12px"><button id="go" disabled>変換する</button></p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div id="warns"></div>
+  <div class="tbl" id="result"></div>
+  <div class="row" style="margin-top:12px">
+    <button id="zipBtn" disabled>まとめて ZIP でダウンロード</button>
+    <button id="listBtn" class="sub" disabled>問題の一覧を CSV で保存</button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <label><input type="radio" name="show" value="bad" checked> 変換できなかった文字</label>
+    <label><input type="radio" name="show" value="env"> 機種依存文字（変換はできています）</label>
+  </div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="list"></div>
+  <p class="note">「行」はテキストエディタで開いたときの行です（セルの中に改行がある場合、その改行も1行と数えます）。</p>
+</div>
+</main>
+
+<script src="henkan.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function kb(n){return n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB";}
+function num(n){return n.toLocaleString("ja-JP");}
+const ENCS=[["auto","自動"],["utf-8","UTF-8"],["shift_jis","Shift_JIS"],["euc-jp","EUC-JP"],["utf-16le","UTF-16（LE）"],["utf-16be","UTF-16（BE）"]];
+let files=[],results=[],sel=0;
+
+function addFiles(list){
+  const arr=[...list];if(!arr.length) return;
+  let left=arr.length;const got=new Array(arr.length);
+  arr.forEach((f,i)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      const u8=new Uint8Array(r.result);
+      got[i]={name:f.name,u8,enc:"auto",info:Henkan.read(u8)};
+      if(--left===0){files=files.concat(got);results=[];renderFiles();renderResult();}
+    };
+    r.readAsArrayBuffer(f);
+  });
+}
+function renderFiles(){
+  $("go").disabled=!files.length;
+  if(!files.length){$("files").innerHTML="";$("prevBox").style.display="none";return;}
+  let h="<table><thead><tr><th>ファイル</th><th>読み込む文字コード</th><th>BOM</th><th>改行</th><th>行数</th><th>大きさ</th><th>読めなかった文字</th><th></th></tr></thead><tbody>";
+  files.forEach((f,i)=>{
+    const d=f.info,lines=d.eol.crlf+d.eol.lf+d.eol.cr+(d.text&&!/[\r\n]$/.test(d.text)?1:0);
+    const opts=ENCS.map(([v,l])=>`<option value="${v}"${f.enc===v?" selected":""}>${v==="auto"?"自動（"+Henkan.ENC_NAME[d.detected]+(d.ascii?"・英数字のみ":"")+"）":l}</option>`).join("");
+    h+=`<tr><td><a href="#" data-p="${i}">${esc(f.name)}</a></td><td><select data-e="${i}">${opts}</select></td><td>${d.bom?"あり":"なし"}</td><td>${Henkan.eolLabel(d.eol)}</td><td class="num">${num(lines)}</td><td class="num">${kb(f.u8.length)}</td><td class="num">${d.broken?'<span class="ng">'+num(d.broken)+"</span>":'<span class="ok">0</span>'}</td><td><button class="mini" data-x="${i}">外す</button></td></tr>`;
+  });
+  h+="</tbody></table>";
+  $("files").innerHTML=h;
+  if(sel>=files.length) sel=0;
+  preview();
+}
+function preview(){
+  const f=files[sel];if(!f){$("prevBox").style.display="none";return;}
+  const lines=f.info.text.split(/\r\n|\r|\n/).slice(0,15);
+  $("prevBox").style.display="";
+  $("prevTitle").textContent=`プレビュー：${f.name}（${Henkan.ENC_NAME[f.info.enc]}として読み込み・先頭15行）`+(f.info.broken?`　※読めなかった文字が${num(f.info.broken)}か所あります。文字コードの選び方を確認してください`:"");
+  $("prev").textContent=lines.join("\n");
+}
+$("files").addEventListener("change",e=>{
+  const i=e.target.dataset.e;if(i==null) return;
+  const f=files[+i];f.enc=e.target.value;f.info=Henkan.read(f.u8,f.enc);sel=+i;results=[];renderFiles();renderResult();
+});
+$("files").addEventListener("click",e=>{
+  if(e.target.dataset.p!=null){e.preventDefault();sel=+e.target.dataset.p;preview();}
+  if(e.target.dataset.x!=null){files.splice(+e.target.dataset.x,1);results=[];renderFiles();renderResult();}
+});
+$("file").addEventListener("change",e=>{addFiles(e.target.files);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");addFiles(e.dataTransfer.files);});
+
+function opts(){
+  const o=$("o_out").value,r=$("o_repl").value;
+  return {out:o==="sjis"?"sjis":"utf8",bom:o==="utf8bom",eol:$("o_eol").value,nfc:$("o_nfc").checked,common:$("o_common").checked,
+    repl:r==="custom"?$("o_custom").value:r,suffix:$("o_suffix").checked};
+}
+function syncOpts(){document.querySelectorAll(".sj").forEach(el=>el.style.opacity=$("o_out").value==="sjis"?1:.4);}
+$("o_out").addEventListener("change",syncOpts);syncOpts();
+
+$("go").addEventListener("click",()=>{
+  const o=opts();const warns=[];
+  if(o.out==="sjis"&&$("o_repl").value==="custom"){
+    const c=o.repl;
+    if(!c) warns.push("置き換える文字が空なので、変換できない文字は削除します");
+    else if([...c].some(ch=>!Henkan.sjisBytes(ch.codePointAt(0)))) warns.push("置き換える文字の中に Shift_JIS にできない文字があります。その文字は書き出しません");
+  }
+  const used=new Set();
+  results=files.map(f=>{
+    const r=Henkan.convert(f.info.text,o);
+    let nm=Henkan.outName(f.name,o),k=nm,c=2;
+    while(used.has(k.toLowerCase())){k=nm.replace(/(\.[^.]*)?$/,m=>"("+c+")"+m);c++;}
+    used.add(k.toLowerCase());
+    if(f.info.broken) warns.push(`「${f.name}」は読めなかった文字が${num(f.info.broken)}か所あります（読み込む文字コードが違う可能性があります）`);
+    return Object.assign(r,{src:f.name,name:k,o});
+  });
+  $("warns").innerHTML=warns.map(w=>'<div class="warn">'+esc(w)+"</div>").join("");
+  renderResult();
+});
+function renderResult(){
+  $("zipBtn").disabled=results.length<2;$("listBtn").disabled=!results.length;
+  if(!results.length){$("result").innerHTML="";$("list").innerHTML="";$("stat").textContent="";if(!files.length)$("warns").innerHTML="";return;}
+  const sj=results[0].o.out==="sjis";
+  let h="<table><thead><tr><th>保存するファイル</th><th>大きさ</th><th>置き換えた文字</th>"+(sj?"<th>変換できなかった文字</th><th>機種依存文字</th>":"")+"<th></th></tr></thead><tbody>";
+  results.forEach((r,i)=>{
+    const fx=Object.entries(r.fixes).map(([k,v])=>esc(k)+(/改行を/.test(k)?"":"："+num(v)+"か所")).join("<br>")||"なし";
+    h+=`<tr><td>${esc(r.name)}</td><td class="num">${kb(r.bytes.length)}</td><td>${fx}</td>`+(sj?`<td class="num">${r.badCount?'<span class="ng">'+num(r.badCount)+"</span>":'<span class="ok">0</span>'}</td><td class="num">${num(r.envCount)}</td>`:"")+`<td><button class="mini" data-d="${i}">保存</button></td></tr>`;
+  });
+  $("result").innerHTML=h+"</tbody></table>";
+  renderList();
+}
+function renderList(){
+  if(!results.length) return;
+  const show=document.querySelector("input[name=show]:checked").value;
+  if(results[0].o.out!=="sjis"){$("stat").textContent="UTF-8 ではすべての文字を保存できます（変換できない文字はありません）";$("list").innerHTML="";return;}
+  const rows=[];let total=0;
+  results.forEach(r=>{const a=show==="bad"?r.bad:r.env;total+=show==="bad"?r.badCount:r.envCount;a.forEach(x=>rows.push([r.src,x]));});
+  const label=show==="bad"?"変換できなかった文字":"機種依存文字";
+  if(!total){$("stat").textContent=label+"はありません";$("list").innerHTML="";return;}
+  $("stat").textContent=`${label}：${num(total)}か所`+(Math.min(rows.length,1000)<total?`（画面には先頭${num(Math.min(rows.length,1000))}か所を表示。一覧は「問題の一覧を CSV で保存」で保存できます）`:"");
+  let h="<table><thead><tr><th>ファイル</th><th>行</th><th>何文字目</th><th>文字</th><th>文字の番号</th><th>前後</th></tr></thead><tbody>";
+  rows.slice(0,1000).forEach(([s,x])=>{h+=`<tr><td>${esc(s)}</td><td class="num">${num(x.line)}</td><td class="num">${num(x.pos)}</td><td class="ch">${esc(x.ch)}</td><td>${Henkan.hex(x.cp)}</td><td>${esc(x.ctx)}</td></tr>`;});
+  $("list").innerHTML=h+"</tbody></table>";
+}
+document.querySelectorAll("input[name=show]").forEach(el=>el.addEventListener("change",renderList));
+function save(name,data,type){
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:type||"application/octet-stream"}));
+  a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("result").addEventListener("click",e=>{const i=e.target.dataset.d;if(i==null) return;const r=results[+i];save(r.name,r.bytes);});
+$("zipBtn").addEventListener("click",()=>{
+  const z=Henkan.zip(results.map(r=>({name:r.name,data:r.bytes})));
+  save("converted_"+(results[0].o.out==="sjis"?"sjis":"utf8")+".zip",z,"application/zip");
+});
+$("listBtn").addEventListener("click",()=>{
+  const q=v=>/[",\r\n]/.test(v)?'"'+String(v).replace(/"/g,'""')+'"':String(v);
+  let t="\uFEFF種類,ファイル,行,何文字目,文字,文字の番号,前後\r\n";
+  results.forEach(r=>{
+    r.bad.forEach(x=>t+=["変換できない",r.src,x.line,x.pos,x.ch,Henkan.hex(x.cp),x.ctx].map(q).join(",")+"\r\n");
+    r.env.forEach(x=>t+=["機種依存文字",r.src,x.line,x.pos,x.ch,Henkan.hex(x.cp),x.ctx].map(q).join(",")+"\r\n");
+  });
+  save("文字の問題一覧.csv",t,"text/csv");
+});
+</script>
+</body>
+</html>
