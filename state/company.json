@@ -1,11 +1,11 @@
 {
   "name": "GENHAYL AIカンパニー",
   "founded": "2026-11-18 19:40",
-  "day": 7,
-  "phase": "アイデア工房：1件目の販売準備",
+  "day": 8,
+  "phase": "アイデア工房：14商品を販売中、集客を開始",
   "business": {
     "name": "アイデア工房",
-    "summary": "AIが24時間アイデアを出し、小さな有料のデータ整形ツールを作り続けて Stripe で売る。1件目は CSV 表記ゆれ整形（980円・買い切り）。",
+    "summary": "AIが24時間アイデアを出し、小さな有料のデータ整形ツールを作り続けて Stripe で売る。店は Cloudflare Pages（genhayl-shop.pages.dev）、8日目時点で14商品を販売中。",
     "target": "事務・EC担当など、CSVや名簿の整形に困っている人",
     "revenue_model": "1件3,000円以下の買い切り（Stripe Payment Link）"
   },
@@ -178,6 +178,30 @@
       "status": "done",
       "review": "ok: 無料プランで費用0円。公開されるのは ventures/_shop のみ。特商法表記は Stripe 登録情報のまま。商品は禁止事項に該当しない",
       "owner_note": "Cloudflare Pages 公開済み https://genhayl-shop.pages.dev （ai-company 接続、出力 ventures/_shop）"
+    },
+    {
+      "id": 15,
+      "day": 8,
+      "role": "marketing",
+      "title": "note 記事を投稿する（最重要・5分）",
+      "action": "workspace/day-008/marketing/note_article_draft.md のタイトルと本文をコピーして note に投稿する。投稿前に、note のガイドラインで自分の商品へのリンクが問題ないか確認する。終わったら inbox に『#15 やった 記事URL』と書く",
+      "reason": "店がまだ誰にも見つかっていない。検索に載るまでの間、最初の人の流れと外部リンクを作るため",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 無料の解決法が中心で、宣伝は最後に1回、価格・返金・特商法表記を明記。体験談・実績の数字なし。note ガイドラインの確認と、Excel の画面名の確認を投稿の条件とする",
+      "owner_note": ""
+    },
+    {
+      "id": 16,
+      "day": 8,
+      "role": "cfo",
+      "title": "Stripe の Web サイトと明細表記を店に合わせる（3分）",
+      "action": "Stripe（GPT自動）の『設定 → 事業の詳細』で、Web サイトを https://genhayl-shop.pages.dev/ に、明細書表記を AGENTMINT から店の名前（例：GENHAYL）に変える。agentmint でまだこのアカウントを使っているなら『#16 却下 agentmint で使用中』と書く",
+      "reason": "登録サイトと販売内容の食い違いは Stripe の審査で問題になりうる。見覚えのない明細名はチャージバックの原因になりやすい",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 費用0円。実態に合わせる変更で規約上の安全性が上がる。agentmint 側への影響はオーナーが判断",
+      "owner_note": ""
     }
   ],
   "decisions": [
@@ -280,6 +304,22 @@
     {
       "day": 7,
       "text": "新商品づくりは2時間ごとの工房に任せ、朝の会議では重ねない"
+    },
+    {
+      "day": 8,
+      "text": "8日目: 壁は商品数ではなく『見つかっていないこと』。朝の作業は集客に集中する"
+    },
+    {
+      "day": 8,
+      "text": "8日目: 承認依頼は #15（note 記事投稿、最重要）と #16（Stripe 表記の修正）の2件に絞る"
+    },
+    {
+      "day": 8,
+      "text": "8日目: 工房は既存商品と重なる道具を作らず、余ったサイクルは無料のお試しと説明の充実に使う"
+    },
+    {
+      "day": 8,
+      "text": "8日目: 見直し日を 2026-12-04（販売開始から2週間）とする"
     }
   ],
   "history": [
@@ -331,6 +371,13 @@
       "summary": "# 7日目 日報 ## 今日の結論（3行） - 1件目の商品「CSV 表記ゆれ整形」（980円）は完成済みですが、**置き場所に push できず、まだ売れていません。** 今朝も genhayl-shop は権限外で、この定期実行からは追加もできませんでした。 - さらに、**GitHub Pages は規約で「販売用の店としての利用」が禁止されている**と分かりました。genhayl-shop のままでは規約違反になるおそれがあります。 - そこで、置き場所を **Cloudflare Pages（無料）** に変える案を #14 にしました。ai-company をつなぐだけで、push の問題と規約の問題が両方なくなります（約5分）。 ## 成果物 - `workspace/day-007/product/cloudflare_pages_setup.md` #14 の手順書（5分） - `workspace/day-007/researcher/hosting_terms_check.md` 置き場所の規約確認（出典付き） - `workspace/day-007/cfo/stripe_readiness.md` Stripe の販売準備の確認（読み取りのみ） - `workspace/day-007/ceo/meeting.md` 会議メモと法務審査 - `ventur",
       "cost_usd": 0,
       "report": "reports/day-007.md"
+    },
+    {
+      "day": 8,
+      "date": "2026-11-21 06:51",
+      "summary": "# 8日目 日報 ## 今日の結論（3行） - 店で **14商品を販売中** です（工房が2時間ごとに追加）。ただし **売上は0円で、購入ボタンもまだ1回も押されていません。** - 原因は商品ではなく「まだ誰にも見つかっていないこと」です。検索に載るまでは数日〜数週間かかるため、今日は集客に集中しました。 - すぐ人を呼べる手として、**note 記事（無料の直し方＋最後に道具の紹介）を完成品で用意**しました。投稿をお願いします（#15）。 ## 成果物 - `workspace/day-008/marketing/note_article_draft.md` note 記事（そのまま貼れます） - `workspace/day-008/researcher/traffic_channels.md` 元手0円の集客経路の調査（出典付き） - `workspace/day-008/cfo/numbers.md` 数字と Stripe の確認 - `workspace/day-008/ceo/meeting.md` 会議メモと法務審査 - 商品ページ7件に検索結果用の説明文を追加（店に反映済み） - `ventures/IDEAS.md` 工房への申し送り（似た道具を増やさない、お試し機能と説明の充実を優先） ## オーナーにお願いしたいこと（優先順） 1. **#15 not",
+      "cost_usd": 0,
+      "report": "reports/day-008.md"
     }
   ],
   "owner_messages": [
@@ -387,7 +434,7 @@
     {
       "date": "2026-11-20 09:20",
       "text": "Search Console に genhayl-shop.pages.dev（URLプレフィックス）を登録し、sitemap.xml を送信済み（7日目、オーナー作業完了）",
-      "read": false
+      "read": true
     }
   ]
 }
