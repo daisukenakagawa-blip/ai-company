@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>複数 CSV の結合</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button.mini{padding:2px 8px;font-size:13px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:6px}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 16px;font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+.files{list-style:none;padding:0;margin:10px 0 0}
+.files li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:4px 0;font-size:14px}
+.files .nm{font-weight:700;word-break:break-all}
+.files .meta{color:var(--sub);font-size:13px;flex:1;min-width:180px}
+.files .miss{color:#92400e}
+.tbl{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left;vertical-align:top}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.src{color:var(--sub)}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+input[type=text]{font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;width:10em}
+</style>
+</head>
+<body>
+<main>
+<h1>複数 CSV の結合</h1>
+<p class="lead">月別・店舗別に分かれた CSV を、見出しの名前で列をそろえて1つのファイルにまとめます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV を入れる（何個でも）</h2>
+  <div class="drop" id="drop"><b>ここに CSV をまとめてドラッグ&ドロップ</b>または <input type="file" id="files" multiple accept=".csv,.txt,.tsv,text/csv"></div>
+  <p class="note">文字コード（UTF-8 / Shift_JIS）と区切り（カンマ / タブ）はファイルごとに自動で判定します。あとから追加で入れることもできます。</p>
+  <div class="row" style="margin-top:8px"><button class="mini" id="sortBtn" disabled>ファイル名の順に並べる</button><button class="mini" id="clearBtn" disabled>すべて外す</button></div>
+  <ul class="files" id="list"></ul>
+</div>
+
+<div class="card">
+  <h2>2. 結合のしかた</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_header" checked> 1行目は見出し（見出しの名前で列をそろえる）</label>
+    <label><input type="radio" name="mode" value="union" checked> どれかのファイルにある列はすべて残す（ない所は空欄）</label>
+    <label><input type="radio" name="mode" value="common"> すべてのファイルにある列だけ残す</label>
+    <label><input type="checkbox" id="o_dedupe"> まったく同じ行は1行にまとめる</label>
+    <label><input type="checkbox" id="o_skiphead" checked> 途中に出てくる見出しと同じ行は外す</label>
+    <label>元のファイル名の列：<select id="o_src"><option value="first">左端に付ける</option><option value="last">右端に付ける</option><option value="none">付けない</option></select></label>
+    <label>その列の見出し：<input type="text" id="o_srcname" value="元のファイル"></label>
+  </div>
+  <p class="note">見出しの前後の空白・全角半角の違い（「金額 」と「金額」、「ＩＤ」と「ID」）は同じ列とみなします。名前の違う列（「電話」と「TEL」など）は別の列になります。見出しなしにすると、列の位置（1列目どうし、2列目どうし…）でそろえます。</p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div id="warns"></div>
+  <div class="row">
+    <button id="dlBtn" disabled>結合した CSV をダウンロード（Excel 向け UTF-8）</button>
+    <button id="copyBtn" class="sub" disabled>表をコピー（Excel に貼り付け用）</button>
+  </div>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="preview"></div>
+</div>
+</main>
+
+<script src="ketsugo.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function decode(buf){
+  try{return{text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"};}
+  catch(e){return{text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"};}
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+let files=[],res=null,seq=0;
+async function add(list){
+  for(const file of list){
+    const buf=await file.arrayBuffer();
+    const id=++seq;
+    if(!buf.byteLength){files.push({id,name:file.name,empty:true,rows:[]});continue;}
+    const {text,enc}=decode(buf);
+    const p=Ketsugo.parseCSV(text);
+    files.push({id,name:file.name,enc,delim:p.delim,rows:p.rows,empty:!p.rows.length});
+  }
+  update();
+}
+function opt(){return{header:$("o_header").checked,mode:document.querySelector("input[name=mode]:checked").value,dedupe:$("o_dedupe").checked,skipSameHead:$("o_skiphead").checked,srcCol:$("o_src").value,srcName:$("o_srcname").value.trim()||"元のファイル"};}
+function update(){
+  const use=files.filter(f=>!f.empty);
+  res=use.length?Ketsugo.merge(use,opt()):null;
+  const info=new Map(res?res.info.map((x,i)=>[use[i].id,x]):[]);
+  $("list").innerHTML=files.map((f,i)=>{
+    let meta;
+    if(f.empty) meta='<span class="miss">空のファイルです（結合に入れていません）</span>';
+    else{const x=info.get(f.id);meta=`${f.enc}・${f.delim==="\t"?"タブ区切り":"カンマ区切り"}・${x.rows}行・${x.cols}列`+(x.missing.length?`<br><span class="miss">この列がありません：${x.missing.map(esc).join("、")}</span>`:"");}
+    return `<li><span>${i+1}.</span><span class="nm">${esc(f.name)}</span><span class="meta">${meta}</span><button class="mini" data-a="up" data-i="${i}" ${i?"":"disabled"}>↑</button><button class="mini" data-a="down" data-i="${i}" ${i<files.length-1?"":"disabled"}>↓</button><button class="mini" data-a="rm" data-i="${i}">外す</button></li>`;
+  }).join("");
+  $("sortBtn").disabled=files.length<2;$("clearBtn").disabled=!files.length;
+  render();
+}
+function render(){
+  if(!res){$("warns").innerHTML="";$("preview").innerHTML="";$("stat").textContent=files.length?"結合できるファイルがありません。":"";$("dlBtn").disabled=true;$("copyBtn").disabled=true;return;}
+  const w=res.warns.slice();
+  if(res.colsOnlySome.length&&opt().mode==="common") w.unshift(`一部のファイルにしかない列を外しました：${res.colsOnlySome.join("、")}`);
+  if(res.dupRemoved) w.push(`まったく同じ行を${res.dupRemoved}行まとめました（元のファイル名は比べていません。最初に出てきた行を残しています）`);
+  if(!res.head.length) w.push("すべてのファイルに共通する列がありません。「どれかのファイルにある列はすべて残す」に切り替えてください");
+  $("warns").innerHTML=w.map(x=>`<div class="warn">${esc(x)}</div>`).join("");
+  const s=opt().srcCol;
+  const srcIdx=s==="first"?0:s==="last"?res.head.length-1:-1;
+  let h="<table><thead><tr><th></th>"+res.head.map(x=>`<th>${esc(x)}</th>`).join("")+"</tr></thead><tbody>";
+  res.rows.slice(0,300).forEach((r,i)=>{h+=`<tr><td class="src">${i+1}</td>`+r.map((v,j)=>`<td${j===srcIdx?' class="src"':""}>${esc(v)}</td>`).join("")+"</tr>";});
+  h+="</tbody></table>";
+  $("preview").innerHTML=res.rows.length?h:'<p class="stat" style="padding:8px">結合した行はありません。</p>';
+  $("stat").textContent=`${res.info.length}個のファイルを結合：${res.rows.length}行・${res.head.length}列${opt().header?"（見出しの行を除く）":""}。`+(res.rows.length>300?`先頭の300行を表示しています（ダウンロードには全行が入ります）。`:"");
+  $("dlBtn").disabled=!res.rows.length;$("copyBtn").disabled=!res.rows.length;
+}
+$("list").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;
+  if(b.dataset.a==="rm") files.splice(i,1);
+  if(b.dataset.a==="up") [files[i-1],files[i]]=[files[i],files[i-1]];
+  if(b.dataset.a==="down") [files[i+1],files[i]]=[files[i],files[i+1]];
+  update();
+});
+$("sortBtn").addEventListener("click",()=>{files.sort((a,b)=>a.name.localeCompare(b.name,"ja",{numeric:true}));update();});
+$("clearBtn").addEventListener("click",()=>{files=[];$("files").value="";update();});
+$("files").addEventListener("change",async e=>{await add([...e.target.files]);e.target.value="";});
+const d=$("drop");
+d.addEventListener("dragover",e=>{e.preventDefault();d.classList.add("over");});
+d.addEventListener("dragleave",()=>d.classList.remove("over"));
+d.addEventListener("drop",e=>{e.preventDefault();d.classList.remove("over");add([...e.dataTransfer.files]);});
+document.querySelectorAll("#o_header,#o_dedupe,#o_skiphead,#o_src,input[name=mode]").forEach(el=>el.addEventListener("change",update));
+$("o_srcname").addEventListener("input",update);
+$("dlBtn").addEventListener("click",()=>{
+  const blob=new Blob(["﻿"+Ketsugo.toCSV([res.head].concat(res.rows))],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`結合_${res.info.length}ファイル.csv`;document.body.appendChild(a);a.click();a.remove();
+});
+$("copyBtn").addEventListener("click",async()=>{
+  const tsv=[res.head].concat(res.rows).map(r=>r.map(v=>String(v).replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
+  try{await navigator.clipboard.writeText(tsv);$("copyBtn").textContent="コピーしました";}catch(e){$("copyBtn").textContent="コピーできませんでした";}
+  setTimeout(()=>$("copyBtn").textContent="表をコピー（Excel に貼り付け用）",2000);
+});
+</script>
+</body>
+</html>
