@@ -1,6 +1,6 @@
 # 複数 CSV の結合（csv-ketsugo）
 
-- 状態：**完成（動作確認済み）／販売はまだ**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格案：500円（税込・買い切り）
 - 誰が・何に困る：月別・店舗別・担当者別に分かれてエクスポートされた CSV を、毎回コピー＆貼り付けで1つにまとめている事務・EC担当者
 - Stripe 登録業種（データ整形API）との関係：データの結合・整形ツールなので範囲内
@@ -56,3 +56,10 @@
 
 ## Stripe
 - 未作成（デプロイ先がないため、販売の条件を満たさない）
+
+
+## 販売開始（2026-11-20、7日目）
+- 公開URL：https://genhayl-shop.pages.dev/csv-ketsugo/
+- Stripe 商品：prod_Vf5AgCWH9aW1qa（500円・買い切り、本番）
+- Payment Link：https://buy.stripe.com/eVq8wQflegun4nGcAC1gs04
+- 完了後の移動先：https://genhayl-shop.pages.dev/csv-ketsugo/tool.html

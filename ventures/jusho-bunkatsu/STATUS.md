@@ -1,6 +1,6 @@
 # 住所の列分割（jusho-bunkatsu）
 
-- 状態：**完成（動作確認済み）／販売はまだ**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格案：500円（税込・買い切り）
 - 誰が・何に困る：配送・DM・顧客管理の担当者。1列に入った住所を都道府県別に集計したり、配送システムの「都道府県／市区町村／番地／建物」形式に分けたりするのを手作業でしている
 - Stripe 登録業種（データ整形API）との関係：データ整形ツールなので範囲内
@@ -51,3 +51,10 @@
 
 ## Stripe
 - 未作成（デプロイ先がないため、販売の条件を満たさない）
+
+
+## 販売開始（2026-11-20、7日目）
+- 公開URL：https://genhayl-shop.pages.dev/jusho-bunkatsu/
+- Stripe 商品：prod_Vf5AC8jOJvlTGb（500円・買い切り、本番）
+- Payment Link：https://buy.stripe.com/28E14oa0U7XR9I01VY1gs01
+- 完了後の移動先：https://genhayl-shop.pages.dev/jusho-bunkatsu/tool.html

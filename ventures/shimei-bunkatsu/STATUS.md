@@ -1,6 +1,6 @@
 # 氏名の姓名分割・ふりがな統一（shimei-bunkatsu）
 
-- 状態：**完成（動作確認済み）／販売はまだ**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格案：500円（税込・買い切り）
 - 誰が・何に困る：会員名簿・顧客リストを別システムへ移す事務担当。氏名が1列に入っていて「姓」「名」の列に分けられない、ふりがなが半角カナ・ひらがな・カタカナで混ざっていて取込エラーになる
 - Stripe 登録業種（データ整形API）との関係：データ整形ツールなので範囲内
@@ -53,3 +53,10 @@
 
 ## Stripe
 - 未作成（デプロイ先がないため、販売の条件を満たさない）
+
+
+## 販売開始（2026-11-20、7日目）
+- 公開URL：https://genhayl-shop.pages.dev/shimei-bunkatsu/
+- Stripe 商品：prod_Vf5AqXQKVu5fV6（500円・買い切り、本番）
+- Payment Link：https://buy.stripe.com/28E28s7SM3HBf2k6ce1gs02
+- 完了後の移動先：https://genhayl-shop.pages.dev/shimei-bunkatsu/tool.html

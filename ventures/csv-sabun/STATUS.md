@@ -1,6 +1,6 @@
 # 2つの CSV の差分比較（csv-sabun）
 
-- 状態：**完成（動作確認済み）／販売はまだ**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格案：980円（税込・買い切り）
 - 誰が・何に困る：先月と今月の名簿・在庫表・商品マスタのどこが変わったかを、目で見比べたり VLOOKUP を組んだりして探している事務・EC担当者
 - Stripe 登録業種（データ整形API）との関係：データの比較・整形ツールなので範囲内
@@ -52,3 +52,10 @@
 
 ## Stripe
 - 未作成（デプロイ先がないため、販売の条件を満たさない）
+
+
+## 販売開始（2026-11-20、7日目）
+- 公開URL：https://genhayl-shop.pages.dev/csv-sabun/
+- Stripe 商品：prod_Vf5Atu8wnrBMxo（980円・買い切り、本番）
+- Payment Link：https://buy.stripe.com/4gM9AUgpice7aM458a1gs03
+- 完了後の移動先：https://genhayl-shop.pages.dev/csv-sabun/tool.html

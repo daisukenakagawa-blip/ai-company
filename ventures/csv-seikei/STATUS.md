@@ -1,6 +1,6 @@
 # CSV 表記ゆれ整形（csv-seikei）
 
-- 状態：**完成（動作確認済み）／販売はまだ**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格案：980円（税込・買い切り）
 - 誰が・何に困る：事務・EC担当者。名簿や受注CSVの全角/半角、電話番号、郵便番号、和暦の日付、（株）表記がバラバラで、取込エラーや重複が起きる
 - Stripe 登録業種（データ整形API）との関係：データ整形ツールなので範囲内
@@ -47,3 +47,10 @@ Shift_JIS のテストCSV（7行：見出し、全角数字の電話、〒付き
 ## 7日目（2026-11-19 朝の会議）
 - `tool.html` に `noindex` を追加（検索に出さない。静的ページなので URL を知っていれば開ける点は変わらない）。`ventures/_shop/` 側も同じ内容
 - GitHub Pages は規約上、販売用の店に使えない可能性が高い（`workspace/day-007/researcher/hosting_terms_check.md`）。置き場所を Cloudflare Pages（ai-company を接続、出力 `ventures/_shop`）に変える案を承認依頼 #14 にした
+
+
+## 販売開始（2026-11-20、7日目）
+- 公開URL：https://genhayl-shop.pages.dev/csv-seikei/
+- Stripe 商品：prod_Vf5Adj7eszISLb（980円・買い切り、本番）
+- Payment Link：https://buy.stripe.com/3cI28s0qk0vpdYgasu1gs00
+- 完了後の移動先：https://genhayl-shop.pages.dev/csv-seikei/tool.html
