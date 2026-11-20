@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>列そろえ（取込形式テンプレート）｜GENHAYL</title>
+<meta name="description" content="CSV の列を選ぶ・並べ替える・名前を変える・つなげる・空の列を足す。整え方を設定ファイルに保存して、毎回同じ取込形式にそろえられます。Shift_JIS 保存対応。ブラウザ内で完結。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+code{font-size:13px;background:#eef2f1;padding:1px 4px;border-radius:4px;word-break:break-all}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+<body>
+<main>
+<h1>列そろえ（取込形式テンプレート）</h1>
+<p>毎週ダウンロードする受注・会員・在庫の CSV を、配送・会計・名簿などの別のシステムに取り込むために、列を消して、並べ替えて、見出しの名前を書き換えて……という作業を毎回くり返していませんか。このツールでは、その整え方を一度作って<b>設定ファイルに保存</b>しておけば、次からは CSV と設定ファイルを入れて保存するだけで、同じ形の CSV ができます。</p>
+
+<div class="price">980円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/3cI00k2ys91V7zSdEG1gs0c">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>列を選ぶ・並べ替える・外す</b>：取込先が求める順番に、↑↓ のボタンで並べ替えます。いらない列は外します</li>
+<li><b>見出しの名前を変える</b>：「購入者 姓」を「お届け先氏名」のように、取込先の見出しに書き換えます</li>
+<li><b>列をつなげる・固定の文字を入れる</b>：<code>{姓} {名}</code> で姓と名を1つの列に、<code>{都道府県}{市区町村}</code> で住所を1つに。「通常便」のような毎回同じ値の列も作れます</li>
+<li><b>空欄の列を足す</b>：取込先に必要だが中身のない列（「記事」「備考」など）を、決まった位置に入れられます</li>
+<li><b>設定ファイルに保存・読み込み</b>：整え方と書き出しの形式を、1つの小さなファイル（.json）に保存します。取込先ごとに別の設定を作っておけます。見出しの前後の空白や全角・半角、大文字・小文字の違いは同じ列とみなします。列名が変わっていた場合は、その列を赤で示して選び直せます</li>
+<li><b>書き出しの形式</b>：UTF-8（BOM 付き／なし）・Shift_JIS、カンマ・タブなどの区切り、改行（CRLF／LF）、見出し行の有無、すべての値を「"」で囲む、前後の空白を取り除く、空の行を書き出さない</li>
+<li>読み込み：UTF-8・Shift_JIS、カンマ・タブ区切りを自動で判定。値の中のカンマや改行もそのまま扱います。1行目が見出しでないファイルにも対応します</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>元の CSV</th><th>設定でやること</th><th>書き出す CSV</th></tr>
+<tr><td>通販の受注一覧（受注番号・購入者 姓・購入者 名・郵便番号・都道府県・市区町村・番地 …）</td><td>姓と名・住所をつなげ、取込先の順番と見出しに。「便の種類」列に「通常便」を入れる</td><td>配送システムに取り込める Shift_JIS の CSV</td></tr>
+<tr><td>会員管理の書き出し（30列）</td><td>メール配信に使う5列だけ選んで名前を変える</td><td>配信ツールの取込形式の CSV</td></tr>
+<tr><td>取引先から毎月届く在庫表</td><td>自社の商品マスタと同じ列の順番・見出しにそろえる</td><td>そのまま貼り付けや取込ができる CSV</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>値の中身の変換（全角・半角の統一、日付の書き方の変更、計算など）はしません。列の取り出し・並べ替え・名前の変更・つなげることに限ります</li>
+<li>行の絞り込みや並べ替えはしません（中身がすべて空欄の行を除く機能だけあります）</li>
+<li>Excel ファイル（.xlsx）は読み込めません。CSV・TSV が対象です</li>
+<li>特定のサービスの取込形式をあらかじめ用意しているわけではありません。取込先の見出しと順番は、お手元の取込仕様を見ながらご自分で設定してください</li>
+<li>Shift_JIS で保存するとき、Shift_JIS にない文字（絵文字など）は「?」になります。その場合は画面に件数を表示します</li>
+<li>パソコンの性能にもよりますが、数百MBを超える大きなファイルは時間がかかったり、処理できないことがあります</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>データと設定は、お使いのブラウザの中だけで処理し、サーバーには送信しません（直前の設定は、このブラウザの中にだけ覚えておきます）</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

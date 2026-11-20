@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>列そろえ（取込形式テンプレート）</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.tabs button.on{border-color:var(--accent);background:#f0fdfa;color:var(--accent);font-weight:700}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+textarea{width:100%;min-height:140px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:8px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:10px;font-size:14px;grid-template-columns:minmax(0,1fr)}
+.opts label{display:block}
+.opts select,.opts input[type=text]{font-size:14px;max-width:100%}
+input[type=text]{padding:3px 6px;border:1px solid var(--line);border-radius:6px;width:5em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.err{font-size:14px;color:#991b1b;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:pre;text-align:left;max-width:22em;overflow:hidden;text-overflow:ellipsis}
+thead th{position:sticky;top:0;background:#f3f4f6}
+pre.out{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:480px;overflow:auto;font-size:12.5px;margin:0;white-space:pre}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<style>
+.map{width:100%;border-collapse:collapse;font-size:14px}
+.map td,.map th{border-bottom:1px solid var(--line);border-right:0;padding:6px 4px;white-space:normal;max-width:none;overflow:visible;vertical-align:top}
+.map th{background:#f3f4f6;text-align:left}
+.map input[type=text]{width:100%;min-width:6em}
+.map select{max-width:100%;font-size:14px}
+.map .btns{white-space:nowrap}
+.map .btns button{padding:4px 8px;font-size:13px;margin:1px}
+.map tr.miss td{background:#fef2f2}
+.tplhelp{font-size:12px;color:var(--sub);margin-top:2px}
+@media (max-width:640px){
+ .map thead{display:none}.map tr{display:block;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;padding:6px}
+ .map td{display:block;border:0;padding:3px 2px}
+ .map td[data-l]::before{content:attr(data-l);display:block;font-size:12px;color:var(--sub)}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>列そろえ（取込形式テンプレート）</h1>
+<p class="lead">CSV の列を「選ぶ・並べ替える・名前を変える・つなげる・空の列を足す」ように整えて書き出します。整え方は設定ファイルに保存でき、次からは CSV と設定ファイルを入れるだけで同じ形になります。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV を入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px">
+    <label><input type="checkbox" id="noHeader"> 1行目は見出しではない（列1・列2 … と呼びます）</label>
+    <button class="sub" id="sample" type="button">見本のデータで試す</button>
+  </div>
+  <p class="stat" id="finfo"></p>
+  <div id="err" class="err hide"></div>
+</div>
+
+<div class="card">
+  <h2>2. 列の整え方</h2>
+  <div class="row" style="margin-bottom:10px">
+    <button class="sub" type="button" id="loadCfgBtn">設定ファイルを読み込む</button><input type="file" id="cfgFile" accept=".json,application/json" class="hide">
+    <button class="sub" type="button" id="saveCfg" disabled>設定ファイルに保存</button>
+    <button class="sub" type="button" id="reset" disabled>元の列に戻す</button>
+    <label>設定の名前：<input type="text" id="cfgName" style="width:12em" placeholder="例：配送システム用"></label>
+  </div>
+  <div id="cfgMsg"></div>
+  <div style="overflow-x:auto"><table class="map" id="map"><thead><tr><th>#</th><th>書き出す列の名前</th><th>中身</th><th></th></tr></thead><tbody></tbody></table></div>
+  <div class="row" style="margin-top:8px">
+    <button class="sub" type="button" id="addCol" disabled>列を足す</button>
+    <label>元の列を足す：<select id="addSrc" disabled></select></label>
+  </div>
+  <p class="note">「文字や列をつなげる」では <code>{列名}</code> がその列の値に置き換わります。例：<code>{姓} {名}</code> →「山田 太郎」、<code>{都道府県}{市区町村}</code>、固定の文字だけ（例：<code>通常便</code>）も書けます。波かっこそのものは <code>{{</code> <code>}}</code> と書きます。</p>
+</div>
+
+<div class="card">
+  <h2>3. 書き出しの形式</h2>
+  <div class="opts">
+    <label>文字コード：<select id="o_enc"><option value="bom">UTF-8（BOM 付き・Excel でそのまま開ける）</option><option value="utf8">UTF-8（BOM なし）</option><option value="sjis">Shift_JIS</option></select></label>
+    <label>区切り：<select id="o_delim"><option value=",">カンマ（.csv）</option><option value="&#9;">タブ（.tsv）</option><option value=";">セミコロン</option><option value="|">縦線</option></select></label>
+    <label>改行：<select id="o_eol"><option value="crlf">CRLF（Windows）</option><option value="lf">LF</option></select></label>
+    <label><input type="checkbox" id="o_header" checked> 1行目に見出しを書く</label>
+    <label><input type="checkbox" id="o_quoteAll"> すべての値を「"」で囲む</label>
+    <label><input type="checkbox" id="o_trim"> 値の前後の空白（全角空白を含む）を取り除く</label>
+    <label><input type="checkbox" id="o_skipEmpty" checked> 中身がすべて空欄の行は書き出さない</label>
+  </div>
+  <p class="note">書き出しの形式も設定ファイルに一緒に保存されます。</p>
+</div>
+
+<div class="card">
+  <h2>4. 結果</h2>
+  <p class="stat" id="rinfo">CSV を入れると、ここに結果（先頭30行）が出ます。</p>
+  <div id="warns"></div>
+  <div class="tbl hide" id="tblWrap"><table id="tbl"></table></div>
+  <div class="row" style="margin-top:12px"><label>ファイル名：<input type="text" id="outName" style="width:14em"></label><button id="save" type="button" disabled>CSV を保存する</button></div>
+</div>
+
+<p class="note">うまく動かない場合は、ご購入から7日以内にご連絡ください（<a href="./">商品ページ</a>・<a href="../tokushoho.html">特定商取引法に基づく表記</a>）。</p>
+</main>
+
+<script src="soroe.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let bytes=null,fname="",table=null,cfg=null,missing=[];
+const SAMPLE='受注番号,受注日,購入者 姓,購入者 名,郵便番号,都道府県,市区町村・番地,電話番号,商品コード,数量,備考\r\nA-1001,2026/11/18,山田,太郎,1000001,東京都,千代田区千代田1-1,0312345678,SKU-01,2,\r\nA-1002,2026/11/19,佐藤,花子,5300001,大阪府,大阪市北区梅田1-1,0612345678,SKU-02,1,午前希望\r\nA-1003,2026/11/19,髙橋,一郎,0600001,北海道,"札幌市中央区北1条西1-1, 2F",0111234567,SKU-01,3,\r\n';
+const SAMPLE_CFG={tool:Soroe.TOOL_ID,version:1,name:"配送システム用（見本）",columns:[
+ {name:"お届け先郵便番号",type:"col",src:"郵便番号"},{name:"お届け先住所",type:"tpl",tpl:"{都道府県}{市区町村・番地}"},
+ {name:"お届け先氏名",type:"tpl",tpl:"{購入者 姓} {購入者 名}"},{name:"お届け先電話",type:"col",src:"電話番号"},
+ {name:"品名",type:"col",src:"商品コード"},{name:"個数",type:"col",src:"数量"},{name:"便の種類",type:"tpl",tpl:"通常便"},
+ {name:"お客様管理番号",type:"col",src:"受注番号"},{name:"記事",type:"empty"}],
+ output:{enc:"sjis",delim:",",header:true,eol:"crlf",quoteAll:false,trim:true,skipEmpty:true}};
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function store(){try{localStorage.setItem("soroe.last",Soroe.configText(cfg));}catch(_){}}
+function readOpts(){const o=cfg.output;o.enc=$("o_enc").value;o.delim=$("o_delim").value;o.eol=$("o_eol").value;
+  o.header=$("o_header").checked;o.quoteAll=$("o_quoteAll").checked;o.trim=$("o_trim").checked;o.skipEmpty=$("o_skipEmpty").checked;cfg.name=$("cfgName").value;}
+function writeOpts(){const o=cfg.output;$("o_enc").value=o.enc;$("o_delim").value=o.delim;$("o_eol").value=o.eol;
+  $("o_header").checked=o.header;$("o_quoteAll").checked=o.quoteAll;$("o_trim").checked=o.trim;$("o_skipEmpty").checked=o.skipEmpty;$("cfgName").value=cfg.name||"";}
+
+function load(){
+  $("err").classList.add("hide");
+  if(!bytes) return;
+  try{table=Soroe.readTable(bytes,{noHeader:$("noHeader").checked});}catch(e){$("err").textContent="読み込めませんでした："+e.message;$("err").classList.remove("hide");return;}
+  if(!table.header.length){$("err").textContent="中身のないファイルです";$("err").classList.remove("hide");table=null;return;}
+  const dn={",":"カンマ","\t":"タブ",";":"セミコロン","|":"縦線"}[table.delim];
+  $("finfo").textContent=`${fname}：${table.enc==="shift_jis"?"Shift_JIS":"UTF-8"+(table.bom?"（BOM 付き）":"")}・${dn}区切り・${table.header.length}列・${table.rows.length}行（見出しを除く）`;
+  if(!cfg){cfg=Soroe.defaultConfig(table.header);try{const s=localStorage.getItem("soroe.last");if(s){const c=Soroe.validateConfig(JSON.parse(s));if(!Soroe.checkConfig(c,table.header).length){cfg=c;msg("前回の整え方が、このファイルの列にそのまま使えるため読み込みました。元の列のままにするには「元の列に戻す」を押してください。","warn");}}}catch(_){}}
+  ["saveCfg","reset","addCol","addSrc"].forEach(id=>$(id).disabled=false);
+  $("addSrc").innerHTML='<option value="">（選ぶ）</option>'+table.header.map((h,i)=>`<option value="${i}">${esc(h)}</option>`).join("");
+  if(!$("outName").value) $("outName").value=fname.replace(/\.[^.]+$/,"")+"_そろえ"+(cfg.output.delim==="\t"?".tsv":".csv");
+  writeOpts();render();
+}
+function msg(t,cls){$("cfgMsg").innerHTML=t?`<div class="${cls||"warn"}">${esc(t)}</div>`:"";}
+
+function srcSelect(c,i){
+  const h=table?table.header:[];
+  let cur=c.type==="col"?"c:"+c.src:c.type;
+  let found=c.type!=="col"||h.some(x=>Soroe.normKey(x)===Soroe.normKey(c.src));
+  let opts=h.map(x=>`<option value="c:${esc(x)}"${c.type==="col"&&Soroe.normKey(x)===Soroe.normKey(c.src)?" selected":""}>列「${esc(x)}」</option>`).join("");
+  if(!found) opts=`<option value="c:${esc(c.src)}" selected>列「${esc(c.src)}」（このファイルにない）</option>`+opts;
+  opts+=`<option value="tpl"${cur==="tpl"?" selected":""}>文字や列をつなげる</option><option value="empty"${cur==="empty"?" selected":""}>空欄の列</option>`;
+  return `<select data-i="${i}" class="src">${opts}</select>`+(c.type==="tpl"?`<input type="text" class="tpl" data-i="${i}" value="${esc(c.tpl)}" placeholder="{姓} {名}" style="margin-top:4px;width:100%">`:"");
+}
+function render(){
+  if(!cfg) return;
+  missing=table?Soroe.checkConfig(cfg,table.header):[];
+  const mset=new Set(missing.map(m=>m.out));
+  $("map").tBodies[0].innerHTML=cfg.columns.map((c,i)=>`<tr class="${mset.has(i)?"miss":""}"><td>${i+1}</td>
+   <td data-l="書き出す列の名前"><input type="text" class="nm" data-i="${i}" value="${esc(c.name)}"></td>
+   <td data-l="中身">${srcSelect(c,i)}${mset.has(i)?'<div class="tplhelp" style="color:#991b1b">このファイルにない列名：'+esc(missing.filter(m=>m.out===i).map(m=>m.name).join("、"))+'</div>':""}</td>
+   <td class="btns"><button type="button" class="sub mv" data-i="${i}" data-d="-1" title="上へ"${i===0?" disabled":""}>↑</button><button type="button" class="sub mv" data-i="${i}" data-d="1" title="下へ"${i===cfg.columns.length-1?" disabled":""}>↓</button><button type="button" class="sub del" data-i="${i}" title="外す">外す</button></td></tr>`).join("");
+  if(missing.length) msg("このファイルにない列名を使っている行が赤くなっています。「中身」でこのファイルの列を選び直すと、その列名で設定を保存し直せます。","err"); else if($("cfgMsg").querySelector(".err")) msg("");
+  preview();
+}
+function preview(){
+  if(!table||!cfg) return;
+  readOpts();store();
+  const r=Soroe.apply(cfg,table.header,table.rows);
+  $("rinfo").textContent=`${r.header.length}列・${r.rows.length}行を書き出します${r.rows.length>30?"（下は先頭30行）":""}`;
+  const w=r.warn.slice();
+  if(cfg.output.enc==="sjis"){const t=Soroe.toCSV(cfg.output.header?r.header:null,r.rows,cfg.output);const e=Soroe.encodeOut(t,"sjis");if(e.bad) w.push(`Shift_JIS にできない文字が ${e.bad} 個あり、「?」になります（絵文字など）。UTF-8 で保存すればそのまま残ります`);}
+  $("warns").innerHTML=w.map(x=>`<div class="warn">${esc(x)}</div>`).join("");
+  const head=cfg.output.header?`<thead><tr>${r.header.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>`:"";
+  $("tbl").innerHTML=head+"<tbody>"+r.rows.slice(0,30).map(x=>"<tr>"+x.map(v=>`<td>${esc(v)}</td>`).join("")+"</tr>").join("")+"</tbody>";
+  $("tblWrap").classList.remove("hide");$("save").disabled=!r.header.length;
+}
+function download(data,name,type){const b=new Blob([data],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+
+$("map").addEventListener("input",e=>{const t=e.target,i=+t.dataset.i;if(!cfg)return;
+  if(t.classList.contains("nm")){cfg.columns[i].name=t.value;preview();}
+  else if(t.classList.contains("tpl")){cfg.columns[i].tpl=t.value;const m=Soroe.checkConfig(cfg,table.header);if(m.length!==missing.length)render();else preview();}});
+$("map").addEventListener("change",e=>{const t=e.target,i=+t.dataset.i;if(!t.classList.contains("src"))return;const c=cfg.columns[i],v=t.value;
+  if(v.startsWith("c:")){c.type="col";c.src=v.slice(2);delete c.tpl;}else if(v==="tpl"){c.type="tpl";c.tpl=c.tpl||(c.src?"{"+c.src+"}":"");delete c.src;}else{c.type="empty";delete c.src;delete c.tpl;}
+  render();});
+$("map").addEventListener("click",e=>{const t=e.target,i=+t.dataset.i;
+  if(t.classList.contains("mv")){const j=i+(+t.dataset.d);const a=cfg.columns;[a[i],a[j]]=[a[j],a[i]];render();}
+  else if(t.classList.contains("del")){cfg.columns.splice(i,1);render();}});
+$("addCol").onclick=()=>{cfg.columns.push({name:"新しい列",type:"empty"});render();};
+$("addSrc").onchange=()=>{const v=$("addSrc").value;if(v==="")return;const h=table.header[+v];cfg.columns.push({name:h,type:"col",src:h});$("addSrc").value="";render();};
+$("reset").onclick=()=>{const o=cfg.output;cfg=Soroe.defaultConfig(table.header);cfg.output=o;msg("");render();};
+$("saveCfg").onclick=()=>{readOpts();const nm=(cfg.name||"列そろえ").replace(/[\\/:*?"<>|]/g,"_");download(Soroe.configText(cfg),nm+"_設定.json","application/json");};
+$("loadCfgBtn").onclick=()=>$("cfgFile").click();
+$("cfgFile").onchange=async()=>{const f=$("cfgFile").files[0];if(!f)return;
+  try{const c=Soroe.validateConfig(JSON.parse(await f.text()));cfg=c;writeOpts();
+    if(table){const m=Soroe.checkConfig(cfg,table.header);msg(m.length?"":`設定「${cfg.name||f.name}」を読み込みました（${cfg.columns.length}列）。`,"warn");render();}
+    else msg(`設定「${cfg.name||f.name}」を読み込みました。次に CSV を入れてください。`,"warn");
+  }catch(e){msg("設定ファイルを読み込めませんでした："+(e instanceof SyntaxError?"JSON の形が正しくありません":e.message),"err");}
+  $("cfgFile").value="";};
+["o_enc","o_delim","o_eol","o_header","o_quoteAll","o_trim","o_skipEmpty","cfgName"].forEach(id=>$(id).addEventListener(id==="cfgName"?"input":"change",()=>{if(cfg){readOpts();preview();}}));
+$("o_delim").addEventListener("change",()=>{const n=$("outName").value;if(n)$("outName").value=n.replace(/\.(csv|tsv)$/i,"")+($("o_delim").value==="\t"?".tsv":".csv");});
+$("save").onclick=()=>{readOpts();const r=Soroe.apply(cfg,table.header,table.rows);
+  const t=Soroe.toCSV(cfg.output.header?r.header:null,r.rows,cfg.output);const e=Soroe.encodeOut(t,cfg.output.enc);
+  download(e.bytes,$("outName").value||"output.csv",cfg.output.enc==="sjis"?"text/csv;charset=shift_jis":"text/csv;charset=utf-8");};
+async function takeFile(f){bytes=new Uint8Array(await f.arrayBuffer());fname=f.name;$("outName").value="";load();}
+$("file").onchange=()=>{const f=$("file").files[0];if(f)takeFile(f);};
+const dz=$("drop");dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("over");});dz.addEventListener("dragleave",()=>dz.classList.remove("over"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("over");const f=e.dataTransfer.files[0];if(f)takeFile(f);});
+$("noHeader").onchange=()=>{if(bytes){cfg=null;load();}};
+$("sample").onclick=()=>{bytes=new TextEncoder().encode(SAMPLE);fname="受注一覧_見本.csv";$("outName").value="";cfg=Soroe.validateConfig(SAMPLE_CFG);load();
+  msg("見本の設定「配送システム用（見本）」を当てています。「元の列に戻す」で最初からも試せます。","warn");};
+</script>
+</body>
+</html>
