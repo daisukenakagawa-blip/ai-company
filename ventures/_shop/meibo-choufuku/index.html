@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>名簿の重複チェック（よく似た行も検出）｜GENHAYL</title>
+<meta name="description" content="顧客名簿・会員名簿の CSV から、二重登録をブラウザだけで探すツール。電話番号・メールの一致に加え、「(株)」と「株式会社」、「1丁目2番3号」と「1-2-3」、1文字違いの氏名も候補に出します。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}
+.keep td{background:#dcfce7}.dup td{background:#fef9c3}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>名簿の重複チェック</h1>
+<p>顧客名簿・会員名簿の CSV から、同じ人や会社が二重に登録されている行を探すツールです。Excel の「重複の削除」では見つからない、書き方が少し違うだけの重複（「山田太郎」と「山田 太郎 様」、「(株)サンプル」と「株式会社サンプル」、「1丁目2番3号」と「1-2-3」など）も候補として一覧にします。</p>
+
+<div class="price">980円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/9B69AUeha1zt8DW0RU1gs07">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>DM やカタログが同じ人に2通届いてしまう</li>
+<li>問い合わせフォーム・展示会・ネットショップなど、入口ごとに登録した顧客リストを1つにまとめたい</li>
+<li>新しいシステムへ名簿を移す前に、二重登録を整理しておきたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>一致での判定</b>：電話番号（ハイフン・括弧・全角の違いは無視）やメールアドレス（大文字小文字・前後の空白は無視）が同じ行</li>
+<li><b>似ている行の判定</b>：氏名・会社名・住所など2つ以上の列がそろって似ている行。「似ている」の基準は 70〜100% で調整できます</li>
+<li>書き方の違いをそろえて比べます：全角・半角、空白、ひらがな・カタカナ、「様」「殿」、(株)・㈱・株式会社、髙・﨑・齋などの異体字、「一丁目二番三号」と「1-2-3」</li>
+<li>見出しと中身から、列の種類（氏名・電話・メール・住所など）を自動で推定。選び直しもできます</li>
+<li>結果はグループごとに表示。残す行（空欄がいちばん少ない行）は選び直せて、重複でないグループは外せます</li>
+<li>ダウンロード：重複を除いた名簿（残す行の空欄を他の行の値で埋めることも可）と、全行に「重複グループ・判定・理由」を付けた確認用の名簿。Excel で文字化けしない UTF-8。Shift_JIS の CSV もそのまま読み込めます</li>
+</ul>
+
+<h2>表示の例</h2>
+<div class="tw"><table>
+<tr><th>判定</th><th>氏名</th><th>会社名</th><th>住所</th><th>理由</th></tr>
+<tr class="keep"><td>残す</td><td>山田 太郎</td><td>株式会社サンプル</td><td>東京都港区芝浦一丁目2番3号</td><td>氏名・会社名・住所が似ている</td></tr>
+<tr class="dup"><td>重複</td><td>山田太郎 様</td><td>(株)サンプル</td><td>東京都港区芝浦1-2-3</td><td></td></tr>
+<tr class="keep"><td>残す</td><td>鈴木 次郎</td><td></td><td>東京都新宿区西新宿2-8-1</td><td>氏名 75%・住所 100%</td></tr>
+<tr class="dup"><td>重複</td><td>鈴木 二郎</td><td></td><td>東京都新宿区西新宿二丁目8番1号</td><td></td></tr>
+</table></div>
+<p class="note">名前の例は架空のものです。</p>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>見つけるのは「重複の候補」です。同姓同名の別人や、同じ住所の家族が候補に出ることがあり、逆に書き方が大きく違う重複は見つからないことがあります。ダウンロード前に一覧で確かめてください</li>
+<li>「斉藤」と「斎藤」のように別の字として使われる漢字の違いや、旧姓・結婚後の姓の違いは、同じとはみなしません</li>
+<li>住所の照合は文字の比較です。郵便番号や地図のデータと照らし合わせることはしません</li>
+<li>読み込めるのは CSV（カンマ区切り・タブ区切り）です。Excel ファイル（.xlsx）は、Excel で CSV として保存してからお使いください</li>
+<li>とても大きなファイル（数十万行以上）は、パソコンの性能によって時間がかかったり、処理できなかったりします</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>名簿はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
