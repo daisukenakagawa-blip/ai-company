@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2つの CSV の差分比較｜GENHAYL</title>
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}
+.add td{background:#dcfce7}.del td{background:#fee2e2}td.chg{background:#fef9c3}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>2つの CSV の差分比較</h1>
+<p>先月と今月の会員名簿、在庫表、商品マスタなど、2つの CSV を比べて「増えた行」「なくなった行」「値が変わった行とセル」を色分けで一覧にするツールです。会員番号や商品コードで行を突き合わせるので、並び順が変わっていても比べられます。</p>
+
+<div class="price">980円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="#">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li>2つの CSV を、キーの列（会員番号・商品コードなど）で突き合わせて比較。キーは自動で推定し、選び直しや複数列の組み合わせもできます</li>
+<li>結果を「追加」「削除」「変更」「変更なし」に分け、変わったセルは「変更前 → 変更後」で表示</li>
+<li>列の順番が違っても、同じ見出しの列どうしを比較。片方にしかない列は知らせます</li>
+<li>キーが重複している行を知らせます（取込前の点検にも）</li>
+<li>空白の数、全角・半角、英字の大文字・小文字、数値の書き方（1,000 と 1000）の違いを、無視するかどうか選べます</li>
+<li>差分だけを CSV でダウンロード（「区分」「変更した列」「変更の内容」の列付き、Excel で文字化けしない UTF-8）。Shift_JIS の CSV もそのまま読み込めます</li>
+</ul>
+
+<h2>表示の例</h2>
+<div class="tw"><table>
+<tr><th>区分</th><th>商品コード</th><th>商品名</th><th>在庫</th></tr>
+<tr><td>変更</td><td>A-001</td><td>ノート A5</td><td class="chg">12 → 8</td></tr>
+<tr class="add"><td>追加</td><td>A-014</td><td>付箋 大</td><td>30</td></tr>
+<tr class="del"><td>削除</td><td>B-102</td><td>封筒 長形3号</td><td>0</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>比べられるのは CSV（カンマ区切り・タブ区切り）です。Excel ファイル（.xlsx）は、Excel で CSV として保存してからお使いください</li>
+<li>列は見出しの名前で対応させます。見出しの名前が違う列（「電話」と「TEL」など）は、同じ列として比べません</li>
+<li>キーを選ばずに比べると、行の順番どうしの比較になり、途中に1行増えるとそれ以降が「変更」と表示されます</li>
+<li>名前のゆれ（「山田太郎」と「山田 太朗」など）を同じ人と判定することはしません</li>
+<li>とても大きなファイル（数十万行以上）は、パソコンの性能によって時間がかかったり、処理できなかったりします</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

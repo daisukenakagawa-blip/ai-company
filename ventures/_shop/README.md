@@ -8,3 +8,5 @@
 - `csv-seikei/tool.html` … 決済後の納品物（ツール本体）
 - `jusho-bunkatsu/index.html` … 商品ページ（住所の列分割・500円。購入ボタンは Payment Link 作成後に差し替え）
 - `jusho-bunkatsu/tool.html` と `split.js` … 決済後の納品物（ツール本体）
+- `shimei-bunkatsu/index.html` と `tool.html`・`shimei.js` … 氏名の姓名分割・ふりがな統一（500円）
+- `csv-sabun/index.html` と `tool.html`・`sabun.js` … 2つの CSV の差分比較（980円）

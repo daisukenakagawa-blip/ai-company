@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2つの CSV の差分比較</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e;--add:#dcfce7;--del:#fee2e2;--chg:#fef9c3}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 16px;font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;margin:6px 0}
+.tbl{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left;vertical-align:top}
+thead th{position:sticky;top:0;background:#f3f4f6}
+tr.add td{background:var(--add)}
+tr.del td{background:var(--del)}
+td.chg{background:var(--chg)}
+td.chg del{color:#b91c1c}
+td.chg ins{color:#15803d;text-decoration:none;font-weight:700}
+.badge{display:inline-block;border-radius:6px;padding:0 6px;font-size:12px}
+.b-add{background:var(--add)}.b-del{background:var(--del)}.b-chg{background:var(--chg)}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.sum label{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:14px;cursor:pointer}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>2つの CSV の差分比較</h1>
+<p class="lead">先月と今月の名簿、在庫表、商品マスタなど、2つの CSV を比べて「増えた行」「なくなった行」「値が変わった行とセル」を色分けで一覧にします。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. 2つの CSV を入れる</h2>
+  <div class="two">
+    <div class="drop" id="dropA"><b>比較の元（古い方）</b>ドラッグ&ドロップ、または<br><input type="file" id="fileA" accept=".csv,.txt,text/csv"><div class="note" id="infoA"></div></div>
+    <div class="drop" id="dropB"><b>比較先（新しい方）</b>ドラッグ&ドロップ、または<br><input type="file" id="fileB" accept=".csv,.txt,text/csv"><div class="note" id="infoB"></div></div>
+  </div>
+  <p class="note">文字コード（UTF-8 / Shift_JIS）と区切り（カンマ / タブ）は自動で判定します。1行目は見出しとして扱い、同じ見出しの列どうしを比べます（列の順番が違っても大丈夫です）。</p>
+</div>
+
+<div class="card">
+  <h2>2. 行を突き合わせる列（キー）</h2>
+  <p class="note" style="margin-top:0">会員番号・商品コードなど、1行ごとに違う値が入る列を選んでください。複数選ぶと組み合わせで突き合わせます。何も選ばないと、行の順番どうしで比べます。</p>
+  <div class="keys" id="keys"><span class="note">CSV を2つ入れると、ここに列が出ます。</span></div>
+  <h2 style="margin-top:14px">オプション</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_space" checked> 前後の空白・空白の数の違いは無視する</label>
+    <label><input type="checkbox" id="o_width" checked> 全角・半角の違いは無視する（Ａ と A、１ と 1）</label>
+    <label><input type="checkbox" id="o_case"> 英字の大文字・小文字の違いは無視する</label>
+    <label><input type="checkbox" id="o_num"> 数値の書き方の違いは無視する（1,000 と 1000、5.0 と 5）</label>
+  </div>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row">
+    <button id="dlBtn" disabled>差分を CSV でダウンロード（Excel 向け UTF-8）</button>
+    <button id="copyBtn" class="sub" disabled>表をコピー（Excel に貼り付け用）</button>
+  </div>
+  <p class="note">ダウンロードとコピーは、上のチェックで表示している区分だけが対象です。先頭に「区分」「変更した列」「変更の内容」の列が付きます。削除の行は古い方の値、それ以外は新しい方の値が入ります。</p>
+  <div class="stat" id="stat"></div>
+  <div class="tbl" id="preview"></div>
+</div>
+</main>
+
+<script src="sabun.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const line=text.split("\n",1)[0];
+  const d=line.split("\t").length>line.split(",").length?"\t":",";
+  const rows=[];let row=[],f="",q=false,i=0;
+  while(i<text.length){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue;} f+=c;i++;continue; }
+    if(c==='"'&&f===""){q=true;i++;continue;}
+    if(c===d){row.push(f);f="";i++;continue;}
+    if(c==="\r"){i++;continue;}
+    if(c==="\n"){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(v=>v!==""));
+}
+function toCSV(rows){return rows.map(r=>r.map(v=>/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n")+"\r\n";}
+function decode(buf){
+  try{return{text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"};}
+  catch(e){return{text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"};}
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+const F={a:null,b:null};
+let res=null,keySel=null,nameB="比較";
+const LABEL={add:"追加",del:"削除",chg:"変更",same:"変更なし"};
+const show={add:true,del:true,chg:true,same:false};
+
+async function load(side,file){
+  const info=$(side==="a"?"infoA":"infoB");
+  const buf=await file.arrayBuffer();
+  if(!buf.byteLength){info.textContent="空のファイルです";F[side]=null;refresh();return;}
+  const {text,enc}=decode(buf);
+  const rows=parseCSV(text);
+  if(!rows.length){info.textContent="空のファイルです";F[side]=null;refresh();return;}
+  F[side]={name:file.name,head:rows[0],rows:rows.slice(1)};
+  if(side==="b") nameB=file.name.replace(/\.[^.]+$/,"");
+  info.textContent=`${file.name}（${enc}）：${rows.length-1}行、${rows[0].length}列`;
+  keySel=null;refresh();
+}
+function opt(){return{space:$("o_space").checked,width:$("o_width").checked,caseI:$("o_case").checked,num:$("o_num").checked};}
+function refresh(){
+  if(!F.a||!F.b){res=null;render();return;}
+  const cols=Sabun.matchColumns(F.a.head,F.b.head);
+  if(keySel===null){
+    keySel=Sabun.guessKey(F.a.head,F.a.rows,F.b.head,F.b.rows);
+    $("keys").innerHTML=cols.pairs.length?cols.pairs.map((p,i)=>`<label><input type="checkbox" class="k" value="${i}" ${keySel.includes(i)?"checked":""}> ${esc(p.name)}</label>`).join(""):'<span class="note">同じ見出しの列がありません。見出しの名前をそろえてください。</span>';
+    document.querySelectorAll(".k").forEach(el=>el.addEventListener("change",()=>{keySel=[...document.querySelectorAll(".k:checked")].map(x=>+x.value);compute();}));
+  }
+  compute();
+}
+function compute(){
+  res=Sabun.diff(F.a.head,F.a.rows,F.b.head,F.b.rows,keySel,opt());
+  render();
+}
+function render(){
+  if(!res){$("sum").innerHTML="";$("warns").innerHTML="";$("preview").innerHTML="";$("stat").textContent="";$("dlBtn").disabled=true;$("copyBtn").disabled=true;return;}
+  const n={add:res.nAdd,del:res.nDel,chg:res.nChg,same:res.nSame};
+  $("sum").innerHTML=["add","del","chg","same"].map(k=>`<label><input type="checkbox" data-k="${k}" ${show[k]?"checked":""}> <span class="badge b-${k}">${LABEL[k]}</span> ${n[k]}件</label>`).join("");
+  $("sum").querySelectorAll("input").forEach(el=>el.addEventListener("change",()=>{show[el.dataset.k]=el.checked;render();}));
+  const w=[];const C=res.cols;
+  if(C.onlyA.length) w.push(`古い方にしかない列：${C.onlyA.map(x=>esc(x.name||"（見出しなし）")).join("、")}（比べていません）`);
+  if(C.onlyB.length) w.push(`新しい方にしかない列：${C.onlyB.map(x=>esc(x.name||"（見出しなし）")).join("、")}（比べていません）`);
+  if(res.dupA.length) w.push(`古い方でキーが重複している行：${res.dupA.length}件（${res.dupA.slice(0,10).map(d=>d.line+1+"行目").join("、")}${res.dupA.length>10?" ほか":""}）。2件目以降は比べていません`);
+  if(res.dupB.length) w.push(`新しい方でキーが重複している行：${res.dupB.length}件（${res.dupB.slice(0,10).map(d=>d.line+1+"行目").join("、")}${res.dupB.length>10?" ほか":""}）。2件目以降は比べていません`);
+  if(!res.keys.length) w.push("キーを選んでいないため、行の順番どうしで比べています。途中に1行増えると、それ以降がすべて「変更」になります。");
+  $("warns").innerHTML=w.map(x=>`<div class="warn">${x}</div>`).join("");
+  const P=C.pairs;
+  let h="<table><thead><tr><th>区分</th><th>古い方</th><th>新しい方</th>"+P.map((p,i)=>`<th>${res.keys.includes(i)?"🔑 ":""}${esc(p.name)}</th>`).join("")+"</tr></thead><tbody>";
+  const list=res.rows.filter(r=>show[r.kind]);
+  list.slice(0,300).forEach(r=>{
+    const src=r.kind==="del"?r.a:r.b,side=r.kind==="del"?"a":"b";
+    const ch=new Map((r.changed||[]).map(c=>[c.col,c]));
+    h+=`<tr class="${r.kind}"><td><span class="badge b-${r.kind}">${LABEL[r.kind]}</span></td><td>${r.lineA?r.lineA+1+"行目":""}</td><td>${r.lineB?r.lineB+1+"行目":""}</td>`;
+    P.forEach((p,i)=>{
+      const c=ch.get(i);
+      if(c) h+=`<td class="chg"><del>${esc(c.from)||"（空）"}</del> → <ins>${esc(c.to)||"（空）"}</ins></td>`;
+      else h+=`<td>${esc(src[p[side]]==null?"":src[p[side]])}</td>`;
+    });
+    h+="</tr>";
+  });
+  h+="</tbody></table>";
+  $("preview").innerHTML=list.length?h:'<p class="stat" style="padding:8px">表示する行はありません。</p>';
+  $("stat").textContent=`古い方 ${F.a.rows.length}行 ／ 新しい方 ${F.b.rows.length}行を比べました。`+(list.length>300?`先頭の300行を表示しています（ダウンロードには全${list.length}行が入ります）。`:"")+"行番号は見出しを1行目として数えています。";
+  $("dlBtn").disabled=!list.length;$("copyBtn").disabled=!list.length;
+}
+function kinds(){return Object.keys(show).filter(k=>show[k]);}
+["a","b"].forEach(s=>{
+  const up=s.toUpperCase();
+  $("file"+up).addEventListener("change",e=>{if(e.target.files[0])load(s,e.target.files[0]);});
+  const d=$("drop"+up);
+  d.addEventListener("dragover",e=>{e.preventDefault();d.classList.add("over");});
+  d.addEventListener("dragleave",()=>d.classList.remove("over"));
+  d.addEventListener("drop",e=>{e.preventDefault();d.classList.remove("over");if(e.dataTransfer.files[0])load(s,e.dataTransfer.files[0]);});
+});
+["o_space","o_width","o_case","o_num"].forEach(id=>$(id).addEventListener("change",()=>{if(F.a&&F.b)compute();}));
+$("dlBtn").addEventListener("click",()=>{
+  const blob=new Blob(["﻿"+toCSV(Sabun.toTable(res,kinds()))],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nameB+"_差分.csv";document.body.appendChild(a);a.click();a.remove();
+});
+$("copyBtn").addEventListener("click",async()=>{
+  const tsv=Sabun.toTable(res,kinds()).map(r=>r.map(v=>String(v).replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
+  try{await navigator.clipboard.writeText(tsv);$("copyBtn").textContent="コピーしました";}catch(e){$("copyBtn").textContent="コピーできませんでした";}
+  setTimeout(()=>$("copyBtn").textContent="表をコピー（Excel に貼り付け用）",2000);
+});
+</script>
+</body>
+</html>
