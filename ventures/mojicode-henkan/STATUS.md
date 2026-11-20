@@ -1,6 +1,6 @@
 # 文字コード・改行コードの変換（mojicode-henkan）
 
-- 状態：**完成（動作確認済み）**
+- 状態：**完成（動作確認済み）／販売中（2026-11-20〜）**
 - 価格：500円（税込・買い切り）
 - 誰が・何に困る：取込先が「Shift_JIS の CSV のみ」なのに手元が UTF-8、Excel で開くと文字化けする、改行コードの違いで取込エラーになる事務・EC担当者。既存6商品はどれも UTF-8 でしか保存できないため、その後ろに使える
 - Stripe 登録業種（データ整形API）との関係：データの変換・整形ツールなので範囲内
@@ -43,3 +43,10 @@
 - 返金：「説明どおりに動かない場合、7日以内なら返金」（特商法表記と同じ）
 - 費用：0円
 - 中身の薄い量産品か：既存6商品（整形・住所・氏名・差分・結合・分割）とは別の作業（文字コード・改行コードの変換と、変換できない文字の特定）。単体で実用になる
+
+## 販売開始（2026-11-20）
+- 公開URL：https://genhayl-shop.pages.dev/mojicode-henkan/
+- Stripe 商品：prod_Vf7Uzmz4ABW3ML（500円・買い切り、本番）／価格 price_1UdnFWKA1rNhuXonmHKKLi6B
+- Payment Link：https://buy.stripe.com/9B69AUc922Dx07q9oq1gs06
+- 完了後の移動先：https://genhayl-shop.pages.dev/mojicode-henkan/tool.html
+- 商品ページの購入ボタン（`#buy`）を Payment Link に差し替え済み
