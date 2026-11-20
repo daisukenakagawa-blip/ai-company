@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>壊れた CSV の点検と修復｜GENHAYL</title>
+<meta name="description" content="取込で「○行目の列数が違います」と出る CSV を点検。列数がそろわない行、閉じ忘れた「&quot;」、セルの中の改行、行末の余分なカンマを行番号つきで一覧にし、直せるものは直して保存します。ブラウザ内で完結。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>壊れた CSV の点検と修復</h1>
+<p>システムに CSV を取り込もうとしたら「○行目の列数が違います」。Excel で開くと途中から列が1つずれている――。原因は、閉じ忘れた「"」で何行もつながってしまった行や、備考欄に入った「,」、行末の余分なカンマであることがほとんどです。このツールは CSV を入れるだけで、どの行から崩れたかを行番号つきで一覧にし、直せるものは直した CSV を作ります。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/dRm7sM5KEdib1bueIK1gs0a">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>点検</b>：行ごとの列数を数え、正しい列数（見出しの列数）と違う行を、テキストエディタと同じ行番号で一覧にします。「最初に崩れたのは何行目か」をすぐ表示します</li>
+<li>見つけるもの：列が多い行・足りない行、閉じ忘れた「"」、「"」の位置がおかしいセル、セルの中の改行、行末の余分な区切り、NUL などの見えない制御文字、見出しの空欄・重複、改行コード（CRLF・LF・CR）の混在</li>
+<li><b>修復</b>：「"」の閉じ忘れで何行もつながった行を1行ずつ読み直す／行末の空の列を削除／足りない列を空欄で補う／はみ出した分を最後の列（備考欄など）につなげる／セルの中の改行を空白に置き換える／制御文字を取り除く。どれも選んで使えます</li>
+<li>自動で直せない行は「要確認の行」として別の CSV に分け、元の行番号を付けます。点検結果の一覧も CSV で保存できます</li>
+<li>読み込み：CSV・TSV（カンマ・タブ・セミコロン・縦線を自動判定、UTF-8・Shift_JIS を自動判定）。保存：UTF-8（BOM 付き／なし）・Shift_JIS</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>困っていること</th><th>このツールでの結果</th></tr>
+<tr><td>取込で「1523行目の列数が違います」と出るが、Excel ではどの行か分からない</td><td>1523行目の中身と、列がいくつ多い（少ない）かを表示</td></tr>
+<tr><td>Excel で開くと途中から全部の行が1つのセルに入ってしまう</td><td>閉じ忘れた「"」の行を見つけ、つながった行を1行ずつに戻した CSV を作成</td></tr>
+<tr><td>備考欄に「火曜, 木曜は不在」のようにカンマが入り、列がずれる</td><td>はみ出した分を備考欄につなげて、列数をそろえた CSV を作成</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>Excel ファイル（.xlsx）は読み込めません。CSV・TSV が対象です</li>
+<li>列数がそろっていても、値の中身（日付や金額の書き方、文字化けした文字の元の文字）は直しません</li>
+<li>どこで列がずれたかを判断できない行は、自動では直さず「要確認の行」に分けます。すべての行を自動で直せるとは限りません</li>
+<li>取込先のシステムごとの決まり（列の順番や必須項目）は確認しません</li>
+<li>パソコンの性能にもよりますが、数十万行を超える大きなファイルは時間がかかったり、処理できないことがあります</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

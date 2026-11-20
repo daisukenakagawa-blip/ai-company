@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>壊れた CSV の点検と修復</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:14px}
+input[type=number]{width:4.5em;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+td.num{text-align:right}
+.ok{color:#047857}.ng{color:#b91c1c;font-weight:700}
+.b{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px}
+.b.fixed{background:#d1fae5;color:#065f46}.b.lost{background:#fee2e2;color:#991b1b}.b.check{background:#fef3c7;color:#92400e}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+td.wrap{white-space:normal;min-width:16em}
+</style>
+<style>
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.tabs label{border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;background:#fff;font-size:14px}
+.tabs label.on{border-color:var(--accent);background:#f0fdfa;font-weight:700}
+.tabs input{margin-right:4px}
+.chk{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}
+.chk label{display:flex;gap:4px;align-items:center}
+input[type=text]{font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;width:8em}
+.hide{display:none!important}
+</style>
+<style>
+.b.severe{background:#fee2e2;color:#991b1b}.b.info{background:#e5e7eb;color:#374151}
+td.wrap{white-space:normal;min-width:18em;word-break:break-all}
+.big{font-size:15px;margin:6px 0}
+.opts{grid-template-columns:minmax(0,1fr)}
+.opts label{display:block}
+.opts select{max-width:100%}
+</style>
+</head>
+<body>
+<main>
+<h1>壊れた CSV の点検と修復</h1>
+<p class="lead">取込で「○行目の列数が違います」と出たときや、Excel で開くと列がずれるときに。CSV を入れると、列数がそろわない行・閉じ忘れた「"」・セルの中の改行などを、メモ帳と同じ行番号つきで一覧にし、直せるものは直して保存します。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <div class="row" style="margin-top:8px"><button class="sub" id="sample" type="button">見本のデータで試す</button></div>
+  <p class="stat" id="finfo"></p>
+</div>
+
+<div class="card">
+  <h2>2. 読み方と直し方</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_head" checked> 1行目は見出し（見出しの列数を正しい列数とします。外すと、いちばん多い列数を正しい列数とします）</label>
+    <label>区切り文字：<select id="o_delim"><option value="auto">自動で判定</option><option value=",">カンマ（,）</option><option value="&#9;">タブ</option><option value=";">セミコロン（;）</option><option value="|">縦線（|）</option></select></label>
+    <label><input type="checkbox" id="o_split" checked> 「"」の閉じ忘れで何行もつながった行は、1行ずつ読み直す</label>
+    <label><input type="checkbox" id="o_trim" checked> 行末の余分な区切り（空の列）は削除する</label>
+    <label><input type="checkbox" id="o_pad" checked> 列が足りない行は、後ろを空欄で補う（外すと要確認ファイルに分けます）</label>
+    <label>列が多い行：<select id="o_long"><option value="review">要確認ファイルに分ける</option><option value="join">はみ出した分を最後の列につなげる（備考欄などに「,」が入っていたとき）</option><option value="keep">そのまま残す（見出しに列を足す）</option></select></label>
+    <label>セルの中の改行：<select id="o_nl"><option value="keep">そのまま残す</option><option value="space">空白に置き換える（改行に対応していない取込先向け）</option></select></label>
+    <label><input type="checkbox" id="o_ctrl" checked> 見えない制御文字（NUL など）を取り除く</label>
+  </div>
+  <p style="margin-top:12px"><button id="go" disabled>点検する</button></p>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <div id="verdict"></div>
+  <div class="sum" id="sum"></div>
+  <div id="warns"></div>
+  <div class="row" style="margin-top:8px">
+    <label>文字コード：<select id="o_enc"><option value="same">読み込んだファイルと同じ</option><option value="utf8bom">UTF-8・BOM 付き（Excel で開ける）</option><option value="utf8">UTF-8・BOM なし</option><option value="sjis">Shift_JIS</option></select></label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <button id="saveOut" disabled>直した CSV</button>
+    <button class="sub" id="saveRev" disabled>要確認の行</button>
+    <button class="sub" id="saveIss" disabled>点検結果の一覧</button>
+  </div>
+  <p class="stat" id="stat"></p>
+  <div class="tbl" id="out"></div>
+  <p class="note">行番号は、メモ帳などのテキストエディタで開いたときの行番号です（Excel の行番号とは、セルの中の改行があると合いません）。「直した CSV」は改行コード CRLF で保存します。</p>
+</div>
+</main>
+
+<script src="tenken.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n){return n.toLocaleString("ja-JP");}
+let file=null,res=null;
+const DN={",":"カンマ","\t":"タブ",";":"セミコロン","|":"縦線"};
+function loadText(name,enc,bom,text){file={name,enc,bom,text};res=null;$("go").disabled=false;
+  $("finfo").textContent=`${name}：${enc==="utf-8"?"UTF-8"+(bom?"（BOM 付き）":""):"Shift_JIS"}・${num(text.length)}文字`;run();}
+function load(f){const r=new FileReader();r.onload=()=>{const t=Tenken.readText(new Uint8Array(r.result));loadText(f.name,t.enc,t.bom,t.text);};r.readAsArrayBuffer(f);}
+function run(){
+  if(!file) return;
+  res=Tenken.check(file.text,{header:$("o_head").checked,delim:$("o_delim").value,split:$("o_split").checked,trim:$("o_trim").checked,pad:$("o_pad").checked,long:$("o_long").value,newline:$("o_nl").value,ctrl:$("o_ctrl").checked});
+  render();
+}
+function render(){
+  ["saveOut","saveRev","saveIss"].forEach(id=>$(id).disabled=!res);
+  if(!res) return;
+  $("saveRev").disabled=!res.review.length;$("saveIss").disabled=!res.issues.length;
+  const sev=res.issues.filter(x=>x.severe).length;
+  $("verdict").innerHTML=sev?`<p class="big ng">列数の崩れなどが ${num(sev)} か所あります。最初に崩れたのは <b>${num(res.firstBroken)} 行目</b>です。</p>`
+    :`<p class="big ok">列数の崩れは見つかりませんでした${res.issues.length?"（気をつけたい点は下の一覧）":""}。</p>`;
+  const e=res.scan.eol,eols=[e.crlf&&"CRLF "+num(e.crlf),e.lf&&"LF "+num(e.lf),e.cr&&"CR "+num(e.cr)].filter(Boolean);
+  const hist=[...res.hist.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}列：${num(v)}行`).join("、");
+  $("sum").innerHTML=`<div>区切り <b>${DN[res.delim]||res.delim}</b></div><div>正しい列数 <b>${num(res.expected)}</b></div><div>直した CSV <b>${num(res.stats.out)}</b> 行</div><div>要確認 <b>${num(res.stats.review)}</b> 行</div>`;
+  let w=`<p class="stat">そのまま読んだときの列数：${esc(hist)}　／　改行コード：${eols.join("・")||"なし"}${res.blank?`　／　空の行：${num(res.blank)}`:""}</p>`;
+  if(eols.length>1) w+=`<div class="warn">改行コードが混ざっています（${eols.join("・")}）。「直した CSV」ではすべて CRLF にそろえます。</div>`;
+  if(res.scan.repl) w+=`<div class="warn">読めない文字（�）が ${num(res.scan.repl)} 個あります。文字コードが混ざっているか、途中で切れたファイルかもしれません。</div>`;
+  if(res.expected===1&&res.stats.out>1) w+=`<div class="warn">1行が1列として読まれています。区切り文字が違うかもしれません。「区切り文字」を選び直してください。</div>`;
+  $("warns").innerHTML=w;
+  const MAX=500,L=res.issues;
+  $("stat").textContent=L.length?(L.length>MAX?`点検結果 ${num(L.length)} 件のうち先頭 ${MAX} 件を表示（「点検結果の一覧」にすべて入っています）`:`点検結果 ${num(L.length)} 件`):"";
+  if(!L.length){$("out").innerHTML="";return;}
+  let h="<table><thead><tr><th>行番号</th><th>種類</th><th>内容</th><th>対応</th></tr></thead><tbody>";
+  L.slice(0,MAX).forEach(x=>{h+=`<tr><td class="num">${x.start===x.end?x.start:x.start+"–"+x.end}</td><td><span class="b ${x.severe?"severe":"info"}">${esc(Tenken.TYPE[x.type])}</span></td><td class="wrap">${esc(x.detail)}</td><td class="wrap">${esc(x.action)}</td></tr>`;});
+  $("out").innerHTML=h+"</tbody></table>";
+}
+function save(name,rows){
+  const d=res.delim;const text=Tenken.toCSV(rows,d);
+  const enc=$("o_enc").value==="same"?(file.enc==="shift_jis"?"sjis":(file.bom?"utf8bom":"utf8")):$("o_enc").value;
+  let bytes;
+  if(enc==="sjis"){const r=Tenken.encodeSJIS(text);bytes=r.bytes;if(r.bad) alert(`Shift_JIS にできない文字が ${r.bad} 個あったため「?」にしました。`);}
+  else bytes=Tenken.encodeUTF8(text,enc==="utf8bom");
+  const b=new Blob([bytes],{type:"text/csv"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=file.name.replace(/\.[^.]+$/,"")+name+(d==="\t"?".tsv":".csv");document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+$("saveOut").addEventListener("click",()=>save("_修復",res.out));
+$("saveRev").addEventListener("click",()=>save("_要確認",res.review));
+$("saveIss").addEventListener("click",()=>save("_点検結果",Tenken.issuesCSV(res.issues)));
+$("go").addEventListener("click",run);
+document.querySelectorAll(".opts input,.opts select").forEach(x=>x.addEventListener("change",run));
+$("sample").addEventListener("click",()=>{
+  const s='会員番号,氏名,住所,備考\n1001,田中 一郎,"東京都新宿区西新宿1-2-3",\n1002,"佐藤, 花子",大阪府大阪市北区1-1,\n1003,鈴木 次郎,"愛知県名古屋市\n中区栄2-3",住所に改行あり\n1004,"山本 三郎,京都府京都市下京区4-5,\n1005,伊藤 四郎,福岡県福岡市中央区6-7,\n1006,加藤 五郎,北海道札幌市中央区8-9,,,\n1007,吉田 六郎,宮城県仙台市青葉区\n1008,中村 七子,広島県広島市中区1-1,火曜, 木曜は不在\n';
+  loadText("見本.csv","utf-8",false,s);
+});
+$("file").addEventListener("change",e=>{if(e.target.files[0]) load(e.target.files[0]);e.target.value="";});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);});
+</script>
+</body>
+</html>
