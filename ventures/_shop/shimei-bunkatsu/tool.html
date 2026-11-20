@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>氏名の姓名分割・ふりがな統一</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e;--ng:#fee2e2;--guess:#e0f2fe}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+label{font-size:14px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.tabs button.on{background:var(--accent);color:#fff}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:24px;text-align:center;color:var(--sub)}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+textarea{width:100%;min-height:140px;font-size:14px;font-family:inherit;border:1px solid var(--line);border-radius:8px;padding:8px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+select{font-size:14px}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+tr.ng td{background:var(--ng)}
+td.guess{background:var(--guess)}
+td.kbad{background:#fef9c3}
+th.new{background:#ccfbf1}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>氏名の姓名分割・ふりがな統一</h1>
+<p class="lead">1つの列に入った氏名を「姓」「名」の列に分け、ふりがなの表記（全角カタカナ／ひらがな、空白）をそろえます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="card">
+  <h2>1. 名簿を入れる</h2>
+  <div class="tabs"><button id="tabCsv" class="on">CSV ファイル</button><button id="tabText">貼り付け</button></div>
+  <div id="paneCsv">
+    <div class="drop" id="drop">ここに CSV をドラッグ&ドロップ、または <input type="file" id="file" accept=".csv,.txt,text/csv"></div>
+    <p class="note">文字コード（UTF-8 / Shift_JIS）は自動で判定します。<label><input type="checkbox" id="hasHeader" checked> 1行目は見出し</label></p>
+    <div class="row">
+      <label>氏名の列 <select id="col" disabled></select></label>
+      <label>ふりがなの列 <select id="kcol" disabled></select></label>
+      <label>分けた列の置き場所 <select id="place"><option value="after">氏名の列のすぐ右</option><option value="end">いちばん右</option></select></label>
+    </div>
+    <div class="stat" id="info"></div>
+  </div>
+  <div id="paneText" class="hide">
+    <p class="note">1行に1人。ふりがなもある場合は、氏名のあとにタブ（Excel からコピーした2列）で区切ってください。</p>
+    <textarea id="text" placeholder="山田　太郎&#9;ﾔﾏﾀﾞ ﾀﾛｳ&#10;佐々木健一&#9;ささき　けんいち"></textarea>
+    <p><button id="runText">分ける</button></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. オプション</h2>
+  <div class="opts">
+    <label><input type="checkbox" id="o_dict" checked> 空白のない氏名は、よくある姓をもとに分ける（青色・要確認）</label>
+    <label><input type="checkbox" id="o_full" checked> 氏名の半角カナを全角にする</label>
+    <label>ふりがなの表記 <select id="o_kind"><option value="kata">全角カタカナ</option><option value="hira">ひらがな</option></select></label>
+    <label><input type="checkbox" id="o_ksplit" checked> ふりがなも「セイ」「メイ」の列に分ける</label>
+    <label><input type="checkbox" id="o_kfix" checked> ふりがなの列そのものも書きそろえる</label>
+  </div>
+  <p class="note">姓と名は空白（全角・半角・複数でも可）で分けます。空白がない氏名は、よくある姓（約330件）に当てはまるときだけ分け、青色で表示します。当てはまらない氏名・外国の方の氏名など区切りが分からないものは赤色で表示し、氏名を「姓」の列に残します。ふりがなは空白で区切られているときだけ分けます。</p>
+</div>
+
+<div class="card">
+  <h2>3. 確認してダウンロード</h2>
+  <div class="row">
+    <button id="dlBtn" disabled>CSV をダウンロード（Excel 向け UTF-8）</button>
+    <label><input type="checkbox" id="bom" checked> BOM を付ける（Excel で文字化けしない）</label>
+    <button id="copyBtn" disabled style="background:#fff;color:var(--accent);border:1px solid var(--accent)">表をコピー（Excel に貼り付け用）</button>
+  </div>
+  <div class="stat" id="stat"></div>
+  <p class="note">先頭の200行を表示しています。赤色の行と青色のセル（推定で分けた氏名・分けられなかったふりがな）、黄色のセル（ふりがなに漢字などが混ざる）は手で確認してください。</p>
+  <div class="tbl" id="preview"></div>
+</div>
+</main>
+
+<script src="shimei.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const line=text.split("\n",1)[0];
+  const d=line.split("\t").length>line.split(",").length?"\t":",";
+  const rows=[];let row=[],f="",q=false,i=0;
+  while(i<text.length){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue;} f+=c;i++;continue; }
+    if(c==='"'&&f===""){q=true;i++;continue;}
+    if(c===d){row.push(f);f="";i++;continue;}
+    if(c==="\r"){i++;continue;}
+    if(c==="\n"){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(v=>v!==""));
+}
+function toCSV(rows){return rows.map(r=>r.map(v=>/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n")+"\r\n";}
+function decode(buf){
+  try{return{text:new TextDecoder("utf-8",{fatal:true}).decode(buf),enc:"UTF-8"};}
+  catch(e){return{text:new TextDecoder("shift_jis").decode(buf),enc:"Shift_JIS"};}
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+let mode="csv", data=null, header=null, fileName="名簿";
+let result=null;
+
+function guessCols(hdr,rows){
+  const n=Math.max(hdr?hdr.length:0,...rows.slice(0,50).map(r=>r.length));
+  let name=0,ns=-1,kana=-1,ks=0;
+  for(let c=0;c<n;c++){
+    const h=hdr?(hdr[c]||""):"";
+    const vals=rows.slice(0,50).map(r=>(r[c]||"").trim()).filter(Boolean);
+    const kanaRate=vals.length?vals.filter(v=>/^[ぁ-ゖァ-ヺｦ-ﾟー・ 　]+$/.test(v)).length/vals.length:0;
+    let k=(/ふりがな|フリガナ|カナ|かな|よみ|ヨミ|kana/i.test(h)?100:0)+kanaRate*10;
+    let s=(/氏名|名前|お名前|姓名|name/i.test(h)&&!/カナ|かな|ふりがな|フリガナ|会社|社名|商品/i.test(h)?100:0);
+    s+=vals.filter(v=>/^[一-鿿々ヶ]{1,5}[ 　]?[ぁ-ゖ一-鿿々ァ-ヶー]{1,5}$/.test(v)).length/Math.max(vals.length,1)*10;
+    if(k>ks&&k>=5){ks=k;kana=c;}
+    if(s>ns&&c!==kana){ns=s;name=c;}
+  }
+  if(name===kana) name=kana===0?1:0;
+  return {name,kana};
+}
+function opt(){return{useDict:$("o_dict").checked,fullKana:$("o_full").checked,kind:$("o_kind").value,ksplit:$("o_ksplit").checked,kfix:$("o_kfix").checked};}
+function run(){
+  if(mode==="text"){
+    const lines=$("text").value.split(/\r?\n/).filter(l=>l.trim()!=="");
+    const two=lines.some(l=>l.includes("\t"));
+    header=two?["氏名","ふりがな"]:["氏名"];data=lines.map(l=>{const p=l.split("\t");return two?[p[0]||"",p[1]||""]:[p[0]];});
+    build(0,two?1:-1,"after");
+  }else if(data){ build(+$("col").value,+$("kcol").value,$("place").value); }
+}
+function build(col,kcol,place){
+  const o=opt();
+  const useK=kcol>=0&&o.ksplit;
+  const cols=useK?["姓","名","セイ","メイ"]:["姓","名"];
+  if(useK&&o.kind==="hira"){cols[2]="せい";cols[3]="めい";}
+  const width=Math.max(header?header.length:0,...data.map(r=>r.length),col+1);
+  const pad=r=>{const a=r.slice();while(a.length<width)a.push("");return a;};
+  const ins=(r,vals)=>{const a=r.slice();if(place==="after")a.splice(col+1,0,...vals);else a.push(...vals);return a;};
+  const start=place==="after"?col+1:width;
+  const kOut=kcol<0?-1:(place==="after"&&kcol>col?kcol+cols.length:kcol);
+  const rows=[],cls=[];let nOk=0,nGuess=0,nNg=0,nKfix=0,nKbad=0;
+  if(header) rows.push(ins(pad(header),cols));
+  data.forEach(r0=>{
+    const r=pad(r0);const c={};
+    const s=Shimei.splitName(r[col],o);
+    const vals=[s.sei,s.mei];
+    if(s.status==="ok")nOk++;else if(s.status==="guess"){nGuess++;c[start]="guess";c[start+1]="guess";}else if(s.status==="ng"){nNg++;c.row="ng";}
+    if(kcol>=0){
+      const k=Shimei.normalizeKana(r[kcol],o.kind);
+      if(k.bad){nKbad++;c[kOut]="kbad";}
+      if(useK){vals.push(k.split?k.sei:k.text,k.split?k.mei:"");if(k.text&&!k.split){c[start+2]="guess";}}
+      if(o.kfix&&k.text!==r[kcol]){r[kcol]=k.text;nKfix++;}
+    }
+    rows.push(ins(r,vals));cls.push(c);
+  });
+  result={rows,cls,start,n:cols.length,hasHeader:!!header,nOk,nGuess,nNg,nKfix,nKbad,kcol:kOut};
+  render();
+}
+function render(){
+  if(!result) return;
+  const {rows,cls,start,n,hasHeader}=result;
+  const body=hasHeader?rows.slice(1):rows;
+  let h="<table><thead><tr><th>#</th>";
+  const hdr=hasHeader?rows[0]:rows[0].map((_,i)=>"列"+(i+1));
+  hdr.forEach((v,i)=>{h+=`<th class="${i>=start&&i<start+n?"new":""}">${esc(v)}</th>`;});
+  h+="</tr></thead><tbody>";
+  body.slice(0,200).forEach((r,i)=>{
+    const c=cls[i]||{};
+    h+=`<tr class="${c.row||""}"><td>${i+1}</td>`;
+    r.forEach((v,j)=>{h+=`<td class="${c[j]||""}">${esc(v)}</td>`;});
+    h+="</tr>";
+  });
+  h+="</tbody></table>";
+  $("preview").innerHTML=h;
+  const R=result;
+  $("stat").textContent=`${body.length}件を処理：空白で分割 ${R.nOk}件 ／ よくある姓から推定 ${R.nGuess}件（青） ／ 要確認 ${R.nNg}件（赤）`+(R.kcol>=0?` ／ ふりがなを書きそろえた ${R.nKfix}件`+(R.nKbad?` ／ ふりがなに漢字などが混ざる ${R.nKbad}件（黄）`:""):"");
+  $("dlBtn").disabled=false;$("copyBtn").disabled=false;
+}
+async function load(file){
+  const buf=await file.arrayBuffer();
+  if(!buf.byteLength){$("info").textContent="空のファイルです";return;}
+  const {text,enc}=decode(buf);
+  const rows=parseCSV(text);
+  if(!rows.length){$("info").textContent="空のファイルです";return;}
+  fileName=file.name.replace(/\.[^.]+$/,"");
+  if($("hasHeader").checked){header=rows[0];data=rows.slice(1);}else{header=null;data=rows;}
+  const n=Math.max(...rows.map(r=>r.length));
+  const g=guessCols(header,data);
+  const name=i=>esc(header?(header[i]||"列"+(i+1)):"列"+(i+1));
+  $("col").innerHTML=Array.from({length:n},(_,i)=>`<option value="${i}" ${i===g.name?"selected":""}>${name(i)}</option>`).join("");
+  $("kcol").innerHTML=`<option value="-1">（なし）</option>`+Array.from({length:n},(_,i)=>`<option value="${i}" ${i===g.kana?"selected":""}>${name(i)}</option>`).join("");
+  $("col").disabled=false;$("kcol").disabled=false;
+  $("info").textContent=`${file.name}（${enc}）：${data.length}行、${n}列。氏名の列は「${$("col").selectedOptions[0].textContent}」、ふりがなの列は「${$("kcol").selectedOptions[0].textContent}」と推定しました。違う場合は選び直してください。`;
+  run();
+}
+$("file").addEventListener("change",e=>{if(e.target.files[0])load(e.target.files[0]);});
+const drop=$("drop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
+["col","kcol","place","o_dict","o_full","o_kind","o_ksplit","o_kfix"].forEach(id=>$(id).addEventListener("change",run));
+$("hasHeader").addEventListener("change",()=>{const f=$("file").files[0];if(f)load(f);});
+$("runText").addEventListener("click",()=>{fileName="名簿";run();});
+function clear(){result=null;$("preview").innerHTML="";$("stat").textContent="";$("dlBtn").disabled=true;$("copyBtn").disabled=true;}
+$("tabCsv").addEventListener("click",()=>{mode="csv";$("tabCsv").classList.add("on");$("tabText").classList.remove("on");$("paneCsv").classList.remove("hide");$("paneText").classList.add("hide");clear();data=null;const f=$("file").files[0];if(f)load(f);});
+$("tabText").addEventListener("click",()=>{mode="text";$("tabText").classList.add("on");$("tabCsv").classList.remove("on");$("paneText").classList.remove("hide");$("paneCsv").classList.add("hide");clear();});
+$("dlBtn").addEventListener("click",()=>{
+  const csv=toCSV(result.rows);
+  const blob=new Blob([($("bom").checked?"﻿":"")+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fileName+"_姓名分割.csv";document.body.appendChild(a);a.click();a.remove();
+});
+$("copyBtn").addEventListener("click",async()=>{
+  const tsv=result.rows.map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
+  try{await navigator.clipboard.writeText(tsv);$("copyBtn").textContent="コピーしました";}catch(e){$("copyBtn").textContent="コピーできませんでした";}
+  setTimeout(()=>$("copyBtn").textContent="表をコピー（Excel に貼り付け用）",2000);
+});
+</script>
+</body>
+</html>
