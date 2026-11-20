@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>JSON ⇔ CSV 変換</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 20px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.tabs button.on{border-color:var(--accent);background:#f0fdfa;color:var(--accent);font-weight:700}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+textarea{width:100%;min-height:140px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:8px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:10px;font-size:14px;grid-template-columns:minmax(0,1fr)}
+.opts label{display:block}
+.opts select,.opts input[type=text]{font-size:14px;max-width:100%}
+input[type=text]{padding:3px 6px;border:1px solid var(--line);border-radius:6px;width:5em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.err{font-size:14px;color:#991b1b;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:pre;text-align:left;max-width:22em;overflow:hidden;text-overflow:ellipsis}
+thead th{position:sticky;top:0;background:#f3f4f6}
+pre.out{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:480px;overflow:auto;font-size:12.5px;margin:0;white-space:pre}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>JSON ⇔ CSV 変換</h1>
+<p class="lead">API や管理画面から出てくる JSON を、Excel で開ける表（CSV）にします。入れ子の項目は「addr.pref」のような列に、配列は1つのセルにまとめるか、列や行に展開します。CSV から JSON を作ることもできます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="tabs" id="tabs">
+  <button type="button" data-m="j2c" class="on">JSON → CSV</button>
+  <button type="button" data-m="c2j">CSV → JSON</button>
+</div>
+
+<div class="card">
+  <h2 id="inTitle">1. JSON を入れる</h2>
+  <div class="drop" id="drop"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="file" accept=".json,.jsonl,.ndjson,.csv,.tsv,.txt,application/json,text/csv,text/plain"></div>
+  <p class="note" style="margin:10px 0 4px">または、下に貼り付け：</p>
+  <textarea id="paste" spellcheck="false" placeholder='[{"id":1,"name":"山田","addr":{"pref":"東京都"}}]'></textarea>
+  <div class="row" style="margin-top:8px"><button class="sub" id="sample" type="button">見本のデータで試す</button><button class="sub" id="clear" type="button">消す</button></div>
+  <p class="stat" id="finfo"></p>
+  <div id="err" class="err hide"></div>
+</div>
+
+<div class="card" id="optJ">
+  <h2>2. 表の作り方</h2>
+  <div class="opts">
+    <label>表にする部分：<select id="j_table"></select></label>
+    <label>配列（["赤","青"] など）の扱い：
+      <select id="j_arr">
+        <option value="join">1つのセルにまとめる（中身がオブジェクトの配列は JSON のまま）</option>
+        <option value="index">番号を付けて列に分ける（tags.1、tags.2 …）</option>
+        <option value="rows">行に展開する（1件を配列の要素の数だけの行にする）</option>
+        <option value="json">JSON の書き方のまま1つのセルに</option>
+      </select></label>
+    <label id="j_joinL">まとめるときの区切り：<select id="j_join"><option value="、">「、」</option><option value=", ">「, 」</option><option value=" / ">「 / 」</option><option value="|">「|」</option><option value="&#10;">改行</option></select></label>
+    <label id="j_explodeL" class="hide">行に展開する配列：<select id="j_explode"></select></label>
+    <label>列名のつなぎ方：<select id="j_keysep"><option value=".">addr.pref</option><option value="_">addr_pref</option><option value="/">addr/pref</option></select></label>
+    <label>null（値なし）の書き方：<select id="j_null"><option value="">空欄</option><option value="null">null と書く</option></select></label>
+    <label>true / false の書き方：<select id="j_bool"><option value="lower">true / false</option><option value="upper">TRUE / FALSE（Excel の書き方）</option></select></label>
+    <label>値の中の改行：<select id="j_nl"><option value="keep">そのまま（セルの中で改行）</option><option value="space">空白に置き換える</option></select></label>
+    <label>保存の形式：<select id="j_enc"><option value="bom">UTF-8（BOM 付き・Excel でそのまま開ける）</option><option value="utf8">UTF-8（BOM なし）</option><option value="sjis">Shift_JIS</option></select>
+      <select id="j_delim"><option value=",">カンマ区切り（.csv）</option><option value="&#9;">タブ区切り（.tsv）</option></select></label>
+  </div>
+</div>
+
+<div class="card hide" id="optC">
+  <h2>2. JSON の作り方</h2>
+  <div class="opts">
+    <label>区切り文字：<select id="c_delim"><option value="auto">自動で判定</option><option value=",">カンマ</option><option value="&#9;">タブ</option><option value=";">セミコロン</option><option value="|">縦線</option></select></label>
+    <label><input type="checkbox" id="c_nest" checked> 見出しの <input type="text" id="c_keysep" value="."> で入れ子にする（「addr.pref」→ {"addr":{"pref":…}}。「tags.1」「tags.2」は配列に戻します）</label>
+    <label>値の型：<select id="c_types"><option value="auto">自動（数字は数値、true/false は真偽値。先頭が0の番号や16桁以上の数字がある列は、列ごと文字のまま）</option><option value="string">すべて文字列</option></select></label>
+    <label>空欄のセル：<select id="c_empty"><option value="empty">""（空の文字列）</option><option value="null">null</option><option value="omit">その項目を書かない</option></select></label>
+    <label><input type="checkbox" id="c_nullword"> 「null」と書かれたセルを null にする</label>
+    <label>1つのセルの複数の値を配列にする区切り：<input type="text" id="c_split" value="" placeholder="なし"> <span class="note">（例：「/」なら「赤/青」→ ["赤","青"]。空欄なら使いません）</span></label>
+    <label>書き出し方：<select id="c_fmt"><option value="2">配列・字下げ2つ（読みやすい）</option><option value="4">配列・字下げ4つ</option><option value="0">配列・1行に詰める</option><option value="lines">JSON Lines（1行に1件）</option></select></label>
+  </div>
+</div>
+
+<div class="card">
+  <h2>3. 結果</h2>
+  <p class="stat" id="rinfo">データを入れると、ここに結果が出ます。</p>
+  <div id="warns"></div>
+  <div class="tbl hide" id="tblWrap"><table id="tbl"></table></div>
+  <pre class="out hide" id="outText"></pre>
+  <div class="row" style="margin-top:12px"><button id="save" type="button" disabled>保存する</button><button class="sub" id="copy" type="button" disabled>コピー</button><span class="note" id="copied"></span></div>
+</div>
+
+<p class="note">うまく変換できないデータがあった場合は、ご購入から7日以内にご連絡ください（<a href="./">商品ページ</a>・<a href="../tokushoho.html">特定商取引法に基づく表記</a>）。</p>
+</main>
+
+<script src="jsoncsv.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let mode="j2c",src={text:"",name:"",enc:"utf-8"},parsed=null,result=null;
+const SAMPLE_J=`{
+  "count": 3,
+  "orders": [
+    {"order_id": 202611200001, "date": "2026-11-20", "customer": {"name": "山田 太郎", "pref": "東京都", "zip": "0100001"},
+     "tags": ["ギフト", "急ぎ"], "paid": true, "note": null,
+     "items": [{"sku": "A-01", "qty": 2, "price": 1200}, {"sku": "B-07", "qty": 1, "price": 3800}]},
+    {"order_id": 202611200002, "date": "2026-11-20", "customer": {"name": "佐藤 花子", "pref": "大阪府", "zip": "5300001"},
+     "tags": [], "paid": false, "note": "午前中に配達\\n玄関前に置く",
+     "items": [{"sku": "C-12", "qty": 3, "price": 650}]},
+    {"order_id": 9007199254740993, "date": "2026-11-21", "customer": {"name": "髙橋 一郎", "pref": "北海道", "zip": "0600001"},
+     "tags": ["定期"], "paid": true, "note": "",
+     "items": [{"sku": "A-01", "qty": 1, "price": 1200}]}
+  ]
+}`;
+const SAMPLE_C=`order_id,date,customer.name,customer.zip,tags.1,tags.2,paid,price
+202611200001,2026-11-20,山田 太郎,0100001,ギフト,急ぎ,TRUE,1200
+202611200002,2026-11-20,佐藤 花子,5300001,,,FALSE,650.5
+9007199254740993,2026-11-21,"髙橋, 一郎",0600001,定期,,TRUE,
+`;
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
+  $("optJ").classList.toggle("hide",m!=="j2c");$("optC").classList.toggle("hide",m!=="c2j");
+  $("inTitle").textContent=m==="j2c"?"1. JSON を入れる":"1. CSV を入れる";
+  $("paste").placeholder=m==="j2c"?'[{"id":1,"name":"山田","addr":{"pref":"東京都"}}]':"id,name,addr.pref\n1,山田,東京都";
+  src={text:"",name:"",enc:"utf-8"};$("paste").value="";$("finfo").textContent="";parsed=null;run();
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+
+function loadText(text,name,enc){
+  src={text,name,enc};parsed=null;
+  $("finfo").textContent=name?`${name}（${enc==="shift_jis"?"Shift_JIS":"UTF-8"}、${text.length.toLocaleString()}文字）`:"";
+  if(mode==="j2c") parseJ();
+  run();
+}
+async function loadFile(f){
+  const u8=new Uint8Array(await f.arrayBuffer());const r=JsonCsv.readText(u8);
+  // 拡張子から向きを合わせる
+  const ext=(f.name.split(".").pop()||"").toLowerCase();
+  if(["csv","tsv"].includes(ext)&&mode!=="c2j") setMode("c2j");
+  if(["json","jsonl","ndjson"].includes(ext)&&mode!=="j2c") setMode("j2c");
+  $("paste").value=r.text.length<200000?r.text:"";
+  loadText(r.text,f.name,r.enc);
+}
+$("file").onchange=e=>{if(e.target.files[0]) loadFile(e.target.files[0]);};
+const drop=$("drop");
+drop.ondragover=e=>{e.preventDefault();drop.classList.add("over");};
+drop.ondragleave=()=>drop.classList.remove("over");
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);};
+let pt=null;
+$("paste").oninput=()=>{clearTimeout(pt);pt=setTimeout(()=>loadText($("paste").value,"",""),300);};
+$("sample").onclick=()=>{const t=mode==="j2c"?SAMPLE_J:SAMPLE_C;$("paste").value=t;loadText(t,"見本",mode==="j2c"?"utf-8":"utf-8");};
+$("clear").onclick=()=>{$("paste").value="";$("file").value="";loadText("","","");$("finfo").textContent="";};
+
+function showErr(m){$("err").textContent=m;$("err").classList.toggle("hide",!m);}
+
+/* ---- JSON → CSV ---- */
+function parseJ(){
+  showErr("");parsed=null;
+  if(!src.text.trim()) return;
+  try{
+    const r=JsonCsv.readJSON(src.text);
+    const tables=JsonCsv.findTables(r.value);
+    parsed={root:r.value,lines:r.lines,tables};
+    const sel=$("j_table");sel.innerHTML="";
+    if(!tables.length){
+      sel.innerHTML='<option value="-1">（全体を1行に）</option>';
+    }else tables.forEach((t,k)=>{
+      const o=document.createElement("option");o.value=k;
+      o.textContent=t.single?JsonCsv.pathLabel(t.path,true):`${JsonCsv.pathLabel(t.path)}（${t.count.toLocaleString()}件）`;
+      sel.appendChild(o);
+    });
+    fillExplode();
+  }catch(e){showErr("JSON として読めませんでした。"+e.message);}
+}
+function currentItems(){
+  if(!parsed) return null;
+  const k=+$("j_table").value;const t=parsed.tables[k];
+  if(!t) return [parsed.root];
+  if(t.single) return [parsed.root];
+  return JsonCsv.getPath(parsed.root,t.path);
+}
+function fillExplode(){
+  const items=currentItems();const sel=$("j_explode");const prev=sel.value;sel.innerHTML="";
+  if(!items) return;
+  const af=JsonCsv.arrayFields(items);
+  if(!af.length){sel.innerHTML='<option value="">（配列の項目がありません）</option>';return;}
+  af.forEach(a=>{const o=document.createElement("option");o.value=JSON.stringify(a.path);o.textContent=`${a.path.join(" › ")}（${a.n.toLocaleString()}件にあり）`;sel.appendChild(o);});
+  if([...sel.options].some(o=>o.value===prev)) sel.value=prev;
+}
+$("j_table").onchange=()=>{fillExplode();run();};
+
+function runJ(){
+  const items=currentItems();
+  if(!items) return null;
+  const arr=$("j_arr").value;
+  $("j_explodeL").classList.toggle("hide",arr!=="rows");
+  $("j_joinL").classList.toggle("hide",arr!=="join"&&arr!=="rows");
+  let explode=null;
+  if(arr==="rows"&&$("j_explode").value) explode=JSON.parse($("j_explode").value);
+  const t=JsonCsv.jsonToTable(items,{
+    arrayMode:arr==="rows"?"join":arr,explode,joinSep:$("j_join").value,keySep:$("j_keysep").value,
+    nullText:$("j_null").value,boolUpper:$("j_bool").value==="upper",newline:$("j_nl").value
+  });
+  return t;
+}
+
+/* ---- CSV → JSON ---- */
+function runC(){
+  if(!src.text.trim()) return null;
+  const dsel=$("c_delim").value;const d=dsel==="auto"?JsonCsv.detectDelim(src.text):dsel;
+  const rows=JsonCsv.parseCSV(src.text,d);
+  if(!rows.length) return null;
+  const r=JsonCsv.tableToJSON(rows[0],rows.slice(1),{
+    nest:$("c_nest").checked,keySep:$("c_keysep").value||".",types:$("c_types").value,
+    empty:$("c_empty").value,nullWord:$("c_nullword").checked,splitArr:$("c_split").value
+  });
+  const f=$("c_fmt").value;
+  r.text=JsonCsv.itemsToText(r.items,f==="lines"?{format:"lines"}:{indent:+f});
+  r.delim=d;r.cols=rows[0].length;
+  return r;
+}
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function run(){
+  result=null;$("warns").innerHTML="";$("tblWrap").classList.add("hide");$("outText").classList.add("hide");
+  $("save").disabled=true;$("copy").disabled=true;$("copied").textContent="";
+  if(mode==="c2j") showErr("");
+  try{
+    if(mode==="j2c"){
+      const t=parsed?runJ():null;
+      if(!t){$("rinfo").textContent=src.text.trim()?"":"データを入れると、ここに結果が出ます。";return;}
+      result=t;
+      $("rinfo").textContent=`${t.rows.length.toLocaleString()}行 × ${t.header.length.toLocaleString()}列`+(t.exploded?`（配列を展開して ${t.exploded.toLocaleString()} 行）`:"")+(parsed.lines?"・JSON Lines として読みました":"")+(t.rows.length>200?"。下の表は先頭200行です":"");
+      t.warn.forEach(w=>$("warns").insertAdjacentHTML("beforeend",`<div class="warn">${esc(w)}</div>`));
+      if(t.header.length>300) $("warns").insertAdjacentHTML("beforeend",`<div class="warn">列が ${t.header.length} 列あります。「番号を付けて列に分ける」で列が増えすぎた場合は、「1つのセルにまとめる」か「行に展開する」をお試しください</div>`);
+      const head="<thead><tr><th>#</th>"+t.header.map(h=>`<th>${esc(h)}</th>`).join("")+"</tr></thead>";
+      const body=t.rows.slice(0,200).map((r,i)=>`<tr><td>${i+1}</td>`+r.map(v=>`<td title="${esc(v)}">${esc(v)}</td>`).join("")+"</tr>").join("");
+      $("tbl").innerHTML=head+"<tbody>"+body+"</tbody>";$("tblWrap").classList.remove("hide");
+    }else{
+      const r=runC();
+      if(!r){$("rinfo").textContent="データを入れると、ここに結果が出ます。";return;}
+      result=r;
+      $("rinfo").textContent=`${r.items.length.toLocaleString()}件・見出し ${r.cols} 列（区切り：${{",":"カンマ","\t":"タブ",";":"セミコロン","|":"縦線"}[r.delim]}）`+(r.text.length>200000?"。下の表示は先頭の一部です":"");
+      r.warn.forEach(w=>$("warns").insertAdjacentHTML("beforeend",`<div class="warn">${esc(w)}</div>`));
+      $("outText").textContent=r.text.length>200000?r.text.slice(0,200000)+"\n…":r.text;$("outText").classList.remove("hide");
+    }
+    $("save").disabled=false;$("copy").disabled=false;
+  }catch(e){showErr("変換できませんでした："+e.message);}
+}
+document.querySelectorAll("#optJ select,#optC select,#optC input").forEach(el=>{el.addEventListener("change",run);if(el.type==="text")el.addEventListener("input",run);});
+
+function baseName(){return (src.name&&src.name!=="見本"?src.name.replace(/\.[^.]+$/,""):"変換結果");}
+function csvText(){const d=$("j_delim").value;return JsonCsv.toCSV(result.header,result.rows,d);}
+$("save").onclick=()=>{
+  let bytes,name,type;
+  if(mode==="j2c"){
+    const text=csvText();const enc=$("j_enc").value;const d=$("j_delim").value;
+    if(enc==="sjis"){const r=JsonCsv.encodeSJIS(text);bytes=r.bytes;if(r.bad) alert(`Shift_JIS にできない文字が ${r.bad} 文字あり、「?」に置き換えました。UTF-8 で保存すると元の文字のまま残ります。`);}
+    else bytes=JsonCsv.encodeUTF8(text,enc==="bom");
+    name=baseName()+(d==="\t"?".tsv":".csv");type="text/csv";
+  }else{
+    bytes=JsonCsv.encodeUTF8(result.text,false);
+    name=baseName()+($("c_fmt").value==="lines"?".jsonl":".json");type="application/json";
+  }
+  const b=new Blob([bytes],{type});const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+};
+$("copy").onclick=async()=>{
+  const t=mode==="j2c"?JsonCsv.toCSV(result.header,result.rows,"\t"):result.text;
+  try{await navigator.clipboard.writeText(t);$("copied").textContent=mode==="j2c"?"コピーしました（タブ区切りなので Excel にそのまま貼り付けられます）":"コピーしました";}
+  catch(_){$("copied").textContent="コピーできませんでした。「保存する」をお使いください";}
+};
+</script>
+</body>
+</html>

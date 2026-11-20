@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON ⇔ CSV 変換｜GENHAYL</title>
+<meta name="description" content="API や管理画面から出てくる JSON を、Excel で開ける CSV に変換。入れ子の項目は列に、配列は1つのセル・列・行に展開。桁の大きい ID も丸めません。CSV から JSON も作れます。ブラウザ内で完結。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+code{font-size:13px;background:#eef2f1;padding:1px 4px;border-radius:4px;word-break:break-all}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>JSON ⇔ CSV 変換</h1>
+<p>管理画面の「エクスポート」や API から受け取ったデータが JSON で、Excel では開けない。中身を表で見たい、取引先に CSV で渡したい――。このツールは JSON を入れるだけで、入れ子になった項目を列に広げ、Excel でそのまま開ける CSV にします。逆に、CSV から JSON を作ることもできます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/8x214o0qkgun6vO3021gs0b">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>JSON → CSV</b>：<code>{"customer":{"name":"山田"}}</code> のような入れ子の項目を <code>customer.name</code> の列に広げます。列は全件の項目を合わせて作るので、件によって項目がなくても列がずれません</li>
+<li><b>表にする部分を選べる</b>：<code>{"count":3,"orders":[…]}</code> のように一覧が奥に入っている JSON でも、配列を見つけて候補に出します</li>
+<li><b>配列の扱いを選べる</b>：「赤、青」のように1つのセルにまとめる／<code>tags.1</code>・<code>tags.2</code> のように列に分ける／注文の明細のように<b>1件を明細の数だけの行に展開</b>する（親の項目は各行にくり返し入れます）</li>
+<li><b>桁の大きい ID を丸めない</b>：<code>9007199254740993</code> のような16桁以上の数字も、書かれたとおりの数字で出力します。先頭の0もそのまま残します</li>
+<li>JSON Lines（1行に1件の形式）も読めます。JSON の書き方に誤りがあるときは「○行目 ○文字目：「}」の前に余分な「,」があります」のように場所を表示します</li>
+<li><b>CSV → JSON</b>：見出しの <code>customer.name</code> を入れ子に戻し、<code>tags.1</code>・<code>tags.2</code> は配列に戻します。数字・true/false の自動判定（先頭が0の番号は文字のまま）、空欄を "" / null / 書かない から選択、JSON Lines での書き出しにも対応</li>
+<li>保存：UTF-8（BOM 付き＝Excel でそのまま開ける／BOM なし）・Shift_JIS、カンマ区切り・タブ区切り。表の結果は Excel にそのまま貼り付けられる形でコピーもできます</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>元のデータ</th><th>このツールでの結果</th></tr>
+<tr><td>注文の JSON（1件に明細が複数入っている）</td><td>「明細1つ＝1行」の表にして、注文番号・日付・お客様名を各行に入れた CSV</td></tr>
+<tr><td>会員の JSON（住所が <code>address</code> の中に入れ子）</td><td><code>address.pref</code>・<code>address.city</code> の列に分かれた CSV</td></tr>
+<tr><td>Excel で作った商品一覧の CSV</td><td>Web サイトやツールの設定に使える JSON（配列・字下げ付き）</td></tr>
+</table></div>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>Excel ファイル（.xlsx）・XML・YAML は読み込めません。JSON・JSON Lines・CSV・TSV が対象です</li>
+<li>JSON の書き方の誤りは場所を表示しますが、自動では直しません</li>
+<li>API や Web サイトからデータを取ってくる機能はありません。お手元のファイルか、貼り付けたテキストを変換します</li>
+<li>CSV → JSON で、16桁以上の数字や先頭が0の番号（郵便番号など）がある列は、値が丸められたり0が消えたりしないよう、列ごと文字列として書き出します</li>
+<li>パソコンの性能にもよりますが、数百MBを超える大きなファイルは時間がかかったり、処理できないことがあります</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>データはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
