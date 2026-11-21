@@ -32,3 +32,4 @@
 ## 消さないこと
 - `index.html` の `<meta name="google-site-verification" ...>` は Google Search Console の所有権確認用（7日目にオーナーが登録）。トップを作り直すときも必ず残す
 - `sitemap.xml` は商品を追加したら1行足す
+- `touban/index.html`・`demo.html`（お試し）・`tool.html`・`touban.js`・`eigyo.js`・`app.js` … 当番表の自動作成（500円）

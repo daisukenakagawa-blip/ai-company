@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>当番表の自動作成 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:14px;font-family:inherit}input[type=text],input[type=date]{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+.scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt td.dl{white-space:normal;font-size:12px;color:var(--sub)}
+.lt tr.over td{color:#9ca3af}.empty{color:#9ca3af}
+.w0{color:#b91c1c}.w6{color:#1d4ed8}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  .pl h1,.pc h1{font-size:18pt;margin:0 0 2mm}.pc h1 span{font-size:14pt;margin-left:6mm;font-weight:400}
+  .per{margin:0 0 4mm;font-size:10pt}
+  .pt{border-collapse:collapse;width:100%;font-size:11pt}.pt th,.pt td{border:.3mm solid #555;padding:1.6mm 2.5mm;text-align:left}
+  .pt th{background:#eee}.pt th.d{width:24mm}.pt th.w{width:15mm;white-space:nowrap}.pt th.bk{width:30mm}.pt tr{break-inside:avoid}
+  .pt.cnt{font-size:9.5pt;margin-top:2mm}.pt.cnt th,.pt.cnt td{white-space:nowrap}.pt.cnt td:last-child{white-space:normal;font-size:8.5pt}.pl h2{font-size:12pt;margin:6mm 0 1mm;break-after:avoid}.cntw{break-inside:avoid}
+  .ft{font-size:10pt;margin-top:4mm}
+  .pc{break-after:page}.pc:last-child{break-after:auto}
+  .ct{border-collapse:collapse;width:100%;table-layout:fixed}
+  .ct th{border:.3mm solid #555;background:#eee;font-size:11pt;padding:1mm}
+  .ct td{border:.3mm solid #555;height:25mm;vertical-align:top;padding:1mm 1.5mm;font-size:10pt;overflow:hidden}
+  .ct td.x{background:#f6f6f6}.ct td.nd{background:#fafafa}
+  .ct .dn{font-weight:700;font-size:11pt}.ct .dn small{font-weight:400;font-size:7pt;margin-left:1.5mm;color:#b91c1c}.ct .dn.hol{color:#b91c1c}
+  .ct .nm{line-height:1.3;margin-top:.6mm;font-size:9pt}.ct .nm span{white-space:nowrap}.ct .nm b{font-size:8pt;color:#333}
+  .w0{color:#b91c1c}.w6{color:#1d4ed8}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<main>
+<h1>当番表の自動作成</h1>
+<p class="lead">メンバーと期間を入れると、出られない日を避けて、回数が偏らない当番表を作ります。名前はこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷と CSV の保存は最初の 10 日分までです。全期間を印刷・保存するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="cols">
+<div class="box">
+  <h2>1. 期間と当番の曜日</h2>
+  <div class="row"><label>始め <input type="date" id="start"></label><label>終わり <input type="date" id="end"></label></div>
+  <div class="row">当番の曜日：
+    <label><input type="checkbox" id="w1" checked>月</label><label><input type="checkbox" id="w2" checked>火</label><label><input type="checkbox" id="w3" checked>水</label><label><input type="checkbox" id="w4" checked>木</label><label><input type="checkbox" id="w5" checked>金</label><label><input type="checkbox" id="w6">土</label><label><input type="checkbox" id="w0">日</label>
+  </div>
+  <div class="row"><label><input type="checkbox" id="skipHol" checked> 祝日は当番なし（振替休日を含む）</label></div>
+  <label class="note">ほかに当番のない日（例：12/29〜12/31、1/2、2027/1/5）</label>
+  <textarea id="offDays" rows="2" placeholder="12/29〜1/3"></textarea>
+</div>
+<div class="box">
+  <h2>2. 係と1日の人数</h2>
+  <textarea id="roles" rows="3">当番 1</textarea>
+  <p class="note">1行に1つ。「掃除 2」のように名前のあとに人数。係が1つなら「当番 1」のままで大丈夫です。</p>
+  <div class="row"><label><input type="checkbox" id="noConsec" checked> 続けて2日入らないようにする（できる限り）</label></div>
+  <details id="priorBox"><summary class="note">前回までの回数を入れて、続きから作る</summary>
+    <textarea id="prior" rows="3" placeholder="山田 花子,4&#10;佐藤 一郎,5"></textarea>
+    <p class="note">「名前,回数」を1行に1人。回数の少ない人から先に入ります。下の「この回数で次の期間を作る」を押すと自動で入ります。</p>
+  </details>
+</div>
+</div>
+
+<div class="box">
+  <h2>3. メンバー（1行に1人）</h2>
+  <textarea id="members" rows="7" placeholder="山田 花子&#9;火&#10;佐藤 一郎,12/24〜12/26&#10;鈴木 美咲"></textarea>
+  <p class="note">名前のあとに、タブかカンマで区切って<b>出られない曜日・日付</b>を書けます（例：「月・金」「12/24」「12/24〜12/26」「土日」）。Excel の表（名前の列と出られない日の列）をコピーして貼り付けても読めます。上の行の人から順に入ります。</p>
+  <div class="row"><button id="make">当番表を作る</button><button class="sub" id="shuffle">名簿の順をまぜて作り直す</button><button class="sub" id="sample">見本を入れる</button></div>
+  <div id="msg" class="note" style="font-size:13px"></div>
+</div>
+
+<div id="out" hidden>
+<div class="cols">
+  <div class="box"><h2>当番表</h2><div class="scroll" id="listView"></div></div>
+  <div class="box"><h2>人ごとの回数</h2><div class="scroll" id="countView"></div>
+    <div class="row"><button class="sub" id="useCounts">この回数で次の期間を作る</button></div></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24"></label></div>
+  <label class="note">下に入れる一言（例：都合が悪いときは、自分で交代相手を探して係に連絡してください）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><label><input type="checkbox" id="printCounts" checked> 一覧に回数表も入れる</label><label><input type="checkbox" id="monStart"> カレンダーは月曜始まり</label></div>
+  <div class="row"><button id="pList">一覧を印刷（A4 縦）</button><button id="pCal">カレンダーで印刷（A4 横・1か月1枚）</button><button class="sub" id="cList">当番表を CSV で保存</button><button class="sub" id="cCount">回数表を CSV で保存</button></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。CSV は Excel で開ける形（UTF-8・BOM 付き）です。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.TOUBAN_LIMIT=10;</script>
+<script src="eigyo.js"></script>
+<script src="touban.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

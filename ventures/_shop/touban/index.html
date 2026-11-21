@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>当番表の自動作成｜出られない日を避けて回数を均等に・カレンダー印刷｜GENHAYL</title>
+<meta name="description" content="メンバーと期間を入れると、出られない曜日・日付を避けて、回数が偏らない当番表を自動で作ります。祝日は自動で除外、1日に複数人・複数の係にも対応。一覧表と月ごとのカレンダーで印刷、CSV 保存。インストール不要、名前は送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>当番表の自動作成</h1>
+<p>メンバーの名前と期間を入れると、<b>出られない曜日・日付を避けて、回数が偏らない当番表</b>を作るツールです。掃除当番・受付当番・戸締まり・PTA や町内会の持ち回りなど、毎月「誰が何回入ったか」を数えながら手で割り振る手間がなくなります。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/dRm8wQ4GA4LFg6o58a1gs0n">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、印刷と CSV の保存は最初の10日分までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="見本のデータで作った当番表（月ごとのカレンダー形式）" width="620"></p>
+<p class="note">見本のデータで作った当番表をカレンダー形式で印刷した例。名前は説明のための架空のものです。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>職場や店の掃除当番・戸締まり当番を、毎月カレンダーを見ながら手で割り振っている</li>
+<li>「火曜は出られない」「12/24〜26 は休み」といった都合を避けながら、回数を同じくらいにしたい</li>
+<li>PTA・町内会・サークルの持ち回りで、偏りがあると不満が出るので、回数の一覧も一緒に配りたい</li>
+<li>先月の続きから、回数の少ない人を先にして来月分を作りたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>期間と曜日</b>：始めと終わりの日、当番のある曜日（平日だけ・土日も など）を選びます。日本の祝日（振替休日を含む）は自動で除けます。年末年始などの休みの日も「12/29〜1/3」のように書いて除けます</li>
+<li><b>メンバーと出られない日</b>：1行に1人。名前のあとに「火」「月・金」「土日」「12/24」「12/24〜12/26」のように出られない曜日・日付を書けます。Excel の表（名前の列と出られない日の列）をコピーして貼り付けても読めます</li>
+<li><b>係と人数</b>：「掃除 2」「戸締まり 1」のように、1日に複数の係・複数人を割り当てられます。同じ日に同じ人が2つの係に入ることはありません</li>
+<li><b>偏らない割り当て</b>：回数の少ない人から順に入れます。回数が同じなら、この先に出られる日が少ない人を先に入れて、出られない日の多い人の回数が少なくなりすぎないようにします。「続けて2日入らない」もできる限り守ります</li>
+<li><b>続きから作る</b>：今回の回数をそのまま「前回までの回数」に入れて、次の期間を作れます。月ごとに作っても、通しで偏りません</li>
+<li><b>印刷・保存</b>：日付ごとの一覧（A4 縦、人ごとの回数表つき）と、1か月1枚のカレンダー（A4 横、日曜始まり・月曜始まり）で印刷できます。CSV（Excel で開ける形）でも保存できます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>表を作ったあと、画面の上で2人を入れ替える機能はありません。入れ替えたいときは、メンバーの都合を書き足して作り直すか、CSV を Excel で開いて直してください</li>
+<li>「この2人は同じ日にする／しない」「新人はベテランと組む」のような組み合わせの条件は指定できません</li>
+<li>時間帯（午前・午後）ごとのシフトや、勤務時間・給与の計算はできません。シフト管理のソフトではありません</li>
+<li>メンバー全員の都合が合わない日は、空欄にして「人数不足」と表示します（無理に入れません）</li>
+<li>メールや LINE での配信はしません。印刷するか、PDF・CSV に保存するところまでです</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで作るなら</h2>
+<p>出られない日がなく、名簿の順に1人ずつ回すだけなら、Excel の式で作れます。A列に日付、名簿を <code>$F$2:$F$7</code> に置いて、2行目から <code>=INDEX($F$2:$F$7, MOD(ROW()-2, ROWS($F$2:$F$7))+1)</code> を下へコピーすると、名簿の順に繰り返し並びます。このツールが向いているのは、<b>出られない日を避けながら回数をそろえたい</b>とき、<b>1日に何人も・何種類もの係がある</b>とき、祝日を除いた日付を自分で並べたくないときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>回数はぴったり同じになりますか？</th><td>出られない日がなければ、差は1回までになります（「続けて2日入らない」を選んでも同じです）。出られない日が多い人や「続けて2日入らない」を選んだときは、その人が入れる日が限られるため差が出ることがあります。画面に1人あたりの回数の幅を表示し、人ごとの回数表も一緒に印刷できます。</td></tr>
+<tr><th>毎回同じ順番になりますか？</th><td>同じ条件なら同じ表になります（名簿の上の人から先に入ります）。順番を変えたいときは「名簿の順をまぜて作り直す」を押してください。</td></tr>
+<tr><th>メンバーの名前はどこかに送られますか？</th><td>送られません。計算・印刷はすべてお使いのブラウザの中で行います。係・表題などの設定だけをブラウザに保存し、名前と出られない日は保存しません。</td></tr>
+<tr><th>祝日はいつまで入っていますか？</th><td>「国民の祝日に関する法律」の決まりから 2010〜2099年の祝日を計算しています。春分の日・秋分の日は、まだ正式に発表されていない年は計算による見込みの日付です。法律が変わった場合は、ツールを更新するまで反映されません。</td></tr>
+<tr><th>何人・何日まで使えますか？</th><td>製品版は人数の制限はありません。1回に作れる期間は1年（366日）までです。</td></tr>
+<tr><th>印刷すると小さくなります</th><td>印刷画面で倍率を「100%（実際のサイズ）」にしてください。カレンダーは用紙の向きが横になります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>名前・出られない日はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">店の休業日を入れた年間カレンダーは <a href="../eigyo-calendar/">年間営業カレンダーの作成・印刷</a>、名札や席札は <a href="../nafuda/">名札・席札の一括印刷</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
