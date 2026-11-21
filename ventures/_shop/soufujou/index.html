@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>送付状（添え状）を取引先一覧から一括作成・印刷｜1社1枚・同封書類と日付を自動で｜GENHAYL</title>
+<meta name="description" content="Excel・CSV の取引先一覧から、宛先・日付・同封書類を入れた A4 の送付状（添え状）を1社1枚でまとめて印刷。会社あては御中、担当者あては様を自動で付け、宛先ごとに違う同封書類や備考も入れられます。インストール不要、データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>送付状の一括作成</h1>
+<p>Excel や CSV の取引先一覧から、<b>宛先・日付・同封書類を入れた A4 の送付状（添え状）</b>を、1社1枚でまとめて印刷するツールです。月末に請求書を何社にも郵送するとき、Word の送付状の宛名と書類名を1枚ずつ書き換える手間がなくなります。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/14A4gA5KE3HB9I07gi1gs0m">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、印刷は先頭3通までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="見本のデータで作った送付状（A4・1社1枚）" width="420"></p>
+<p class="note">見本のデータで作った送付状の例。会社名・氏名・住所は説明のための架空のものです。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>月末に、請求書・納品書を何社にも郵送していて、送付状を Word で1枚ずつ宛名だけ書き換えている</li>
+<li>取引先によって同封する書類（請求書だけ、見積書と工程表、契約書と返信用封筒…）が違い、書き間違いが心配</li>
+<li>会社あては「御中」、担当者あては「様」の付け分けを、毎回確かめている</li>
+<li>封筒の宛名と同じ取引先一覧から、送付状もまとめて作りたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>読み込み</b>：Excel（.xlsx）・CSV（UTF-8／Shift_JIS を自動判定）・表の貼り付け。「会社名」「部署」「役職」「担当者」「同封書類」「備考」などの見出しから列を自動で選びます（選び直し可）</li>
+<li><b>宛先と敬称</b>：担当者の名前がある宛先は「様」（殿・先生も選べます）、名前がない宛先は会社名か部署に「御中」を付けます。役職は名前の前に入れます。郵便番号・住所を宛先の上に入れることもできます</li>
+<li><b>同封書類</b>：全員に共通の書類（「請求書 1部」のように1行に1つ）と、宛先ごとの「同封書類」の列（「見積書 2部、工程表 1部」のように区切って書く）のどちらも使えます。「記」の下に番号つきで並べます</li>
+<li><b>文面</b>：表題（送付状・書類送付のご案内・自由入力）、日付（西暦・和暦）、「拝啓〜敬具」の丁寧な形と、頭語なしの短い形。時候の挨拶は日付の月から選べます（「時下」も選べます）。本文は自由に書き換えられ、{会社名} {氏名} や一覧の列の見出しで宛先ごとの値を差し込めます</li>
+<li><b>そのほか</b>：差出人（住所・会社名・担当者・電話など、1行ずつ）と押印の丸枠、宛先ごとの備考、文書番号、明朝・ゴシック、文字の大きさ。「送る／送らない」の列に「×」「メール」などと書いた行は印刷しません</li>
+<li><b>印刷の前の確認</b>：一覧で宛先・同封書類を確かめられ、宛先や差し込みが空欄の行には印が付きます。1枚に収まらないときは文字を少しだけ小さくし、それでも収まらない送付状をお知らせします</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>メールやFAXの送信はしません。印刷するか、ブラウザの印刷画面で PDF に保存するところまでです（PDF は全員分で1つのファイルになります）</li>
+<li>横書き・A4 縦の1種類の体裁です。縦書きや、会社のロゴ・角印の画像は入れられません</li>
+<li>送付状の書き方（敬語・時候の挨拶）は一般的な例を用意していますが、社内の決まりがある場合は本文を書き換えてお使いください</li>
+<li>Excel の読み込みは1枚目のシートだけです</li>
+<li>1通だけ作るなら、無料で配られている送付状のテンプレートで十分です。このツールは、何社分もまとめて作るときに向いています</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>Word の差し込み印刷と何が違いますか？</th><td>Word でも「差し込み文書」から取引先一覧を差し込めますが、会社あてと個人あてで「御中」「様」を付け分けたり、宛先ごとに数の違う同封書類を「記」の下に並べたりするには、差し込みフィールドの条件を自分で組む必要があります。このツールは列を選ぶだけでそれを行い、1枚に収まらない送付状も知らせます。</td></tr>
+<tr><th>取引先の一覧はどこかに送られますか？</th><td>送られません。読み込み・印刷は、すべてお使いのブラウザの中で行います。差出人や本文などの設定だけをブラウザに保存し、取引先の一覧は保存しません。</td></tr>
+<tr><th>封筒の宛名も印刷できますか？</th><td>封筒の宛名は、同じ取引先一覧を使って <a href="../fuutou-atena/">封筒の宛名印刷</a>（別商品）で印刷できます。</td></tr>
+<tr><th>印刷すると小さくなります</th><td>印刷画面で倍率を「100%（実際のサイズ）」にし、余白を「なし」にしてください。</td></tr>
+<tr><th>何社まで使えますか？</th><td>製品版は件数の制限はありません。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>取引先の一覧はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">封筒は <a href="../fuutou-atena/">封筒の宛名印刷</a>、ラベル用紙は <a href="../atena-label/">宛名ラベルの面付け印刷</a> もあります。取引先一覧の重複は <a href="../meibo-choufuku/">名簿の重複チェック</a> で先に整えられます。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

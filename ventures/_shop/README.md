@@ -27,6 +27,7 @@
 - `tanaoroshi/index.html`・`demo.html`（お試し）・`tool.html`・`sheet.js`・`app.js`・`vendor/` … 棚卸の記入用シート印刷（500円）
 - `nafuda/index.html`・`demo.html`（お試し）・`tool.html`・`nafuda.js`・`app.js`・`vendor/` … 名札・席札の一括印刷（500円）
 - `fuutou-atena/index.html`・`demo.html`（お試し）・`tool.html`・`fuutou.js`・`app.js`・`vendor/` … 封筒の宛名印刷（500円）
+- `soufujou/index.html`・`demo.html`（お試し）・`tool.html`・`soufu.js`・`app.js`・`vendor/` … 送付状の一括作成（500円）
 
 ## 消さないこと
 - `index.html` の `<meta name="google-site-verification" ...>` は Google Search Console の所有権確認用（7日目にオーナーが登録）。トップを作り直すときも必ず残す

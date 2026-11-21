@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>送付状の一括作成 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=date],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 14px}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 400px;gap:16px}.two>div{min-width:0}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+.lw{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+#list{border-collapse:collapse;font-size:12px;width:100%}#list th,#list td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+#list tr[data-i]{cursor:pointer}#list tr.on{background:#f0fdfa}
+.pvw{width:100%;max-width:400px;overflow:hidden;border:1px solid #d1d5db;background:#fff;margin:0 auto}
+.pvw .page{transform-origin:0 0}
+/* 送付状（A4 縦・実寸） */
+.page{position:relative;width:210mm;height:297mm;background:#fff;color:#000;overflow:hidden}
+.page .in{position:absolute;left:22mm;right:22mm;top:20mm;bottom:18mm;overflow:hidden;line-height:1.7}
+.f-mincho{font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","MS PMincho",serif}
+.f-gothic{font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+.s-s{font-size:9.5pt}.s-m{font-size:10.5pt}.s-l{font-size:11.5pt}
+.page .date{text-align:right}
+.page .to{margin-top:3mm}.page .to .ad{font-size:.95em}.page .to .og{font-size:1.05em}
+.page .to .nm{font-size:1.25em;display:inline-block;border-bottom:.25mm solid #000;padding:0 2mm 0 0;margin-top:1mm}
+.page .from{margin:3mm 0 0 auto;width:max-content;max-width:88mm;position:relative}
+.page .from .stampbox{position:absolute;right:-14mm;bottom:0;width:11mm;height:11mm;border:.25mm solid #888;color:#aaa;font-size:7pt;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.page .ttl{text-align:center;font-size:1.7em;letter-spacing:.35em;margin:9mm 0 7mm;font-weight:700}
+.page p{margin:0}.page .bd{text-indent:1em}
+.page .cl,.page .ij{text-align:right}
+.page .ki{text-align:center;margin:6mm 0 3mm}
+.page table.docs{margin:0 auto;width:75%;border-collapse:collapse}
+.page table.docs td{padding:1mm 2mm;border-bottom:.2mm dotted #999}.page table.docs td.n{width:9mm}.page table.docs td.q{text-align:right;white-space:nowrap}
+.page .nt{margin:5mm 0 2mm;border:.25mm solid #999;padding:2.5mm 3.5mm;font-size:.95em}
+.page .ij{margin-top:3mm}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .page{page-break-after:always;break-after:page}
+  #printArea .page:last-child{page-break-after:auto;break-after:auto}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>送付状の一括作成</h1>
+<p class="lead">取引先の一覧（Excel・CSV）から、宛先・日付・同封書類を入れた A4 の送付状（添え状）を1社1枚でまとめて印刷します。データはこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは先頭 3 通までです。全員分を印刷するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 宛先の一覧を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「会社名」「担当者」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しから自動で選んでいます。違っていたら選び直してください。会社名・部署・氏名のうち、ある列だけで大丈夫です。氏名がない宛先は「御中」、氏名がある宛先は敬称（様など）を付けます。「送る／送らない」の列に「×」「不要」「メール」と書いた行は印刷しません。</p>
+<div class="grid" id="mapGrid"></div>
+<div class="row"><label class="mf"><span>敬称（氏名がある宛先・「敬称」の列が空欄のとき）</span><select id="keisho"><option value="様">様</option><option value="殿">殿</option><option value="先生">先生</option></select></label></div>
+</section>
+
+<section class="box" id="step3">
+<h2>3. 送付状の中身</h2>
+<div class="grid">
+<label class="mf"><span>表題</span><select id="title"><option value="送付状">送付状</option><option value="書類送付のご案内">書類送付のご案内</option><option value="書類送付状">書類送付状</option><option value="free">自分で入れる</option></select><input type="text" id="titleFree" placeholder="例：請求書送付のご案内" hidden></label>
+<label class="mf"><span>日付</span><input type="date" id="date"></label>
+<label class="mf"><span>日付の書き方</span><select id="dateStyle"><option value="ymd">2026年11月21日</option><option value="wareki">令和8年11月21日</option><option value="slash">2026/11/21</option></select></label>
+<label class="mf"><span>書き出し</span><select id="style"><option value="formal">拝啓〜敬具（丁寧）</option><option value="simple">頭語なし（本文だけ）</option></select></label>
+<label class="mf"><span>時候の挨拶（日付の月から）</span><select id="season"></select></label>
+<label class="mf"><span>書体</span><select id="font"><option value="mincho">明朝</option><option value="gothic">ゴシック</option></select></label>
+<label class="mf"><span>文字の大きさ</span><select id="size"><option value="m">標準（10.5pt）</option><option value="s">小（9.5pt）</option><option value="l">大（11.5pt）</option></select></label>
+</div>
+<div class="two" style="margin-top:10px"><div>
+<label class="mf"><span>本文（1行ずつ段落になります。{会社名} {氏名} などで宛先ごとの値を差し込めます）</span><textarea id="body" rows="5"></textarea></label>
+<p class="note" id="phList"></p>
+<button class="sub" id="bodyReset" type="button">本文を初めの文に戻す</button>
+</div><div>
+<label class="mf"><span>差出人（1行ずつ。郵便番号・住所・会社名・部署・担当者・電話など）</span><textarea id="sender" rows="6" placeholder="〒000-0000&#10;住所&#10;会社名&#10;部署　担当：氏名&#10;TEL 00-0000-0000"></textarea></label>
+<div class="row"><label><input type="checkbox" id="stamp"> 差出人の横に押印の丸枠</label></div>
+</div></div>
+<div class="two"><div>
+<label class="mf"><span>同封書類（全員に共通。「請求書 1部」のように1行に1つ）</span><textarea id="docs" rows="4" placeholder="請求書 1部&#10;納品書 1部"></textarea></label>
+<label class="mf"><span>宛先ごとの「同封書類」の列の使い方</span><select id="docsMode"><option value="row">宛先ごとの列を使う（空欄の宛先は共通の書類）</option><option value="append">共通の書類のあとに、宛先ごとの書類を足す</option><option value="common">共通の書類だけ（列は使わない）</option></select></label>
+</div><div>
+<label class="mf"><span>備考（全員に共通、空欄可。宛先ごとの「備考」の列があれば、その下に足します）</span><textarea id="note" rows="3"></textarea></label>
+<div class="row"><label><input type="checkbox" id="showAddr"> 宛先の郵便番号・住所も書く</label>
+<label><input type="checkbox" id="numbered"> 文書番号 <input type="text" id="noPrefix" value="" placeholder="頭の文字（例：2026-11-）" style="width:150px"></label></div>
+</div></div>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 確かめて印刷する</h2>
+<div class="two"><div>
+<p id="count" style="font-weight:600;margin:0 0 6px"></p>
+<div class="lw"><table id="list"></table></div>
+<p class="note">行を押すと、右にその送付状を表示します。「確認」に出ている行は、宛先や差し込みが空欄になっていないか確かめてください。</p>
+</div><div>
+<div class="pvw" id="pvw"><div id="pv"></div></div>
+<div class="row" style="justify-content:center"><button class="sub" id="prevBtn">前へ</button><span id="pvNo" class="note"></span><button class="sub" id="nextBtn">次へ</button></div>
+<p id="fitMsg" class="note wtxt"></p>
+</div></div>
+<div class="row"><button id="printBtn">印刷する</button><span id="printMsg" class="note"></span></div>
+<p class="note">印刷画面で、用紙を A4、倍率を 100%（実際のサイズ）、余白を「なし」にしてください。「PDF に保存」を選ぶと、1社1ページの PDF になります（メールで送る場合は、PDF を宛先ごとに分ける作業はご自身で行ってください）。</p>
+</section>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></p>
+</main>
+<div id="printArea"></div>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="soufu.js"></script>
+<script>window.SOUFU_LIMIT=3;</script>
+<script src="app.js"></script>
+</body>
+</html>
