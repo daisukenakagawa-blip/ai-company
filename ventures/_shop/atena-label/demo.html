@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>宛名ラベルの面付け印刷 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:14px 0 6px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+input[type=number]{width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px 14px}
+.grid.s{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 380px;gap:16px}.two>div{min-width:0}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+.tbl{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left;vertical-align:top}
+thead th{background:#f3f4f6;position:sticky;top:0}
+tr.off td{color:#9ca3af}td.w,.wtxt,#sheetMsg{color:#b45309}
+.note{font-size:12px;color:var(--sub)}
+#startGrid{display:grid;gap:3px;max-width:260px}
+#startGrid button{padding:3px 0;font-size:12px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:4px}
+#startGrid button.used{background:#e5e7eb;color:#9ca3af;text-decoration:line-through}
+#startGrid button.first{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pvw{width:100%;max-width:360px;aspect-ratio:210/297;overflow:hidden;border:1px solid #d1d5db;background:#fff;margin:0 auto}
+.pvw .sheet{transform-origin:0 0}
+/* A4 の用紙（実寸） */
+.sheet{position:relative;width:210mm;height:297mm;overflow:hidden;background:#fff;color:#000}
+.sheet.mincho{font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif CJK JP","Noto Serif JP","MS PMincho",serif}
+.sheet.gothic{font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans CJK JP","Noto Sans JP","MS PGothic",sans-serif}
+.lbl{position:absolute;overflow:hidden;display:flex}
+.lbl.bd{outline:0.2mm solid #9ca3af;outline-offset:-0.1mm}
+.lbl.fr{outline-style:dashed}
+.lbl .in{display:flex;flex-direction:column;justify-content:center;width:100%;height:100%}
+.lbl .in.top{justify-content:flex-start}
+.ln{white-space:nowrap;overflow:hidden}
+.ln.name{font-weight:600}
+.ghost{visibility:hidden}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .sheet{page-break-after:always;break-after:page}
+  #printArea .sheet:last-child{page-break-after:auto;break-after:auto}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>宛名ラベルの面付け印刷</h1>
+<p class="lead">住所録（CSV・Excel）から、A4 のラベル用紙（10面〜44面など）に宛名を横書きで並べて印刷します。封筒・小包・DM に。住所録はこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは先頭 3 件までです（用紙の位置合わせの試し刷りは何度でもできます）。全件を印刷するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 住所録を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「氏名」「住所」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しの名前から自動で選んでいます。違っていれば選び直してください。氏名は「姓・名」が別の列でも、1列（姓と名の間に空白）でも使えます。会社名だけの行は「御中」を付けます。</p>
+<div class="grid" id="mapBox"></div>
+</section>
+
+<section class="box" id="step3" hidden>
+<h2>3. 用紙を選ぶ</h2>
+<div class="grid">
+<label class="mf"><span>用紙（A4）</span><select id="preset"></select></label>
+</div>
+<p class="note">よくある寸法の例です。<b>お手元のラベル用紙の箱や説明書に書かれた寸法</b>（ラベルの大きさ・上と左の余白・すき間）と同じか確かめ、違えば下の数字を直してください。</p>
+<div class="grid s">
+<label class="mf"><span>列の数</span><input type="number" id="cols" min="1" max="10" step="1"></label>
+<label class="mf"><span>段の数</span><input type="number" id="rows" min="1" max="20" step="1"></label>
+<label class="mf"><span>ラベルの幅（mm）</span><input type="number" id="w" step="0.1"></label>
+<label class="mf"><span>ラベルの高さ（mm）</span><input type="number" id="h" step="0.1"></label>
+<label class="mf"><span>上の余白（mm）</span><input type="number" id="top" step="0.1"></label>
+<label class="mf"><span>左の余白（mm）</span><input type="number" id="left" step="0.1"></label>
+<label class="mf"><span>横のすき間（mm）</span><input type="number" id="gx" step="0.1" value="0"></label>
+<label class="mf"><span>縦のすき間（mm）</span><input type="number" id="gy" step="0.1" value="0"></label>
+</div>
+<p id="sheetMsg" class="note"></p>
+<h3>1枚目の何面目から貼るか（使いかけの用紙）</h3>
+<div class="row" style="align-items:flex-start"><div id="startGrid"></div><p id="startNote" class="note" style="max-width:420px"></p></div>
+<h3>文字と位置</h3>
+<div class="grid s">
+<label class="mf"><span>並べる順</span><select id="order"><option value="across">横へ（左→右、次の段）</option><option value="down">縦へ（上→下、次の列）</option></select></label>
+<label class="mf"><span>文字の大きさ（mm）</span><input type="number" id="fs" value="3.6" step="0.1" min="2" max="8"></label>
+<label class="mf"><span>ラベルの内側の余白（mm）</span><input type="number" id="pad" value="4" step="0.5" min="0" max="15"></label>
+<label class="mf"><span>縦の位置</span><select id="align"><option value="mid">中央</option><option value="top">上</option></select></label>
+<label class="mf"><span>書体</span><select id="font"><option value="gothic">ゴシック体</option><option value="mincho">明朝体</option></select></label>
+<label class="mf"><span>番地などの数字</span><select id="numStyle"><option value="keep">住所録のまま</option><option value="half">半角にそろえる</option><option value="full">全角にそろえる</option></select></label>
+<label class="mf"><span>敬称（敬称の列が空のとき）</span><select id="keisho"><option>様</option><option>殿</option><option>先生</option><option>さん</option></select></label>
+<label class="mf"><span>ずれの補正：右へ（mm）</span><input type="number" id="offX" value="0" step="0.5" min="-10" max="10"></label>
+<label class="mf"><span>ずれの補正：下へ（mm）</span><input type="number" id="offY" value="0" step="0.5" min="-10" max="10"></label>
+</div>
+<p class="note">長い住所・会社名は、その行だけ文字を小さくしてラベルに収めます。氏名は大きめに印刷します。設定はこのブラウザに保存され、次回も使えます（サーバーには送りません）。</p>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 確かめて印刷する</h2>
+<div class="two">
+<div>
+<div class="row"><span id="count"></span><button class="sub" id="allOn">全部選ぶ</button><button class="sub" id="allOff">全部外す</button></div>
+<div class="tbl"><table><thead><tr><th>印刷</th><th>#</th><th>宛名</th><th>〒</th><th>住所</th><th>確認</th></tr></thead><tbody id="list"></tbody></table></div>
+<p class="note">チェックを外した行は印刷しません。住所録の「印刷」列に「×」「0」「不要」などがある行は、最初から外しています。</p>
+</div>
+<div>
+<div class="pvw" id="pvw"><div id="pv"></div></div>
+<p id="pvNote" class="note" style="text-align:center"></p>
+</div>
+</div>
+<div class="box" style="margin-top:12px;background:#f9fafb">
+<b>印刷の手順</b>
+<ol style="font-size:14px;margin:6px 0 10px;padding-left:20px">
+<li>まず<b>普通紙で試し刷り</b>：「試し刷り（1枚目・枠つき）」を押し、印刷画面で用紙を「A4」、倍率を「100%（実際のサイズ）」、余白を「なし」にします。印刷した紙をラベル用紙に重ね、明るい所に透かして枠が合うか確かめます</li>
+<li>ずれていたら「ずれの補正」で直します。全体ではなく下の段ほどずれるときは、ラベルの高さ・すき間の数字を見直します</li>
+<li>ラベル用紙をセットし、「印刷する」を押します</li>
+</ol>
+<div class="row"><button class="sub" id="testBtn">試し刷り（1枚目・枠つき）</button><button id="printBtn">印刷する</button>
+<label><input type="checkbox" id="border"> 本番でも枠を印刷する（普通紙に印刷して切るとき）</label></div>
+<p class="note">プリンターによっては、用紙の端の数ミリに印刷できません。余白のない用紙（21面など）は、端の文字が欠けないよう、内側の余白を広めにしてください。</p>
+</div>
+</section>
+<p class="note">住所録・設定は、このページの外へ送信しません。困ったときは <a href="../tokushoho.html">特定商取引法に基づく表記</a> の連絡先へ。</p>
+</main>
+<div id="printArea"></div>
+<script>window.LABEL_LIMIT=3;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="atena.js"></script>
+<script src="label.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

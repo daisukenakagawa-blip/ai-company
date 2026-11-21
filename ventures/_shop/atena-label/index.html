@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>宛名ラベルの面付け印刷（A4 ラベル用紙）ブラウザだけで・Mac でも｜GENHAYL</title>
+<meta name="description" content="住所録（Excel・CSV）から、A4 のラベル用紙（10面・12面・18面・21面・24面・44面など）に宛名を並べて印刷。寸法は mm で直せて、使いかけの用紙の途中の面からも印刷できます。インストール不要、住所録は送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>宛名ラベルの面付け印刷</h1>
+<p>Excel や CSV の住所録から、<b>A4 のラベル用紙</b>に宛名を並べて印刷するツールです。封筒・小包・DM・会報の発送に。ソフトのインストールは不要で、<b>Mac でも Windows でも</b>、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/4gMbJ25KE1ztg6o3021gs0i">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、宛名の印刷は先頭3件まで（用紙の位置合わせの試し刷りは何度でもできます）。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="12面のラベル用紙に印刷した例（架空の住所・氏名）" width="560"></p>
+<p class="note">12面の用紙に印刷した例（試し刷りの枠つき）。住所・氏名は架空のものです。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>封筒に貼る宛名ラベルを作りたいが、Word の差し込み印刷は設定が多くて毎回つまずく</li>
+<li>ラベル用紙の付属ソフトが、Mac や今のパソコンでは使えない</li>
+<li>前回の残りのラベル用紙（途中まで使ったもの）を無駄にしたくない</li>
+<li>住所録は Excel で管理していて、それをそのまま使いたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>住所録の読み込み</b>：Excel（.xlsx）・CSV（UTF-8／Shift_JIS を自動判定）・表の貼り付け。「氏名」「郵便番号」「住所」などの見出しから列を自動で選びます（選び直し可）</li>
+<li><b>用紙</b>：A4 の 10面・12面・18面・21面・24面・44面の寸法の例から選べます。ラベルの大きさ・上と左の余白・すき間を mm で直せるので、お手元の用紙の寸法に合わせられます（設定はブラウザに保存）</li>
+<li><b>使いかけの用紙</b>：1枚目の何面目から貼るかを、面の図を押して選べます</li>
+<li><b>宛名の体裁</b>：〒郵便番号、住所、建物名、会社名・部署、氏名＋敬称（氏名は大きめ）。会社名だけの宛名は「御中」。連名は名の位置をそろえて並べます</li>
+<li><b>文字の大きさの自動調整</b>：長い住所や会社名は、その行だけ小さくしてラベルからはみ出さないようにします。小さくなりすぎる行は一覧で知らせます</li>
+<li><b>位置合わせ</b>：普通紙に枠つきで試し刷りし、ずれは 0.5mm 単位で補正できます。並べる順（横へ／縦へ）、書体、数字の全角・半角も選べます</li>
+<li><b>出さない人を外す</b>：一覧でチェックを外すか、住所録の「印刷」列に「×」「0」などがあれば外します</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>A4 のラベル用紙だけです。ロール状のラベル（ラベルプリンター用）、はがき、封筒への直接印刷には対応していません（はがきは <a href="../atena-hagaki/">はがきの宛名印刷（縦書き）</a>）</li>
+<li>横書きのみです。縦書きの宛名ラベルには対応していません</li>
+<li>用紙の寸法の例は一般的な値です。特定のメーカーの品番の寸法を保証するものではありません。お手元の用紙の箱に書かれた寸法をご確認ください</li>
+<li>人名の外字（パソコンにない字）は印刷できません。住所の正しさ（郵便番号と住所が合っているか）は調べません</li>
+<li>印刷の仕上がりは、プリンターと用紙の設定によって変わります。<b>お試し版での試し刷りをおすすめします</b></li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>住所録はどこかに送られますか？</th><td>送られません。読み込み・配置・印刷は、すべてお使いのブラウザの中で行います。</td></tr>
+<tr><th>下の段ほどずれていきます</th><td>ラベルの高さか縦のすき間の数字が、用紙と少し違っています。箱の寸法を確かめて直してください。全体が同じだけずれるときは「ずれの補正」で直します。</td></tr>
+<tr><th>印刷すると少し小さくなります</th><td>印刷画面で倍率を「100%（実際のサイズ）」にし、「用紙に合わせる」を外してください。</td></tr>
+<tr><th>何件まで印刷できますか？</th><td>製品版は件数の制限はありません。次回以降も同じ画面で使えます。</td></tr>
+<tr><th>連絡先アプリの住所録を使いたい</th><td>連絡先ファイル（.vcf）は、<a href="../renrakusaki/">連絡先ファイル（.vcf）⇔ CSV 変換</a> で CSV にしてから読み込めます。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>住所録はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

@@ -20,6 +20,7 @@
 - `retsu-soroe/index.html` と `tool.html`・`soroe.js` … 列そろえ（取込形式テンプレート）（980円）
 - `renban-check/index.html` と `tool.html`・`renban.js` … 番号の抜け・重複チェック（500円）
 - `atena-hagaki/index.html`・`demo.html`（お試し）・`tool.html`・`atena.js`・`app.js`・`vendor/` … はがきの宛名印刷（980円）
+- `atena-label/index.html`・`demo.html`（お試し）・`tool.html`・`atena.js`・`label.js`・`app.js`・`vendor/` … 宛名ラベルの面付け印刷（500円）
 - `eigyoubi/index.html` と `tool.html`・`eigyo.js` … 営業日の計算（500円）
 - `renrakusaki/index.html` と `tool.html`・`vcard.js` … 連絡先ファイル（.vcf）⇔ CSV 変換（500円）
 - `eigyo-calendar/index.html` と `tool.html`・`calendar.js`・`eigyo.js`・`cal.css` … 年間営業カレンダーの作成・印刷（500円）
