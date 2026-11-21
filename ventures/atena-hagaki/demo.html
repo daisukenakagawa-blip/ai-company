@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>はがきの宛名印刷（縦書き）お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 380px;gap:16px}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+.tbl{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left;vertical-align:top}
+thead th{background:#f3f4f6;position:sticky;top:0}
+tr{cursor:pointer}tr.cur td{background:#ecfeff}tr.off td{color:#9ca3af}td.w,.wtxt{color:#b45309}
+.note{font-size:12px;color:var(--sub)}
+.pvw{width:100%;max-width:360px;aspect-ratio:100/148;overflow:hidden;border:1px solid #d1d5db;background:#fff;margin:0 auto}
+.pvw .hagaki{transform-origin:0 0}
+/* はがき（実寸） */
+.hagaki{position:relative;width:100mm;height:148mm;overflow:hidden;background:#fff;color:#000}
+.hagaki.mincho{font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif CJK JP","Noto Serif JP","MS PMincho",serif}
+.hagaki.gothic{font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans CJK JP","Noto Sans JP","MS PGothic",sans-serif}
+.hagaki.test{outline:0.3mm solid #9ca3af;outline-offset:-0.3mm}
+.zbox{position:absolute;border:0.3mm solid #e11d48}
+.zd{position:absolute;text-align:center;font-family:"Helvetica Neue",Arial,"Noto Sans",sans-serif;font-size:5.6mm}
+.ch{position:absolute;writing-mode:vertical-rl;text-align:center;line-height:1;display:flex;align-items:center;justify-content:center}
+.tx{position:absolute;white-space:nowrap}
+#printArea{display:none}
+@media print{
+  @page{size:100mm 148mm;margin:0}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .hagaki{page-break-after:always;break-after:page}
+  #printArea .hagaki.test{outline:0.2mm solid #9ca3af}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>はがきの宛名印刷（縦書き）</h1>
+<p class="lead">住所録（CSV・Excel）から、年賀状・喪中はがき・寒中見舞いなどの宛名面を縦書きで印刷します。住所録はこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは先頭 3 枚までです。全件を印刷するには <a href="./">製品版（980円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 住所録を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「氏名」「住所」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しの名前から自動で選んでいます。違っていれば選び直してください。氏名は「姓・名」が別の列でも、1列（姓と名の間に空白）でも使えます。連名は「花子」のように名だけなら、上の人の名の位置にそろえます。1つのセルに「花子、一郎」と複数書いても構いません。</p>
+<div class="grid" id="mapBox"></div>
+</section>
+
+<section class="box" id="step3" hidden>
+<h2>3. 差出人と印刷の設定</h2>
+<div class="row"><label><input type="checkbox" id="useSender" checked> 差出人を印刷する</label></div>
+<div class="grid">
+<label class="mf"><span>差出人の郵便番号</span><input type="text" id="sZip" placeholder="105-0023"></label>
+<label class="mf"><span>差出人の住所</span><input type="text" id="sAddr1" placeholder="東京都港区芝浦1-2-3"></label>
+<label class="mf"><span>建物名など</span><input type="text" id="sAddr2" placeholder="サンプルマンション101"></label>
+<label class="mf"><span>差出人の氏名（姓と名の間に空白）</span><input type="text" id="sName" placeholder="山田 太郎"></label>
+<label class="mf"><span>差出人の連名（名だけ、「、」区切り）</span><input type="text" id="sRenmei" placeholder="花子、一郎"></label>
+</div>
+<div class="grid" style="margin-top:10px">
+<label class="mf"><span>番地などの数字</span><select id="numStyle"><option value="kanji">漢数字（一ー二ー三）</option><option value="zen">そのまま（１ー２ー３）</option></select></label>
+<label class="mf"><span>書体</span><select id="font"><option value="mincho">明朝体</option><option value="gothic">ゴシック体</option></select></label>
+<label class="mf"><span>敬称（敬称の列が空のとき）</span><select id="keisho"><option>様</option><option>殿</option><option>先生</option><option>さん</option></select></label>
+<label class="mf"><span>ずれの補正：右へ（mm、左はマイナス）</span><input type="number" id="offX" value="0" step="0.5" min="-10" max="10"></label>
+<label class="mf"><span>ずれの補正：下へ（mm、上はマイナス）</span><input type="number" id="offY" value="0" step="0.5" min="-10" max="10"></label>
+</div>
+<p class="note">差出人と設定は、このブラウザに保存され、次回も使えます（サーバーには送りません）。</p>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 確かめて印刷する</h2>
+<div class="two">
+<div>
+<div class="row"><span id="count"></span><button class="sub" id="allOn">全部選ぶ</button><button class="sub" id="allOff">全部外す</button></div>
+<div class="tbl"><table><thead><tr><th>印刷</th><th>#</th><th>宛名</th><th>〒</th><th>住所</th><th>確認</th></tr></thead><tbody id="list"></tbody></table></div>
+<p class="note">行を押すと右に表示します。チェックを外した行は印刷しません。</p>
+</div>
+<div>
+<div class="pvw" id="pvw"><div id="pv"></div></div>
+<div class="row" style="justify-content:center"><button class="sub" id="prev">← 前</button><span id="pvNote" class="note"></span><button class="sub" id="next">次 →</button></div>
+<p class="note">画面の赤い枠は位置の目安です（本番の印刷では印刷しません）。</p>
+</div>
+</div>
+<div class="box" style="margin-top:12px;background:#f9fafb">
+<b>印刷の手順</b>
+<ol style="font-size:14px;margin:6px 0 10px;padding-left:20px">
+<li>まず<b>普通紙で試し刷り</b>：「試し刷り（1枚）」を押し、印刷画面で用紙を「はがき」、倍率を「100%（実際のサイズ）」、余白を「なし」にします。印刷した紙をはがきに重ねて、郵便番号が枠に入るか確かめます</li>
+<li>ずれていたら、上の「ずれの補正」で mm 単位で直します</li>
+<li>はがきをプリンターにセットし、「印刷する」を押します。同じ設定で全件を印刷します</li>
+</ol>
+<div class="row"><button class="sub" id="testBtn">試し刷り（1枚・枠つき）</button><button id="printBtn">印刷する</button>
+<label><input type="checkbox" id="printBoxes"> 本番でも枠を印刷する（普通紙に印刷するとき）</label></div>
+<p class="note">はがきの向き・表裏の入れ方はプリンターによって違います。プリンターの説明書の「はがきの宛名面」の入れ方に従ってください。</p>
+</div>
+</section>
+
+<p class="note">住所録はこのブラウザの中だけで処理し、どこにも送信しません。お問い合わせ・返金は <a href="../tokushoho.html">特定商取引法に基づく表記</a> の連絡先へ。</p>
+</main>
+<div id="printArea"></div>
+<script>window.ATENA_LIMIT=3;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="atena.js"></script>
+<script src="app.js"></script>
+<script>
+// 画面のはがき表示を枠の大きさに合わせる
+(function(){function fitPv(){var w=document.getElementById("pvw");var h=w.querySelector(".hagaki");if(!h)return;var mm=h.offsetWidth/100;h.style.transform="scale("+(w.clientWidth/(100*mm))+")";}
+new MutationObserver(fitPv).observe(document.getElementById("pv"),{childList:true});window.addEventListener("resize",fitPv);})();
+</script>
+</body>
+</html>

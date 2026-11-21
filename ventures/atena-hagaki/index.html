@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>はがきの宛名印刷（縦書き）ブラウザだけで・Mac でも｜GENHAYL</title>
+<meta name="description" content="年賀状・喪中はがきの宛名面を、住所録（Excel・CSV）から縦書きで印刷。インストール不要、Mac・Windows のブラウザで動きます。番地の漢数字、連名、差出人、郵便番号の位置合わせに対応。住所録は送信しません。980円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin-left:8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+</style>
+</head>
+<body>
+<main>
+<h1>はがきの宛名印刷（縦書き）</h1>
+<p>年賀状・喪中はがき・寒中見舞いの<b>宛名面</b>を、Excel や CSV の住所録から縦書きで印刷するツールです。ソフトのインストールは不要で、<b>Mac でも Windows でも</b>、いつものブラウザで動きます。</p>
+
+<div class="price">980円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/dRm00kc924LF5rK6ce1gs0f">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、印刷は先頭3枚まで。プリンターでの位置合わせまで、購入前に確かめられます。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="印刷結果の例（架空の住所・氏名）" width="720"></p>
+<p class="note">印刷結果の例。住所・氏名は架空のものです。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>宛名印刷のソフトが Windows 用しかなく、Mac では使えない</li>
+<li>年に一度のために、宛名ソフトを買ったり入れたりしたくない</li>
+<li>住所録は Excel で管理していて、それをそのまま使いたい</li>
+<li>Word の差し込み印刷は、毎年やり方を忘れてしまう</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>住所録の読み込み</b>：Excel（.xlsx）・CSV（UTF-8／Shift_JIS を自動判定）・表の貼り付け。「氏名」「郵便番号」「住所」などの見出しから列を自動で選びます（選び直し可）。姓・名が別の列でも、1列でも使えます</li>
+<li><b>縦書きの体裁</b>：番地の数字を漢数字に（「1-2-3」→「一ー二ー三」、「20丁目」→「二十丁目」、部屋番号「1203」→「一二〇三」）。英字は全角に。数字をそのまま（全角）にもできます</li>
+<li><b>長い住所</b>：1列に入らない住所は、市区町村の後ろなどで2列に分けます。建物名は別の列に。住所の列に建物名が一緒に入っていても、番地の後ろの空白で分けます</li>
+<li><b>連名</b>：4人まで（「花子」のように名だけなら、名の位置と「様」をそろえます）。敬称の列があればそれを使い、なければ「様」など選んだ敬称。会社名だけの宛名は「御中」</li>
+<li><b>差出人</b>：住所・氏名・連名を左下に。郵便番号は左下に「〒123-4567」の形で印刷します。一度入れればブラウザに保存されます</li>
+<li><b>位置合わせ</b>：郵便番号は、日本郵便の示す郵便番号枠の位置（はがきの上端から12mm・右端から8mm）に合わせて印刷。普通紙に枠つきで試し刷りし、ずれは 0.5mm 単位で補正できます</li>
+<li><b>出さない人を外す</b>：一覧でチェックを外すか、住所録の「印刷」列に「×」「0」などがあれば外します（喪中の方など）</li>
+<li>明朝体・ゴシック体を選べます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>はがきの<b>宛名面だけ</b>です。裏面（絵柄・写真）や、封筒・ラベルシートには対応していません</li>
+<li>はがきは縦書きのみです。横書きの宛名には対応していません</li>
+<li>人名の外字（パソコンにない字）は印刷できません。住所録に入っている文字のとおりに印刷します</li>
+<li>住所の正しさ（郵便番号と住所が合っているか）は調べません</li>
+<li>差出人の郵便番号は、枠ではなく「〒」つきの文字で印刷します</li>
+<li>印刷の仕上がりは、プリンターと用紙の設定によって変わります。<b>お試し版での試し刷りをおすすめします</b></li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>住所録はどこかに送られますか？</th><td>送られません。読み込み・計算・印刷は、すべてお使いのブラウザの中で行います。</td></tr>
+<tr><th>他の宛名ソフトの住所録は使えますか？</th><td>そのソフトから CSV で書き出せば使えます。見出しが違っても、列は画面で選び直せます。</td></tr>
+<tr><th>郵便番号が枠からずれます</th><td>印刷画面で倍率を「100%（実際のサイズ）」、余白を「なし」にしてください。それでもずれる場合は、「ずれの補正」で mm 単位で直せます。</td></tr>
+<tr><th>何枚まで印刷できますか？</th><td>製品版は枚数の制限はありません。来年以降も同じ画面で使えます。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>住所録はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
