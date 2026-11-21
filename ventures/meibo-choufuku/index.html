@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>名簿の重複チェック（よく似た行も検出）｜GENHAYL</title>
-<meta name="description" content="顧客名簿・会員名簿の CSV から、二重登録をブラウザだけで探すツール。電話番号・メールの一致に加え、「(株)」と「株式会社」、「1丁目2番3号」と「1-2-3」、1文字違いの氏名も候補に出します。">
+<meta name="description" content="顧客名簿・会員名簿の CSV から、二重登録をブラウザだけで探すツール。先頭30行までなら無料で試せます。電話番号・メールの一致に加え、「(株)」と「株式会社」、「1丁目2番3号」と「1-2-3」、1文字違いの氏名も候補に出します。">
 <style>
 body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
 main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
@@ -14,6 +14,10 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
 .tw{overflow-x:auto}
 table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}
 .keep td{background:#dcfce7}.dup td{background:#fef9c3}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px}
+.try textarea{width:100%;box-sizing:border-box;font-family:ui-monospace,Menlo,monospace;font-size:13px;min-height:150px}
+.try button{background:#0f766e;color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:15px;cursor:pointer}
+.tg{margin-top:10px}.tg .gh{font-size:14px;font-weight:600;margin:12px 0 4px}.tg .gh span{font-weight:400;color:#6b7280;font-size:13px}
 .note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
 </style>
 </head>
@@ -25,6 +29,23 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 <div class="price">980円（税込・買い切り）</div>
 <p><a class="buy" id="buy" href="https://buy.stripe.com/9B69AUeha1zt8DW0RU1gs07">購入する（Stripe）</a></p>
 <p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>先頭30行まで、ここで無料で試せます</h2>
+<div class="try">
+<p class="note" style="margin-top:0">CSV を貼り付けるか、ファイルを選んでください（1行目は見出し）。見出しと中身から氏名・電話・メール・住所などの列を見分けて、重複の候補を探します。データはこのページの中だけで処理し、送信しません。下の例は架空のデータです。</p>
+<textarea id="t_text" aria-label="CSV の貼り付け欄">氏名,会社名,電話,メール,住所
+山田 太郎,株式会社サンプル,03-1234-5678,yamada@example.com,東京都港区芝浦一丁目2番3号
+佐藤 花子,,090-1111-2222,hanako@example.jp,大阪府大阪市北区梅田3-1-1
+山田太郎 様,(株)サンプル,０３（１２３４）５６７８,,東京都港区芝浦1-2-3
+鈴木 次郎,,,jiro@example.net,東京都新宿区西新宿2-8-1
+高橋 一郎,見本工業,045-000-1111,,神奈川県横浜市西区1-1
+鈴木 二郎,,,,東京都新宿区西新宿二丁目8番1号
+さとう はなこ,,,Hanako@Example.jp ,大阪府大阪市北区梅田3丁目1-1</textarea>
+<p style="margin:8px 0 0"><button id="t_run" type="button">重複を探してみる</button> または <input type="file" id="t_file" accept=".csv,.txt,text/csv" aria-label="CSV ファイルを選ぶ"></p>
+<div class="note" id="t_info" style="margin-top:8px"></div>
+<div class="tg" id="t_out"></div>
+<p class="note" id="t_after" hidden>緑が残す行、黄色が重複の候補です（残す行は、空欄がいちばん少ない行）。<b>全部の行の検査と、重複を除いた名簿・確認用の名簿のダウンロードはご購入後</b>のツールで行えます。列の種類や使い方の選び直し、「似ている」の基準（70〜100%）の調整、残す行の選び直しもツールでできます。</p>
+</div>
 
 <h2>こんなときに</h2>
 <ul>
@@ -53,6 +74,14 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 </table></div>
 <p class="note">名前の例は架空のものです。</p>
 
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>Excel の「重複の削除」との違い</b>：Excel は、選んだ列の文字がすべて同じ行だけを消します。「山田太郎」と「山田 太郎 様」、「03-1234-5678」と「０３（１２３４）５６７８」は別の行として残ります。このツールは書き方の違いをそろえてから比べ、消す前に候補を一覧で確かめられます</li>
+<li><b>COUNTIF で数えたら0件なのに、同じ人に2通届く</b>：空白・全角・敬称・ふりがなの書き方が違うと、関数では一致しません。電話番号やメールの一致、氏名と住所がそろって似ている行を候補にします</li>
+<li><b>消してよいか不安</b>：元のファイルは変更しません。確認用の名簿（全行に「重複グループ・判定・理由」付き）を先に保存して、目で確かめてから使えます</li>
+<li><b>表記ゆれも直したい</b>：全角・半角や電話番号の書き方そのものをそろえて保存したいときは、別の商品<a href="../csv-seikei/">「CSV 表記ゆれ整形」</a>をお使いください</li>
+</ul>
+
 <h2>できないこと（購入前にご確認ください）</h2>
 <ul>
 <li>見つけるのは「重複の候補」です。同姓同名の別人や、同じ住所の家族が候補に出ることがあり、逆に書き方が大きく違う重複は見つからないことがあります。ダウンロード前に一覧で確かめてください</li>
@@ -71,5 +100,52 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 
 <footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
 </main>
+<script src="meibo.js"></script>
+<script>
+"use strict";
+(function(){
+const $=id=>document.getElementById(id), LIMIT=30;
+const e=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function parseCSV(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const line=text.split("\n",1)[0];
+  const d=line.split("\t").length>line.split(",").length?"\t":",";
+  const rows=[];let row=[],f="",q=false,i=0;
+  while(i<text.length){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i+=2;continue;}q=false;i++;continue;}f+=c;i++;continue;}
+    if(c==='"'&&f===""){q=true;i++;continue;}
+    if(c===d){row.push(f);f="";i++;continue;}
+    if(c==="\r"){i++;continue;}
+    if(c==="\n"){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;}
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(v=>v!==""));
+}
+function decode(buf){try{return new TextDecoder("utf-8",{fatal:true}).decode(buf);}catch(x){return new TextDecoder("shift_jis").decode(buf);}}
+function run(text,name){
+  const all=parseCSV(text);
+  if(all.length<3){$("t_info").textContent="見出しの行と、データの行を2行以上入れてください。";$("t_out").innerHTML="";$("t_after").hidden=true;return;}
+  const w=Math.max(...all.map(r=>r.length));all.forEach(r=>{while(r.length<w)r.push("");});
+  const head=all[0],body=all.slice(1),rows=body.slice(0,LIMIT);
+  const cols=head.map((h,i)=>{const t=Meibo.guessType(h,rows.map(r=>r[i]));return{index:i,type:t,use:Meibo.guessUse(t)};});
+  const res=Meibo.detect(rows,cols,{threshold:0.8});
+  const used=cols.filter(c=>c.use!=="off").map(c=>(head[c.index]||"（見出しなし）")+"＝"+Meibo.TYPE_LABEL[c.type]);
+  let h="";
+  res.groups.forEach(g=>{
+    const why=[...new Set(g.why.map(x=>Meibo.reasonText(x,head)))].join(" / ");
+    h+=`<div class="gh">グループ ${g.id}（${g.members.length}行） <span>${e(why)}</span></div><div class="tw"><table><thead><tr><th>判定</th><th>行</th>${head.map(x=>`<th>${e(x)}</th>`).join("")}</tr></thead><tbody>`;
+    g.members.forEach(i=>{const k=i===g.keep;h+=`<tr class="${k?"keep":"dup"}"><td>${k?"残す":"重複"}</td><td>${i+2}行目</td>${rows[i].map(v=>`<td>${e(v)}</td>`).join("")}</tr>`;});
+    h+="</tbody></table></div>";
+  });
+  $("t_out").innerHTML=h;$("t_after").hidden=!res.groups.length;
+  $("t_info").textContent=(name?name+"：":"")+`データ ${body.length} 行のうち、先頭 ${rows.length} 行を調べました。`
+    +(res.groups.length?`重複の候補 ${res.groups.length} グループ（${res.rowsInGroups} 行）。`:"重複の候補は見つかりませんでした。")
+    +(used.length?`使った列：${used.join("、")}。`:"重複を探せる列（氏名・電話・メール・住所など）が見つかりませんでした。ツールでは列の種類を手で選べます。")
+    +(body.length>LIMIT?`残りの ${body.length-LIMIT} 行はご購入後のツールで調べられます。`:"");
+}
+$("t_run").onclick=()=>run($("t_text").value,"");
+$("t_file").onchange=async ev=>{const f=ev.target.files[0];if(!f)return;run(decode(await f.arrayBuffer()),f.name);};
+})();
+</script>
 </body>
 </html>
