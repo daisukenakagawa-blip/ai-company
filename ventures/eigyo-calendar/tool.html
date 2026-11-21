@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>年間営業カレンダーの作成・印刷</title>
+<link rel="stylesheet" href="cal.css">
+<style id="pagecss">@page{size:A4 portrait;margin:10mm}</style>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.layout{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 8px}
+.f{display:block;font-size:14px;margin:0 0 10px}
+.f>span{display:block;font-size:13px;color:var(--sub);margin-bottom:2px}
+.f input[type=text],.f textarea,.f select{width:100%;font-size:14px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit}
+.f textarea{min-height:64px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px}
+.row label{display:inline-flex;gap:4px;align-items:center}
+.wk label{min-width:3.2em}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:8px 12px;font-size:14px}
+.stat{font-size:14px;color:var(--sub);margin:6px 0 10px}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.warn:empty{display:none}
+.hint{font-size:12px;color:var(--sub);margin-top:2px}
+.prev{position:sticky;top:12px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+footer{margin-top:32px;font-size:13px}
+@media print{
+  body{background:#fff}
+  main>*:not(.layout),.layout>.side,.prev>*:not(.cal-wrap){display:none!important}
+  main{padding:0;max-width:none}.layout{display:block}.prev{position:static}
+  .cal-wrap{height:auto!important;overflow:visible}
+  .cal-sheet{transform:none!important;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>年間営業カレンダーの作成・印刷</h1>
+<p class="lead">年と休む曜日、夏季休業などを入れると、祝日（振替休日・国民の休日を含む）入りの1年分のカレンダーを A4 1枚にまとめます。「印刷する」から、紙に印刷するか PDF に保存してください。入力した内容は送信されません。</p>
+
+<div class="layout">
+<div class="side">
+  <div class="card">
+    <h2>期間</h2>
+    <div class="row">
+      <label><select id="year"></select></label>
+      <label><select id="start"><option value="1">1月始まり</option><option value="4">4月始まり（年度）</option><option value="10">10月始まり</option></select></label>
+      <label><select id="weekStart"><option value="0">日曜始まり</option><option value="1">月曜始まり</option></select></label>
+    </div>
+  </div>
+  <div class="card">
+    <h2>休業日</h2>
+    <div class="f"><span>毎週休む曜日</span><div class="row wk" id="weekly"></div></div>
+    <div class="row" style="margin-bottom:10px"><label><input type="checkbox" id="holidays" checked> 祝日は休み</label></div>
+    <label class="f"><span>年末年始</span><select id="nenmatsu"><option value="none">指定しない</option><option value="12/29-1/3" selected>12/29〜1/3 休み</option><option value="12/30-1/3">12/30〜1/3 休み</option><option value="12/31-1/3">12/31〜1/3 休み</option></select></label>
+    <label class="f"><span>ほかの休業日（夏季休業・棚卸など。1行に1つ）</span><textarea id="off" placeholder="8/13〜8/16&#10;5/6&#10;2027/10/1"></textarea><div class="hint">「8/13〜8/16」「8/13-16」「12月30日」「2027/5/6」の書き方が使えます。年を省くと、カレンダーの期間の年になります</div></label>
+    <label class="f"><span>休みの曜日・祝日でも営業する日</span><textarea id="on" placeholder="11/23"></textarea></label>
+    <label class="f"><span>短縮営業の日（▲を付けます）</span><textarea id="half" placeholder="12/28"></textarea></label>
+    <div class="warn" id="bad"></div>
+  </div>
+  <div class="card">
+    <h2>見出しと説明</h2>
+    <label class="f"><span>見出し</span><input type="text" id="title"></label>
+    <label class="f"><span>店名・教室名など（右上）</span><input type="text" id="shop" placeholder="例：〇〇商店"></label>
+    <label class="f"><span>下の説明（営業時間・連絡先など）</span><textarea id="note" placeholder="営業時間 10:00〜18:00&#10;▲の日は 15:00 まで"></textarea></label>
+    <div class="row">
+      <label class="f" style="flex:1"><span>休業日の名前</span><input type="text" id="closedLabel" value="休業日"></label>
+      <label class="f" style="flex:1"><span>▲の名前</span><input type="text" id="halfLabel" value="短縮営業"></label>
+    </div>
+  </div>
+  <div class="card">
+    <h2>紙面</h2>
+    <div class="row" style="margin-bottom:8px">
+      <label><select id="orient"><option value="portrait">A4 縦（3列×4段）</option><option value="land">A4 横（4列×3段）</option></select></label>
+      <label><select id="theme"><option value="">赤</option><option value="t-green">緑</option><option value="t-blue">青</option><option value="t-orange">オレンジ</option><option value="t-mono">白黒（モノクロ印刷向け）</option></select></label>
+    </div>
+    <div class="row"><label><input type="checkbox" id="showHol" checked> 祝日名を小さく入れる</label><label><input type="checkbox" id="showCount"> 月ごとの営業日数</label></div>
+  </div>
+  <div class="card">
+    <h2>設定の保存</h2>
+    <p class="hint" style="margin:0 0 8px">入力した内容をファイルに保存しておけば、来年は読み込んで年を変えるだけで作れます。</p>
+    <div class="acts"><button class="sub" id="saveSet">設定を保存</button><label class="sub" style="display:inline-block;border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer">設定を読み込む<input type="file" id="loadSet" accept=".json,application/json" hidden></label><button class="sub" id="reset">初めの状態に戻す</button></div>
+  </div>
+</div>
+<div class="prev">
+  <div class="acts"><button id="print">印刷する（PDF 保存も）</button><button class="sub" id="csv">1年分を CSV で保存</button></div>
+  <div class="stat" id="stat"></div>
+  <div class="cal-wrap" id="wrap"><div class="cal-sheet" id="sheet"></div></div>
+  <p class="hint">印刷の画面で「用紙：A4」「倍率：100%（既定）」「余白：既定」を選んでください。色が出ない場合は「背景のグラフィック」をオンにしてください。PDF にするには、送信先（プリンター）で「PDF に保存」を選びます。</p>
+</div>
+</div>
+
+<footer><a href="./">商品ページ</a>　<a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+<script src="eigyo.js"></script>
+<script src="calendar.js"></script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id),WD="日月火水木金土";
+  const now=new Date(),defYear=now.getMonth()>=9?now.getFullYear()+1:now.getFullYear();
+  for(let y=now.getFullYear()-1;y<=now.getFullYear()+5;y++){const o=document.createElement("option");o.value=y;o.textContent=y+"年";$("year").appendChild(o);}
+  for(let w=0;w<7;w++){const l=document.createElement("label");l.innerHTML=`<input type="checkbox" value="${w}"${w===0?" checked":""}> ${WD[w]}`;$("weekly").appendChild(l);}
+  const TXT=["off","on","half","title","shop","note","closedLabel","halfLabel"],SEL=["year","start","weekStart","nenmatsu","orient","theme"],CHK=["holidays","showHol","showCount"];
+  let titleAuto=true;
+  function autoTitle(){const y=+$("year").value,s=+$("start").value;return s===1?`${y}年 営業カレンダー`:`${y}年度 営業カレンダー`;}
+  function get(){
+    const o={weekly:[...$("weekly").querySelectorAll("input:checked")].map(i=>+i.value)};
+    TXT.forEach(k=>o[k]=$(k).value);SEL.forEach(k=>o[k]=$(k).value);CHK.forEach(k=>o[k]=$(k).checked);
+    o.titleAuto=titleAuto;return o;
+  }
+  function set(o){
+    if(!o||typeof o!=="object") return;
+    if(Array.isArray(o.weekly)) $("weekly").querySelectorAll("input").forEach(i=>i.checked=o.weekly.includes(+i.value));
+    TXT.forEach(k=>{if(typeof o[k]==="string") $(k).value=o[k];});
+    SEL.forEach(k=>{if(o[k]!=null&&[...$(k).options].some(x=>x.value===String(o[k]))) $(k).value=String(o[k]);});
+    CHK.forEach(k=>{if(typeof o[k]==="boolean") $(k).checked=o[k];});
+    titleAuto=o.titleAuto!==false;
+  }
+  $("year").value=defYear;$("title").value=autoTitle();
+  try{const s=localStorage.getItem("eigyo-calendar");if(s){set(JSON.parse(s));if(![...$("year").options].some(x=>x.value===$("year").value)) $("year").value=defYear;}}catch(_){}
+  if(titleAuto) $("title").value=autoTitle();
+  let model=null;
+  function fit(){
+    const sh=$("sheet"),w=$("wrap");sh.style.transform="none";
+    const sc=Math.min(1,w.clientWidth/sh.offsetWidth);
+    sh.style.transform=`scale(${sc})`;w.style.height=(sh.offsetHeight*sc+4)+"px";
+  }
+  function draw(){
+    const o=get();
+    try{model=EigyoCal.build({year:+o.year,start:+o.start,weekStart:+o.weekStart,weekly:o.weekly,holidays:o.holidays,nenmatsu:o.nenmatsu,off:o.off,on:o.on,half:o.half});}
+    catch(e){$("stat").textContent=e.message;return;}
+    const sh=$("sheet");
+    sh.className="cal-sheet"+(o.orient==="land"?" land":"")+(o.theme?" "+o.theme:"");
+    sh.innerHTML=EigyoCal.render(model,{title:o.title,shop:o.shop,note:o.note,showHol:o.showHol,showCount:o.showCount,closedLabel:o.closedLabel,halfLabel:o.halfLabel});
+    $("pagecss").textContent=`@page{size:A4 ${o.orient==="land"?"landscape":"portrait"};margin:10mm}`;
+    const c=model.cnt;
+    $("stat").textContent=`営業日 ${c.open}日（うち短縮 ${c.half}日）・休業日 ${c.closed}日`;
+    const b=[];[["off","ほかの休業日"],["on","営業する日"],["half","短縮営業の日"]].forEach(([k,n])=>model.bad[k].forEach(l=>b.push(`${n}：「${l}」`)));
+    $("bad").textContent=b.length?"読めなかった・期間外の日付があります。"+b.join("　"):"";
+    try{localStorage.setItem("eigyo-calendar",JSON.stringify(o));}catch(_){}
+    fit();
+  }
+  document.querySelectorAll("input,select,textarea").forEach(el=>{if(el.id==="loadSet") return;el.addEventListener("input",draw);el.addEventListener("change",draw);});
+  $("title").addEventListener("input",()=>{titleAuto=$("title").value.trim()==="";if(titleAuto){$("title").value=autoTitle();draw();}});
+  ["year","start"].forEach(k=>$(k).addEventListener("change",()=>{if(titleAuto){$("title").value=autoTitle();draw();}}));
+  window.addEventListener("resize",fit);
+  function dl(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+  $("print").addEventListener("click",()=>window.print());
+  $("csv").addEventListener("click",()=>{
+    if(!model) return;
+    const rows=EigyoCal.toRows(model,$("halfLabel").value);
+    const text=rows.map(r=>r.map(v=>/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n")+"\r\n";
+    dl(`eigyo-calendar-${$("year").value}${$("start").value==="1"?"":"-nendo"}.csv`,new Blob(["﻿"+text],{type:"text/csv"}));
+  });
+  $("saveSet").addEventListener("click",()=>dl("eigyo-calendar-settings.json",new Blob([JSON.stringify(get(),null,1)],{type:"application/json"})));
+  $("loadSet").addEventListener("change",e=>{
+    const f=e.target.files[0];if(!f) return;
+    f.text().then(t=>{try{set(JSON.parse(t));if(titleAuto) $("title").value=autoTitle();draw();}catch(_){alert("設定ファイルとして読めませんでした");}e.target.value="";});
+  });
+  $("reset").addEventListener("click",()=>{try{localStorage.removeItem("eigyo-calendar");}catch(_){}location.reload();});
+  window.addEventListener("beforeprint",()=>{$("sheet").style.transform="none";});
+  window.addEventListener("afterprint",fit);
+  draw();
+})();
+</script>
+</body>
+</html>

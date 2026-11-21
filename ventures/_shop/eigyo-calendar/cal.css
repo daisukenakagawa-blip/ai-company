@@ -1,0 +1,40 @@
+/* 年間営業カレンダーの紙面（A4）。--c は休業日の色 */
+.cal-wrap{position:relative;overflow:hidden}
+.cal-sheet{--c:#dc2626;--cb:#fde2e2;--sun:#dc2626;--sat:#2563eb;--ink:#1f2937;
+  width:189mm;height:276mm;box-sizing:border-box;padding:6mm 6mm 5mm;background:#fff;color:var(--ink);
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+  display:flex;flex-direction:column;transform-origin:0 0;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+.cal-sheet.land{width:276mm;height:189mm}
+.cal-sheet.t-green{--c:#047857;--cb:#d1fae5}
+.cal-sheet.t-blue{--c:#1d4ed8;--cb:#dbeafe}
+.cal-sheet.t-orange{--c:#c2410c;--cb:#ffedd5}
+.cal-sheet.t-mono{--c:#111827;--cb:#d1d5db;--sun:#111827;--sat:#111827}
+.cal-head{display:flex;align-items:baseline;justify-content:space-between;gap:4mm;border-bottom:.6mm solid var(--c);padding-bottom:2mm;margin-bottom:3mm}
+.cal-title{font-size:20pt;font-weight:700;letter-spacing:.05em}
+.cal-shop{font-size:12pt;font-weight:700;text-align:right}
+.cal-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:3mm 4mm;min-height:0}
+.cal-sheet.land .cal-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}
+.cal-month{display:flex;flex-direction:column;min-height:0}
+.cal-mh{display:flex;align-items:baseline;gap:2mm;margin-bottom:.8mm}
+.cal-mn{font-size:14pt;font-weight:700;color:var(--c)}.cal-mn small{font-size:9pt;margin-left:.3mm}
+.cal-my{font-size:8pt;color:#6b7280}
+.cal-cnt{margin-left:auto;font-size:7pt;color:#6b7280}
+.cal-month table{width:100%;border-collapse:collapse;table-layout:fixed}
+.cal-month th{font-size:7pt;font-weight:600;padding:.3mm 0;border-bottom:.2mm solid #9ca3af}
+.cal-month td{height:7mm;position:relative;text-align:center;vertical-align:middle;padding:0;font-size:9.5pt;line-height:1.05;border-bottom:.15mm solid #e5e7eb}
+.cal-month .w0{color:var(--sun)}.cal-month .w6{color:var(--sat)}
+.cal-month td.hol{color:var(--sun)}
+.cal-month td.off{background:var(--cb);color:var(--c);font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cal-sheet.t-mono td.off{color:#111827}
+.cal-month td .dn{display:block;padding-bottom:1.2mm}
+.cal-month td .hn{position:absolute;left:0;right:0;bottom:.2mm;display:block;font-size:4.6pt;line-height:1;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:clip;letter-spacing:-.02em}
+.cal-month td .hm{position:absolute;top:.2mm;right:.4mm;font-size:5pt;color:var(--c)}
+.cal-month td.half .dn{text-decoration:underline;text-decoration-color:var(--c);text-underline-offset:.6mm}
+.cal-foot{margin-top:3mm;border-top:.2mm solid #9ca3af;padding-top:2mm;display:flex;gap:6mm;align-items:flex-start;font-size:9pt}
+.cal-legend{display:flex;flex-direction:column;gap:1mm;white-space:nowrap}
+.cal-legend span{display:flex;align-items:center;gap:1.5mm}
+.cal-legend i{display:inline-block;width:5mm;height:3.6mm;font-style:normal;font-size:6pt;text-align:center;line-height:3.6mm;color:var(--c);border:.15mm solid #9ca3af}
+.cal-legend .lg-off{background:var(--cb);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cal-note{flex:1;white-space:normal;line-height:1.45}
+.cal-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-size:90pt;font-weight:700;color:rgba(220,38,38,.16);transform:rotate(-28deg);letter-spacing:.2em}
+.cal-sheet.land .cal-month td{height:5.6mm}

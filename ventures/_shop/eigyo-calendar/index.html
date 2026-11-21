@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>年間営業カレンダーの作成・印刷（祝日入り・A4 1枚）｜GENHAYL</title>
+<meta name="description" content="年と休む曜日、夏季休業・年末年始などを入れると、祝日（振替休日・国民の休日を含む）入りの1年分の営業カレンダーを A4 1枚にまとめ、印刷・PDF 保存できます。店頭の掲示や配布用に。年度（4月始まり）にも対応。ブラウザ内で完結、見本は無料で確かめられます。">
+<link rel="stylesheet" href="cal.css">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:14px;width:100%;background:#fff}.t th,.t td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;font-size:15px}
+.try select{font-size:15px;padding:3px 6px;border:1px solid #d1d5db;border-radius:6px;max-width:100%}
+.try .row{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:10px;font-size:14px}
+.try label{display:inline-flex;gap:4px;align-items:center}
+.cal-wrap{margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>年間営業カレンダーの作成・印刷</h1>
+<p>来年の営業日カレンダーを、祝日を調べながら表計算ソフトで1か月ずつ塗っていませんか。このツールでは、年と休む曜日、夏季休業・年末年始などを入れるだけで、祝日（振替休日・国民の休日を含む）入りの1年分のカレンダーを A4 1枚にまとめます。店頭やレジ横への掲示、教室・事務所での配布用に、そのまま印刷または PDF 保存できます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/eVqfZi1uo4LF4nGasu1gs0h">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば、来年以降も何度でも使えます。</p>
+
+<h2>見本をここで無料で確かめられます</h2>
+<div class="try">
+  <div class="row">
+    <label><select id="t_year"></select></label>
+    <label><select id="t_start"><option value="1">1月始まり</option><option value="4">4月始まり（年度）</option></select></label>
+    <span>休む曜日：</span><span id="t_week"></span>
+    <label><input type="checkbox" id="t_hol" checked> 祝日休み</label>
+    <label><input type="checkbox" id="t_nen" checked> 年末年始（12/29〜1/3）休み</label>
+  </div>
+  <div class="cal-wrap" id="t_wrap"><div class="cal-sheet" id="t_sheet"></div></div>
+  <p class="note" id="t_stat"></p>
+</div>
+<p class="note">見本には「見本」の文字が入ります。印刷・PDF 保存、夏季休業などの休業日の指定、営業する祝日、短縮営業の▲、見出し・店名・営業時間の文字、色、A4 横、CSV 保存は購入後のツールでできます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>祝日入りの12か月を A4 1枚に</b>：日本の祝日・振替休日・国民の休日を計算して入れ、日曜・祝日は赤、土曜は青で表示します。祝日名も小さく入れられます</li>
+<li><b>休業日を色で塗る</b>：休む曜日（土日以外も可）、祝日、年末年始（12/29・12/30・12/31〜1/3）、夏季休業・棚卸などの休業日を「8/13〜8/16」のように入れると、その日を塗ります</li>
+<li><b>祝日でも営業する日・短縮営業の日</b>：「祝日だけど営業」の日は塗らず、短縮営業の日には▲を付けます。凡例の名前（「定休日」「午前のみ」など）も変えられます</li>
+<li><b>年度（4月始まり）・10月始まり</b>、日曜始まり・月曜始まり、A4 縦（3列×4段）・A4 横（4列×3段）を選べます</li>
+<li><b>見出し・店名・下の説明</b>（営業時間・電話番号など）を入れられます。色は赤・緑・青・オレンジ・白黒（モノクロのプリンター向け）から選べます</li>
+<li><b>月ごとの営業日数</b>を各月の右上に表示できます。1年分を「日付・曜日・祝日・営業/休業」の CSV でも保存できます（Excel でそのまま開けます）</li>
+<li><b>設定をファイルに保存</b>しておけば、来年は読み込んで年を変えるだけで作れます</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table class="t">
+<tr><th>こんなとき</th><th>このツールでの作り方</th></tr>
+<tr><td>商店・飲食店の店頭に、来年の定休日を貼り出したい</td><td>休む曜日（例：水曜）・年末年始・夏季休業を入れて A4 縦で印刷</td></tr>
+<tr><td>取引先に、年末年始とお盆の休業日をお知らせしたい</td><td>PDF に保存してメールに添付。下の説明に「出荷は休業日の前日 15時まで」などを入れる</td></tr>
+<tr><td>4月始まりの年度で、教室・サークルの開講日を配りたい</td><td>「4月始まり」にして、開講しない日を休業日に入れる。凡例を「お休み」に変える</td></tr>
+</table></div>
+
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>表計算ソフトのカレンダーのひな形との違い</b>：ひな形は祝日を自分で調べて塗る必要があり、年が変わると曜日の位置も作り直しです。このツールは祝日を計算して入れ、休業日の指定を変えるたびに紙面がすぐ描き直されます</li>
+<li><b>振替休日・国民の休日を塗り忘れる</b>：例えば 2027年は3月21日（春分の日）が日曜のため、3月22日が振替休日です。こうした日も自動で入ります</li>
+<li><b>年度のカレンダーで年がずれる</b>：4月始まりにすると、1〜3月は次の年の祝日で作ります。「2/10」のように年を省いて入れた休業日も、期間の中の年として扱います</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>祝日は「国民の祝日に関する法律」の決まりから計算しています。春分の日・秋分の日は、正式には前の年の2月に発表されるため、まだ発表されていない年は計算による見込みの日付です。法律が変わって祝日が増えた・動いた場合は、ツールを更新するまで反映されません</li>
+<li>地域の行事・銀行・取引先ごとの休業日は知りません。必要な日は「ほかの休業日」に入れてください</li>
+<li>紙面の大きさは A4（縦・横）だけです。B5・A3、1か月1枚、壁掛け用の綴じ穴の位置には対応していません。ロゴ・画像は入れられません</li>
+<li>印刷の色・余白は、お使いのブラウザとプリンターの設定によって変わることがあります（印刷の画面で「背景のグラフィック」をオンにしてください）</li>
+<li>予定の書き込み（1日ごとのメモ欄）や、Google カレンダーなどへの取り込み用ファイルの作成はできません</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>入力した内容はお使いのブラウザの中だけで使い、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（印刷はパソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../eigyoubi/">営業日の計算（CSV に「N営業日後」の列を足す）</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+<script src="eigyo.js"></script>
+<script src="calendar.js"></script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id),WD="日月火水木金土",now=new Date();
+  const def=now.getMonth()>=9?now.getFullYear()+1:now.getFullYear();
+  for(let y=now.getFullYear();y<=now.getFullYear()+2;y++){const o=document.createElement("option");o.value=y;o.textContent=y+"年";$("t_year").appendChild(o);}
+  $("t_year").value=def;
+  for(let w=0;w<7;w++){const l=document.createElement("label");l.innerHTML=`<input type="checkbox" value="${w}"${w===0?" checked":""}>${WD[w]}`;$("t_week").appendChild(l);}
+  function fit(){const sh=$("t_sheet"),w=$("t_wrap");sh.style.transform="none";const sc=Math.min(1,w.clientWidth/sh.offsetWidth);sh.style.transform=`scale(${sc})`;w.style.height=(sh.offsetHeight*sc+4)+"px";}
+  function draw(){
+    const y=+$("t_year").value,s=+$("t_start").value;
+    const m=EigyoCal.build({year:y,start:s,weekly:[...$("t_week").querySelectorAll("input:checked")].map(i=>+i.value),holidays:$("t_hol").checked,nenmatsu:$("t_nen").checked?"12/29-1/3":"none"});
+    $("t_sheet").innerHTML=EigyoCal.render(m,{title:s===1?`${y}年 営業カレンダー`:`${y}年度 営業カレンダー`,shop:"（店名が入ります）",note:"（営業時間・連絡先などの説明が入ります）",showHol:true})+'<div class="cal-mark">見本</div>';
+    $("t_stat").textContent=`この設定では、営業日 ${m.cnt.open}日・休業日 ${m.cnt.closed}日です。`;
+    fit();
+  }
+  document.querySelectorAll(".try input,.try select").forEach(el=>el.addEventListener("change",draw));
+  window.addEventListener("resize",fit);
+  draw();
+})();
+</script>
+</body>
+</html>
