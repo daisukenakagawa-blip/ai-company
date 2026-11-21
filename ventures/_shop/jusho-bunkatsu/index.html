@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>住所の列分割｜GENHAYL</title>
-<meta name="description" content="1列の住所を「都道府県／市区町村／町域・番地／建物名」の列に分けます。郡・政令指定都市の区にも対応。ブラウザ内で処理し、ファイルは送信しません。500円・買い切り。">
+<meta name="description" content="1列の住所を「都道府県／市区町村／町域・番地／建物名」の列に分けます。郡・政令指定都市の区にも対応。先頭10件までなら無料で試せます。ブラウザ内で処理し、ファイルは送信しません。500円・買い切り。">
 <style>
 body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
 main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
@@ -13,6 +13,10 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
 .buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
 .tw{overflow-x:auto}
 table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px}
+.try textarea{width:100%;box-sizing:border-box;font-family:ui-monospace,Menlo,monospace;font-size:13px;min-height:150px}
+.try button{background:#0f766e;color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:15px;cursor:pointer}
+tr.ng td{background:#fee2e2}tr.gs td{background:#dbeafe}
 .note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
 </style>
 </head>
@@ -24,6 +28,29 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 <div class="price">500円（税込・買い切り）</div>
 <p><a class="buy" id="buy" href="https://buy.stripe.com/28E14oa0U7XR9I01VY1gs01">購入する（Stripe）</a></p>
 <p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>先頭10件まで、ここで無料で試せます</h2>
+<div class="try">
+<p class="note" style="margin-top:0">住所を1行に1件ずつ貼り付けて「分けてみる」を押してください。住所はこのページの中だけで処理し、送信しません。下の例は架空の番地です。</p>
+<textarea id="t_text" aria-label="住所の貼り付け欄">東京都港区芝浦一丁目2番3号 サンプルビル5F
+〒530-0001 大阪府大阪市北区梅田3-1-1
+横浜市港北区新横浜2-5-5
+北海道余市郡余市町朝日町26
+三重県四日市市諏訪町1-5 見本マンション201
+札幌市中央区北1条西2丁目1
+住所不明</textarea>
+<p style="margin:8px 0 0"><button id="t_run" type="button">分けてみる</button></p>
+<div class="note" id="t_info" style="margin-top:8px"></div>
+<div class="tw" id="t_out"></div>
+<p class="note" id="t_after" hidden>赤は切り出せなかった行、青は都道府県を補った行です。<b>11件目以降の分割、CSV ファイルの読み込み（Shift_JIS も可）、列の置き場所の指定、CSV の保存はご購入後</b>のツールで行えます。</p>
+</div>
+
+<h2>こんなときに</h2>
+<ul>
+<li>顧客名簿の住所から、都道府県別・市区町村別の件数を出したい</li>
+<li>配送システムや宛名印刷ソフトの取込形式が「都道府県／市区町村／番地／建物名」に分かれている</li>
+<li>建物名・部屋番号だけを別の列にして、宛名ラベルの2行目にしたい</li>
+</ul>
 
 <h2>できること</h2>
 <ul>
@@ -44,6 +71,14 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 <tr><td>三重県四日市市諏訪町1-5</td><td>三重県</td><td>四日市市</td><td>諏訪町1-5</td><td></td></tr>
 </table></div>
 
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>Excel の LEFT・FIND 関数との違い</b>：「都道府県は3文字か4文字（神奈川県・和歌山県・鹿児島県）」の式までは作れても、市区町村は「市」「区」「町」「郡」の位置で切ると、四日市市・大和郡山市・余市郡余市町などで崩れます。このツールはそうした名前を例外として扱い、切れなかった行は赤で知らせます</li>
+<li><b>Excel の「区切り位置」で分けられない</b>：住所の中には区切り文字がないため、区切り位置では分けられません</li>
+<li><b>都道府県が書かれていない住所が混ざっている</b>：「横浜市…」「世田谷区…」のように政令指定都市と東京23区で始まる住所は、都道府県を補えます（補った行は色分け）</li>
+<li><b>全角・半角もそろえたい</b>：数字・英字の全角・半角や空白をそろえるのは、別の商品<a href="../csv-seikei/">「CSV 表記ゆれ整形」</a>をお使いください。氏名を姓・名に分けるのは<a href="../shimei-bunkatsu/">「氏名の姓名分割・ふりがな統一」</a>です。分割は書かれている番地の書き方のまま行い、「1丁目2番3号」と「1-2-3」をそろえることはしません</li>
+</ul>
+
 <h2>できないこと（購入前にご確認ください）</h2>
 <ul>
 <li>住所が正しいか（実在するか）の確認、郵便番号からの住所の補完はしません</li>
@@ -58,7 +93,26 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 <li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
 </ul>
 
-<footer><a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
 </main>
+<script src="split.js"></script>
+<script>
+"use strict";
+(function(){
+const $=id=>document.getElementById(id),LIMIT=10;
+const e=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("t_run").onclick=()=>{
+  const lines=$("t_text").value.split(/\r?\n/).filter(l=>l.trim()!=="");
+  if(!lines.length){$("t_info").textContent="住所を1行に1件ずつ入れてください。";$("t_out").innerHTML="";$("t_after").hidden=true;return;}
+  const use=lines.slice(0,LIMIT);let ng=0,gs=0;
+  let h="<table><thead><tr><th>元の住所</th><th>都道府県</th><th>市区町村</th><th>町域・番地</th><th>建物名</th></tr></thead><tbody>";
+  use.forEach(l=>{const r=JushoSplit.splitAddress(l,{splitBuilding:true,fillPref:true});
+    const cls=!r.ok?"ng":(r.guessed?"gs":"");if(!r.ok)ng++;if(r.guessed)gs++;
+    h+=`<tr class="${cls}"><td>${e(l)}</td><td>${e(r.pref)}</td><td>${e(r.city)}</td><td>${e(r.town)}</td><td>${e(r.building)}</td></tr>`;});
+  $("t_out").innerHTML=h+"</tbody></table>";$("t_after").hidden=false;
+  $("t_info").textContent=`${lines.length}件のうち、先頭${use.length}件を分けました。`+(ng?`切り出せなかった行 ${ng}件。`:"")+(gs?`都道府県を補った行 ${gs}件。`:"")+(lines.length>LIMIT?`残りの${lines.length-LIMIT}件はご購入後のツールで分けられます。`:"");
+};
+})();
+</script>
 </body>
 </html>
