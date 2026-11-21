@@ -5,7 +5,7 @@ from common import page
 OUT = os.path.join(os.path.dirname(__file__), "..", "_shop", "guide")
 os.makedirs(OUT, exist_ok=True)
 
-A = []  # (slug, title, desc, body)
+A = []  # (slug, title, desc, body[, date])
 
 A.append(("excel-jusho-bunkatsu",
 "Excel で住所を「都道府県」と「それ以降」に分ける方法（関数あり）",
@@ -125,11 +125,54 @@ A.append(("excel-meibo-choufuku",
 <p class="note">見つかるのは「重複の候補」です。最後は一覧を見て確かめてください。</p>
 '''))
 
-for slug, title, desc, body in A:
-    with open(os.path.join(OUT, slug + ".html"), "w", encoding="utf-8") as f:
-        f.write(page(title, desc, body))
+A.append(("excel-hyou-hikaku",
+"Excel で新旧2つの表を比べて「増えた行・なくなった行・変わった値」を見つける方法",
+"先月と今月の名簿や在庫表を、商品コードや会員番号で突き合わせて比べる方法。COUNTIF で追加・削除を、VLOOKUP で値の変更を見つける式と、空欄と0・先頭の0で起きる見落とし。",
+'''<p>先月と今月の会員名簿、きのうと今日の在庫表、取引先から届いた新しい商品マスタ。2つの表のどこが変わったかを、画面を並べて目で探すのは大変です。Excel の関数で探す方法をまとめました。</p>
 
-items = "\n".join(f'<div class="box"><a href="{s}.html"><b>{t}</b></a><br><span class="note">{d}</span></div>' for s, t, d, _ in A)
+<h2>準備：2つの表を同じブックの別シートに置く</h2>
+<p>古い表をシート「旧」、新しい表をシート「新」に貼り付けます。以下の例では、どちらも A 列が<b>商品コード（行を見分ける番号）</b>、B〜D 列が商品名・価格・在庫です。</p>
+<p class="note">行の並び順はそろっていなくてかまいません。行を見分ける列（会員番号・商品コードなど）があることが前提です。</p>
+
+<h2>増えた行（新にだけある行）</h2>
+<p>シート「新」の空いている列（例：F2）に次の式を入れて下へコピーします。</p>
+<pre>=IF(COUNTIF(旧!$A:$A,A2)=0,"追加","")</pre>
+<p>古い表に同じ商品コードが1件もなければ「追加」と表示されます。</p>
+
+<h2>なくなった行（旧にだけある行）</h2>
+<p>シート「旧」の空いている列に、シート名を入れ替えた式を入れます。</p>
+<pre>=IF(COUNTIF(新!$A:$A,A2)=0,"削除","")</pre>
+
+<h2>値が変わった行</h2>
+<p>在庫（D 列）が変わったかを見るには、シート「新」に次の式を入れます。</p>
+<pre>=IFERROR(IF(VLOOKUP(A2,旧!$A:$D,4,FALSE)&amp;""=D2&amp;"","","変更"),"")</pre>
+<p>古い表から同じ商品コードの在庫を取り出し、今の値と違えば「変更」と表示します（追加の行は空欄になります）。変更前の値を見たいときは、別の列に <code>=IFERROR(VLOOKUP(A2,旧!$A:$D,4,FALSE),"")</code> を入れます。</p>
+<p>B〜D 列のどれかが変わった行をまとめて探すなら、次の式です。</p>
+<pre>=IF(COUNTIF(旧!$A:$A,A2)=0,"追加",IF(SUMPRODUCT(--(INDEX(旧!$B:$D,MATCH(A2,旧!$A:$A,0),0)&lt;&gt;B2:D2))&gt;0,"変更",""))</pre>
+<p>最後に「データ」→「フィルター」で、「追加」「削除」「変更」の行だけを表示すれば一覧になります。</p>
+
+<h2>見落としやすい3つの落とし穴</h2>
+<h3>1. 空欄と0が「同じ」になる</h3>
+<p>VLOOKUP は、取り出したセルが空欄だと <b>0</b> を返します。そのため <code>VLOOKUP(…)=D2</code> と比べると、「空欄 → 0」の変化を見落とします。上の式で <code>&amp;""</code> を付けているのは、両方を文字として比べ、空欄と0を区別するためです。</p>
+<h3>2. 先頭の0が消えた番号は「別の番号」になる</h3>
+<p>片方の表では会員番号が「0123」（文字）、もう片方では Excel が「123」（数値）にしてしまっていると、同じ人なのに「追加」と「削除」の両方に出ます。CSV を開いたときに先頭の0が消えていないか、先に確かめてください（<a href="csv-mojibake.html">CSV を開くときの注意</a>）。</p>
+<h3>3. 大文字・小文字、全角・半角</h3>
+<p>Excel の「=」での比較は、英字の大文字と小文字を区別しません（「abc」と「ABC」は同じ）。区別したいときは <code>EXACT</code> 関数を使います。逆に、全角「ＡＢＣ」と半角「ABC」、空白の数の違いは「違う値」として扱われます。書き方の違いを無視したいときは、<a href="excel-meibo-choufuku.html">比較用の列でそろえてから</a>比べます。</p>
+
+<h2>列が多い・毎月比べるときは</h2>
+<div class="box">
+<p><b><a href="../csv-sabun/">2つの CSV の差分比較</a></b>（980円・買い切り）は、2つの CSV を商品コードや会員番号で突き合わせて、「追加」「削除」「変更」を色分けで一覧にするツールです。変わったセルは「変更前 → 変更後」で表示し、列の順番が違っていても同じ見出しの列どうしを比べます。空白・全角半角・数値の書き方（1,000 と 1000）の違いを無視するかどうかも選べます。ファイルはブラウザの中だけで処理し、どこにも送信しません。</p>
+<p><a class="cta" href="../csv-sabun/">2つの CSV の差分比較を見る</a></p>
+</div>
+<p class="note">列が少なく、比べるのがたまになら、上の式で十分です。</p>
+''', "2026-11-22"))
+
+for a in A:
+    slug, title, desc, body = a[:4]
+    with open(os.path.join(OUT, slug + ".html"), "w", encoding="utf-8") as f:
+        f.write(page(title, desc, body, *a[4:]))
+
+items = "\n".join(f'<div class="box"><a href="{s}.html"><b>{t}</b></a><br><span class="note">{d}</span></div>' for s, t, d, *_ in A)
 idx = page("使い方ガイド", "CSV や名簿の整理でよくある困りごとの直し方。Excel の機能だけでできる方法から紹介しています。",
            "<p>CSV や名簿の整理でよくある困りごとの直し方です。まず Excel の機能だけでできる方法を紹介し、手作業では大変な場合に当店の道具を紹介しています。</p>\n" + items)
 idx = idx.replace('<p class="crumb"><a href="../">GENHAYL の小さな道具</a> ＞ <a href="./">使い方ガイド</a></p>', '<p class="crumb"><a href="../">GENHAYL の小さな道具</a></p>')
