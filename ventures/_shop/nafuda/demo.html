@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>名札・席札の一括印刷 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:14px 0 6px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+input[type=number]{width:80px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 14px}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 400px;gap:16px}.two>div{min-width:0}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+.start{display:grid;gap:3px;max-width:200px}
+.start button{padding:4px 0;font-size:12px;background:#fff;color:var(--ink);border:1px solid #d1d5db;border-radius:4px}
+.start button.used{background:#e5e7eb;color:#9ca3af;text-decoration:line-through}
+.start button.first{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pvw{width:100%;max-width:400px;overflow:hidden;border:1px solid #d1d5db;background:#fff;margin:0 auto}
+.pvw .page{transform-origin:0 0}
+/* 用紙（実寸） */
+.page{position:relative;width:210mm;height:297mm;background:#fff;color:#000;overflow:hidden}
+.slot{position:absolute;overflow:hidden}
+.slot.cut{outline:0.2mm dashed #9ca3af;outline-offset:-0.1mm}
+.face{position:absolute;left:0;overflow:hidden}
+.face.back{transform:rotate(180deg)}
+.fold{position:absolute;left:0;right:0;border-top:0.2mm dashed #9ca3af}
+.frame-no{position:absolute;left:2mm;top:2mm;font-size:3mm;color:#6b7280}
+.it{position:absolute;display:flex;justify-content:center;align-items:center;white-space:nowrap;line-height:1.25}
+.it .tx{display:inline-block;transform-origin:50% 50%}
+.k-name{font-weight:700}.k-name .ks{font-size:0.7em;font-weight:600;margin-left:0.4em}
+.it .sp{display:inline-block;width:0.45em}
+.k-org,.k-sub{color:#222}.k-kana{color:#333;letter-spacing:0.05em}
+.k-band{color:#fff;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.k-foot{color:#444}.k-blank{color:#6b7280;justify-content:flex-start}
+.ln{position:absolute;border-top:0.25mm solid #9ca3af}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .page{page-break-after:always;break-after:page}
+  #printArea .page:last-child{page-break-after:auto;break-after:auto}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>名札・席札の一括印刷</h1>
+<p class="lead">参加者の一覧（Excel・CSV）から、名刺サイズの名札や二つ折りの席札を A4 にまとめて印刷します。長い名前は札の幅に合わせて自動で縮めます。データはこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは先頭 1 ページ（名刺サイズなら 10 枚）までです。枠だけの試し刷りは何度でもできます。全ページを印刷するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 参加者の一覧を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「氏名」「会社名」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しから自動で選んでいます。違っていたら選び直してください。氏名は「氏名」の1列か、「姓」「名」の2列のどちらかを選びます。</p>
+<div class="grid" id="mapGrid"></div>
+<p id="missMsg" class="note wtxt"></p>
+</section>
+
+<section class="box" id="step3" hidden>
+<h2>3. 札の種類と用紙</h2>
+<div class="row"><select id="preset">
+<option value="meishi10">名札：名刺サイズ 91×55mm（A4 に 10 枚・2列×5段）</option>
+<option value="card8">名札：大きめ 95×65mm（A4 に 8 枚・普通紙に印刷して切る）</option>
+<option value="tent91">席札：二つ折り 91×55mm（A4 に 4 枚・広げると 91×110mm）</option>
+<option value="tent100">席札：二つ折り 100×60mm（A4 に 4 枚・広げると 100×120mm）</option>
+<option value="tentA4">大きな名前札：A4 を半分に折る（会議・登壇用、A4 に 1 枚）</option>
+<option value="custom">自分で寸法を入れる</option>
+</select>
+<label><input type="checkbox" id="editSize"> 寸法を直す</label></div>
+<p class="note">名刺サイズは、ネームホルダー（名刺サイズ用）にそのまま入ります。市販の名刺用紙に印刷するときは、用紙の箱に書かれた寸法（上と左の余白）に合わせて直し、「枠だけ試し刷り」で位置を確かめてください。席札は厚めの紙に印刷し、点線で切って真ん中で山折りにします。</p>
+<div id="custom" hidden>
+<div class="row" id="customKindRow" hidden><label>種類 <select id="customKind"><option value="tag">名札（1面＝1枚）</option><option value="tent">席札（二つ折り：1面＝高さの2倍）</option></select></label></div>
+<div class="row">
+<label>札の幅 <input type="number" id="w" step="0.1" value="91"> mm</label>
+<label>高さ <input type="number" id="h" step="0.1" value="55"> mm</label>
+<label>列 <input type="number" id="cols" value="2"></label>
+<label>段 <input type="number" id="rows" value="5"></label>
+<label>上の余白 <input type="number" id="top" step="0.1" value="11"> mm</label>
+<label>左の余白 <input type="number" id="left" step="0.1" value="14"> mm</label>
+<label>横のすき間 <input type="number" id="gx" step="0.1" value="0"> mm</label>
+<label>縦のすき間 <input type="number" id="gy" step="0.1" value="0"> mm</label>
+</div></div>
+<div class="row"><label>位置の補正：右へ <input type="number" id="offX" step="0.5" value="0"> mm</label><label>下へ <input type="number" id="offY" step="0.5" value="0"> mm</label><span class="note">（試し刷りで札が左にずれたら「右へ」に正の数、上にずれたら「下へ」に正の数）</span></div>
+<h3>1枚目のどこから印刷するか（使いかけの用紙）</h3>
+<div class="start" id="startGrid"></div><p id="startNote" class="note"></p>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 札の中身を決めて印刷する</h2>
+<div class="two"><div>
+<div class="grid">
+<label class="mf"><span>敬称</span><select id="keisho"><option value="">なし</option><option value="様">様</option><option value="さん">さん</option><option value="殿">殿</option></select></label>
+<label class="mf"><span>上の帯</span><select id="band"><option value="none">なし</option><option value="cat">区分（来賓・スタッフなど）</option><option value="event">催しの名前</option></select></label>
+<label class="mf"><span>催しの名前（下か帯に小さく、空欄可）</span><input type="text" id="event" placeholder="例：2026年 忘年会"></label>
+<label class="mf"><span>帯の色</span><select id="color"><option value="navy">紺</option><option value="green">緑</option><option value="red">えんじ</option><option value="gray">灰</option><option value="black">黒（白黒印刷）</option></select></label>
+<label class="mf"><span>書体</span><select id="font"><option value="gothic">ゴシック</option><option value="mincho">明朝</option></select></label>
+<label class="mf"><span>長い名前</span><select id="fit"><option value="condense">横に詰める（文字の高さはそのまま）</option><option value="shrink">文字を小さくする</option></select></label>
+<label class="mf"><span>並べ順</span><select id="sort"><option value="src">一覧のとおり</option><option value="kana">ふりがなの順</option><option value="org">会社・団体ごと</option><option value="table">卓ごと</option><option value="cat">区分ごと</option></select></label>
+<label class="mf"><span>空欄の札（当日の参加者に手書き）</span><select id="blank"><option value="0">なし</option><option value="2">2枚</option><option value="4">4枚</option><option value="10">10枚</option></select></label>
+</div>
+<div class="row">
+<label><input type="checkbox" id="showKana" checked> ふりがな</label>
+<label><input type="checkbox" id="showOrg" checked> 会社・団体</label>
+<label><input type="checkbox" id="showDept" checked> 部署</label>
+<label><input type="checkbox" id="showTitle" checked> 役職</label>
+<label><input type="checkbox" id="catColors"> 区分ごとに帯の色を変える</label>
+<label><input type="checkbox" id="cutLine"> 切り取り線</label>
+</div>
+<div class="row" id="tentOpts" hidden>
+<label><input type="checkbox" id="both" checked> 裏にも名前（向かいの席からも読める）</label>
+<label><input type="checkbox" id="foldLine" checked> 折り線</label>
+<label><input type="checkbox" id="showTable"> 卓の名前を下に</label>
+</div>
+<p id="warn" class="note wtxt"></p>
+<p id="small" class="note wtxt"></p>
+</div><div>
+<p id="count" style="font-weight:600;margin:0 0 6px"></p>
+<div class="pvw" id="pvw"><div id="pv"></div></div>
+<div class="row" style="justify-content:center"><button class="sub" id="prevBtn">前のページ</button><span id="pvNo" class="note"></span><button class="sub" id="nextBtn">次のページ</button></div>
+</div></div>
+<div class="row"><button id="printBtn">印刷する</button><button class="sub" id="frameBtn">枠だけ試し刷り（1ページ）</button><span id="printMsg" class="note"></span></div>
+<p class="note">印刷画面で、用紙を A4、倍率を 100%（実際のサイズ）、余白を「なし」にしてください。PDF に保存もできます。まず普通紙に「枠だけ試し刷り」をして、名刺用紙やネームホルダーに重ねて位置を確かめるのがおすすめです。</p>
+</section>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></p>
+</main>
+<div id="printArea"></div>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="nafuda.js"></script>
+<script>window.NAFUDA_LIMIT_PAGES=1;</script>
+<script src="app.js"></script>
+</body>
+</html>
