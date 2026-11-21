@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>棚卸の記入用シート印刷 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px}input[type=text],input[type=date],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px 14px}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 400px;gap:16px}.two>div{min-width:0}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.tbl{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+.tbl table{border-collapse:collapse;font-size:13px;min-width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+.tbl thead th{background:#f3f4f6;position:sticky;top:0;z-index:1}
+.tbl td.g{background:#f9fafb;font-weight:600}
+.tbl input{width:90px;font-size:14px;padding:3px 6px}
+.tbl tr.df td{background:#fffbeb}.tbl tr.bad td{background:#fef2f2}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+.pvw{width:100%;max-width:400px;overflow:hidden;border:1px solid #d1d5db;background:#fff;margin:0 auto}
+.pvw .page{transform-origin:0 0}
+/* 用紙（実寸） */
+.page{position:relative;background:#fff;color:#000;overflow:hidden;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans CJK JP","Noto Sans JP","MS PGothic",sans-serif}
+.page .hd{position:absolute;display:flex;justify-content:space-between;align-items:flex-start}
+.page .ttl{font-size:16pt;font-weight:700;line-height:1.2}
+.page .sub2{font-size:9pt;margin-top:1.5mm;line-height:1.4}
+.page .grp{font-size:12pt;font-weight:700;margin-top:1mm}
+.page .sign{display:flex;gap:2mm;font-size:8pt}
+.page .sign div{border:0.3mm solid #000;width:20mm;height:15mm;text-align:center;line-height:1.3;padding-top:0.5mm}
+.page .sign div.dt{width:34mm;text-align:left;padding-left:1.5mm}
+.page table{position:absolute;border-collapse:collapse;table-layout:fixed}
+.page th{font-size:8.5pt;font-weight:600;background:#eee;border:0.25mm solid #000;padding:0 1mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page td{border:0.2mm solid #000;padding:0 1.2mm;overflow:hidden;white-space:nowrap;vertical-align:middle}
+.page td.c2{white-space:normal;line-height:1.1;word-break:break-all}
+.page td.n{text-align:right}.page td.ct{border-left:0.5mm solid #000;border-right:0.5mm solid #000}
+.page td.gh{font-weight:700;background:#f3f3f3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page .sp{color:#444}
+.page .ft{position:absolute;display:flex;justify-content:space-between;font-size:8pt;align-items:flex-end}
+#printArea{display:none}
+@media print{
+  @page{margin:0}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .page{page-break-after:always;break-after:page}
+  #printArea .page:last-child{page-break-after:auto;break-after:auto}
+}
+</style>
+<style id="pageSize">@media print{@page{size:A4 portrait}}</style>
+</head>
+<body>
+<main>
+<h1>棚卸の記入用シート印刷</h1>
+<p class="lead">商品の一覧（CSV・Excel）から、棚卸で数を書き込むための表を A4 に印刷します。棚や分類が変わるところで改ページし、ページ番号・担当者欄が付きます。数えた数をあとで入力すれば、帳簿の数との差を付けて CSV に保存できます。データはこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは先頭 1 ページ、実数の CSV 保存は先頭 10 行までです。全ページを印刷するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 商品の一覧を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「品番」「商品名」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しから自動で選んでいます。違っていたら選び直してください。「品番」か「品名」のどちらかは必要です。</p>
+<div class="grid" id="mapGrid"></div>
+</section>
+
+<section class="box" id="step3" hidden>
+<h2>3. 表の形を決める</h2>
+<div class="two"><div>
+<div class="grid">
+<label class="mf"><span>表の題</span><input type="text" id="title" value="棚卸表"></label>
+<label class="mf"><span>店・事業所の名前（空欄可）</span><input type="text" id="office" value=""></label>
+<label class="mf"><span>実施日（空欄なら記入欄）</span><input type="date" id="date"></label>
+<label class="mf"><span>まとめ方</span><select id="groupBy"><option value="loc">棚・場所ごと</option><option value="cat">分類ごと</option><option value="none">まとめない</option></select></label>
+<label class="mf"><span>まとまりの順番</span><select id="groupSort"><option value="seen">一覧に出てきた順</option><option value="name">名前の順（A-2 → A-10）</option></select></label>
+<label class="mf"><span>まとまりの中の順番</span><select id="sort"><option value="src">一覧のとおり</option><option value="code">品番の順</option><option value="name">品名の順</option></select></label>
+<label class="mf"><span>用紙</span><select id="orient"><option value="portrait">A4 縦</option><option value="landscape">A4 横</option></select></label>
+<label class="mf"><span>1行の高さ（書き込みやすさ）</span><select id="rowMm"><option value="7">7mm（たくさん並べる）</option><option value="8" selected>8mm（ふつう）</option><option value="10">10mm（書きやすい）</option><option value="12">12mm（大きく書く）</option></select></label>
+<label class="mf"><span>まとまりごとの空欄行（一覧にない品を書く）</span><select id="blank"><option value="0">なし</option><option value="3" selected>3行</option><option value="5">5行</option></select></label>
+</div>
+<div class="row">
+<label><input type="checkbox" id="breakOnGroup" checked> まとまりが変わるところで改ページ</label>
+<label><input type="checkbox" id="showBook"> 帳簿の数を印刷する</label>
+<label><input type="checkbox" id="showDiff"> 差異の記入欄</label>
+<label><input type="checkbox" id="showCat"> 分類の列</label>
+<label><input type="checkbox" id="showSign" checked> 担当者・確認者の欄</label>
+</div>
+<p class="note">帳簿の数を印刷しないと、数える人が帳簿の数に引きずられずに済みます。差は、あとで「4.」で入力すると自動で計算します。</p>
+<p id="warn" class="note wtxt"></p>
+</div><div>
+<p id="count" style="font-weight:600;margin:0 0 6px"></p>
+<div class="pvw" id="pvw"><div id="pv"></div></div>
+<div class="row" style="justify-content:center"><button class="sub" id="prevBtn">前のページ</button><span id="pvNo" class="note"></span><button class="sub" id="nextBtn">次のページ</button></div>
+</div></div>
+<div class="row"><button id="printBtn">印刷する</button><span class="note">印刷画面で、用紙を A4、倍率を 100%（実際のサイズ）、余白を「なし」にしてください。PDF に保存もできます。</span></div>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 数えた数を入力して保存する（任意）</h2>
+<p class="note">紙に書いた数を入力します。Enter で次の行へ進みます。保存した CSV を次に読み込むと、入力した「実数」の続きから入力できます。ページを閉じると入力は消えるので、途中でも保存してください。</p>
+<div class="row"><label>表示：<select id="filter"><option value="all">すべて</option><option value="todo">未入力だけ</option><option value="diff">差があるものだけ</option></select></label>
+<input type="text" id="find" placeholder="品番・品名で探す" style="width:180px">
+<span id="sum" class="note"></span></div>
+<div class="tbl"><table id="inTbl"></table></div>
+<div class="row"><button id="saveBtn">実数と差異を付けて CSV に保存</button><span id="saveMsg" class="note"></span></div>
+</section>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></p>
+</main>
+<div id="printArea"></div>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="sheet.js"></script>
+<script>window.TANA_LIMIT_PAGES=1;window.TANA_LIMIT_ROWS=10;</script>
+<script src="app.js"></script>
+</body>
+</html>

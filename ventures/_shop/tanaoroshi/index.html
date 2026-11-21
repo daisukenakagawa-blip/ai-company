@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>棚卸の記入用シート（棚卸表）を商品一覧から印刷｜棚ごとに改ページ・差異つき CSV｜GENHAYL</title>
+<meta name="description" content="Excel・CSV の商品一覧から、棚卸で数を書き込む表（棚卸表）を A4 に印刷。棚・分類ごとに改ページ、ページ番号・担当者欄つき。数えた数を入力すれば帳簿との差を付けて CSV に保存できます。インストール不要、データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>棚卸の記入用シート印刷</h1>
+<p>Excel や CSV の商品一覧から、棚卸で数を書き込むための表（棚卸表）を <b>A4 に印刷</b>するツールです。棚や分類が変わるところで改ページするので、<b>棚ごとに紙を配って</b>数えてもらえます。数えたあとは、紙に書いた数を入力すると、帳簿の数との差を付けて CSV に保存できます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/aFa4gAb4Y1zt4nG6ce1gs0j">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、印刷は先頭1ページ、実数の CSV 保存は先頭10行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="棚ごとに分けて印刷した棚卸表の例（見本のデータ）" width="500"></p>
+<p class="note">見本のデータで印刷した例（棚 A-2 のページ）。品番・品名は説明のための見本です。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>年末・期末の棚卸の前に、記入用の一覧を表計算で整えて印刷するのに毎回時間がかかる</li>
+<li>Excel で印刷すると、棚の途中でページが切れたり、見出しが2ページ目から消えたりする</li>
+<li>何人かで手分けして数えるので、棚ごとに紙を分けて、担当者の名前を書いてもらいたい</li>
+<li>数えた数を帳簿と見比べて、差があるものだけ数え直したい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>読み込み</b>：Excel（.xlsx）・CSV（UTF-8／Shift_JIS を自動判定）・表の貼り付け。「棚番」「品番」「商品名」「単位」「在庫数」などの見出しから列を自動で選びます（選び直し可）</li>
+<li><b>まとめて改ページ</b>：棚・場所ごと、または分類ごとに分け、変わるところで改ページ。改ページしない場合は見出しの行を入れます。まとまりの順番（一覧に出てきた順／A-2 → A-10 の順）と、中の順番（一覧のとおり／品番順／品名順）を選べます</li>
+<li><b>表の体裁</b>：通し番号・品番・品名と規格・単位・実数の記入欄・備考欄。各ページに題・店名・実施日・担当者と確認者の欄・数えた時刻の欄・「何ページ中何ページ目」が付きます</li>
+<li><b>書き込みやすさ</b>：1行の高さを 7〜12mm から選べます。A4 縦・横。長い品名は文字を小さくするか2行にして欄に収めます</li>
+<li><b>帳簿の数</b>：印刷する・しないを選べます（帳簿の数を見ずに数えたいとき用）。差異の記入欄も付けられます</li>
+<li><b>空欄の行</b>：まとまりごとに3行・5行の空欄を付け、一覧にない品を書き足せます</li>
+<li><b>実数の入力と保存</b>：紙に書いた数を画面で入力（Enter で次の行）。帳簿との差をその場で表示し、「差があるものだけ」「未入力だけ」で絞り込めます。元の表に「実数」「差異」の列を足した CSV（Excel で開ける形式）で保存し、その CSV を読み込めば続きから入力できます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>在庫の金額（評価額）の計算や、会計・税務の処理はしません。数を書く表と、数の差を出すところまでです</li>
+<li>バーコードの読み取りや、在庫管理システムへの直接の書き戻しはできません（保存した CSV をお使いのシステムの取込に合わせてください。列の並べ替えは <a href="../retsu-soroe/">列そろえ</a> でできます）</li>
+<li>Excel の読み込みは1枚目のシートだけです。セルの結合や数式の入った表は、値だけの一覧にしてから読み込んでください</li>
+<li>入力した実数はブラウザに保存しません。ページを閉じる前に CSV に保存してください</li>
+<li>印刷の仕上がりはプリンターの設定によって変わります。<b>お試し版で1ページ印刷してみることをおすすめします</b></li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>Excel の印刷と何が違いますか？</th><td>Excel でも、棚の列で並べ替えてから「データ」→「小計」で「グループごとに改ページを挿入する」を選び、「ページレイアウト」→「印刷タイトル」で見出しの行を指定すれば、棚ごとに印刷できます。その場合は小計の行が入るので、印刷後に「すべて削除」で元に戻します。このツールは棚・分類の列を選ぶだけで改ページし、ページごとに棚の名前・担当者欄・空欄の行・ページ番号を付け、元の表は変えません。</td></tr>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・印刷・CSV の保存は、すべてお使いのブラウザの中で行います。</td></tr>
+<tr><th>何件まで使えますか？</th><td>製品版は件数の制限はありません。数千件の一覧でも動きますが、パソコンの性能によっては表示に時間がかかります。</td></tr>
+<tr><th>印刷すると表が小さくなります</th><td>印刷画面で倍率を「100%（実際のサイズ）」にし、余白を「なし」にしてください。</td></tr>
+<tr><th>来年も使えますか？</th><td>買い切りです。決済後の画面をブックマークしておけば、次の棚卸でもそのまま使えます。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>商品の一覧はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
