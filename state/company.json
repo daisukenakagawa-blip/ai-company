@@ -435,6 +435,11 @@
       "date": "2026-11-20 09:20",
       "text": "Search Console に genhayl-shop.pages.dev（URLプレフィックス）を登録し、sitemap.xml を送信済み（7日目、オーナー作業完了）",
       "read": true
+    },
+    {
+      "date": "2026-11-21 07:33",
+      "text": "周知・拡散も自動で行う（店の中の使い方ガイドは自動。SNS は投稿用コネクタ接続後に自動。スパム・頼まれていないメールはしない）",
+      "read": false
     }
   ]
 }

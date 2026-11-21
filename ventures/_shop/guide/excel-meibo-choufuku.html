@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excel で名簿の重複を見つける方法と、「重複の削除」で見つからない重複｜GENHAYL</title>
+<meta name="description" content="Excel の条件付き書式・COUNTIF・重複の削除で名簿の重複を見つける方法と、全角半角や（株）の書き方の違いで見落とす重複をそろえてから探すコツ。">
+<style>body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.85}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}h1{font-size:25px;line-height:1.5;margin:0 0 8px}h2{font-size:19px;margin:32px 0 8px;border-left:4px solid #0f766e;padding-left:10px}h3{font-size:16px;margin:20px 0 4px}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid #e5e7eb;border-radius:6px}code{padding:1px 5px;font-size:14px}pre{padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.6}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}th{background:#f3f4f6}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:20px 0}.cta{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px}
+.note{font-size:13px;color:#6b7280}.crumb{font-size:13px}.crumb a,footer a{color:#0f766e}footer{margin-top:40px;font-size:13px}</style>
+</head>
+<body>
+<main>
+<p class="crumb"><a href="../">GENHAYL の小さな道具</a> ＞ <a href="./">使い方ガイド</a></p>
+<h1>Excel で名簿の重複を見つける方法と、「重複の削除」で見つからない重複</h1>
+<p class="note">2026-11-21 公開</p>
+<p>DM が同じ人に2通届いた、展示会とネットの名簿を合わせたら同じ会社が何件もある。顧客名簿の二重登録を Excel で探す方法です。</p>
+
+<h2>まったく同じ値の重複を探す</h2>
+<h3>色を付けて目で確かめる</h3>
+<p>電話番号やメールアドレスの列を選び、<b>「ホーム」→「条件付き書式」→「セルの強調表示ルール」→「重複する値」</b>。同じ値のセルに色が付きます。</p>
+<h3>何件あるかを数える</h3>
+<p>電話番号が D 列（2〜1000行目）なら、空いている列に次の式を入れて下へコピーします。2以上なら重複です。</p>
+<pre>=COUNTIF($D$2:$D$1000,D2)</pre>
+<h3>まとめて消す</h3>
+<p><b>「データ」→「重複の削除」</b>で、選んだ列が同じ行の2件目以降を消せます。<b>元に戻せないので、必ず名簿のコピーで行ってください。</b>どちらの行が残るかは選べず、上にある行が残ります。</p>
+
+<h2>書き方が違うだけの重複は見つからない</h2>
+<p>上の3つは、文字が1文字でも違えば別の値として扱います。名簿では、次のような「同じものなのに書き方が違う」重複がよくあります。</p>
+<div class="tw"><table>
+<tr><th>1件目</th><th>2件目</th><th>違い</th></tr>
+<tr><td>090-1111-2222</td><td>０９０（１１１１）２２２２</td><td>全角・区切りの記号</td></tr>
+<tr><td>株式会社サンプル</td><td>(株)サンプル</td><td>会社の種類の書き方</td></tr>
+<tr><td>山田 太郎</td><td>山田太郎 様</td><td>空白・敬称</td></tr>
+<tr><td>髙橋 花子</td><td>高橋 花子</td><td>異体字</td></tr>
+<tr><td>港区芝浦一丁目2番3号</td><td>港区芝浦1-2-3</td><td>住所の書き方</td></tr>
+</table></div>
+
+<h2>そろえてから探すコツ（関数）</h2>
+<p>比べたい列を、書き方をそろえた「比較用の列」に作り直してから、上の COUNTIF や条件付き書式を使います。</p>
+<p>電話番号（D2）から、全角を半角にして、ハイフンと括弧と空白を取り除く：</p>
+<pre>=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(ASC(D2),"-",""),"(",""),")","")," ","")</pre>
+<p>会社名（C2）から、空白と「株式会社」「(株)」を取り除く：</p>
+<pre>=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(ASC(C2)," ",""),"株式会社",""),"(株)","")</pre>
+<p class="note">ASC 関数は全角の英数字・記号・空白を半角にします（カタカナも半角になりますが、比較用の列なので問題ありません）。</p>
+<p>この方法で、表の上の3行目までは見つけられるようになります。異体字（髙と高）、住所の漢数字（一丁目と1-）、1文字違いの入力ミスまで関数でそろえるのは大変です。</p>
+
+<h2>関数では大変なとき</h2>
+<div class="box">
+<p><b><a href="../meibo-choufuku/">名簿の重複チェック</a></b>（980円・買い切り）は、名簿の CSV から二重登録の候補を探すツールです。電話番号・メールの一致に加えて、上の表のような書き方の違いをそろえ、氏名と住所がそろって似ている行も候補に出します。同姓同名でも住所が違う人は分けます。<b>先頭30行までは無料で試せます。</b>名簿はブラウザの中だけで処理し、どこにも送信しません。</p>
+<p><a class="cta" href="../meibo-choufuku/">名簿の重複チェックを見る</a></p>
+</div>
+<p class="note">見つかるのは「重複の候補」です。最後は一覧を見て確かめてください。</p>
+
+<footer><a href="./">ほかのガイド</a>　<a href="../">道具の一覧</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

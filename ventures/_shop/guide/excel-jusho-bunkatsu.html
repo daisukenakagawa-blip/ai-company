@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excel で住所を「都道府県」と「それ以降」に分ける方法（関数あり）｜GENHAYL</title>
+<meta name="description" content="1つのセルに入った住所から、Excel の関数で都道府県を取り出す方法と、市区町村まで分けようとすると関数ではうまくいかない理由をまとめました。">
+<style>body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.85}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}h1{font-size:25px;line-height:1.5;margin:0 0 8px}h2{font-size:19px;margin:32px 0 8px;border-left:4px solid #0f766e;padding-left:10px}h3{font-size:16px;margin:20px 0 4px}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid #e5e7eb;border-radius:6px}code{padding:1px 5px;font-size:14px}pre{padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.6}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}th{background:#f3f4f6}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:20px 0}.cta{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px}
+.note{font-size:13px;color:#6b7280}.crumb{font-size:13px}.crumb a,footer a{color:#0f766e}footer{margin-top:40px;font-size:13px}</style>
+</head>
+<body>
+<main>
+<p class="crumb"><a href="../">GENHAYL の小さな道具</a> ＞ <a href="./">使い方ガイド</a></p>
+<h1>Excel で住所を「都道府県」と「それ以降」に分ける方法（関数あり）</h1>
+<p class="note">2026-11-21 公開</p>
+<p>顧客名簿の住所が「東京都港区芝浦1-2-3」のように1つのセルに入っていて、都道府県別に集計したい、配送システムの取込形式に合わせたい、というときの方法です。</p>
+
+<h2>都道府県は関数で取り出せます</h2>
+<p>住所が A2 に入っているとして、B2 に次の式を入れます。</p>
+<pre>=IF(MID(A2,4,1)="県",LEFT(A2,4),LEFT(A2,3))</pre>
+<p>都道府県名は、<b>神奈川県・和歌山県・鹿児島県の3つだけが4文字</b>で、ほかはすべて3文字（東京都・北海道・大阪府・京都府なども3文字）です。そこで「4文字目が『県』なら4文字、そうでなければ3文字」を取り出しています。</p>
+<p>それ以降の住所は、C2 に次の式で取り出せます。</p>
+<pre>=MID(A2,LEN(B2)+1,LEN(A2))</pre>
+
+<h3>うまくいかないケース</h3>
+<ul>
+<li><b>住所が都道府県から始まっていない</b>（「横浜市中区…」「〒105-0023 東京都…」）：先頭の3〜4文字をそのまま取り出してしまいます。郵便番号や空白が先頭にあるときは、先に消してください</li>
+<li><b>先頭に空白がある</b>：<code>=TRIM(A2)</code> の列を作ってから使います（全角の空白は TRIM では消えないので、<code>=TRIM(SUBSTITUTE(A2,"　"," "))</code>）</li>
+</ul>
+
+<h2>市区町村を関数で分けるのは難しい</h2>
+<p>「最初の『市』『区』『町』『村』まで」を取り出す式を作りたくなりますが、実際の住所では次のような例で崩れます。</p>
+<div class="tw"><table>
+<tr><th>住所の例</th><th>関数で起きやすい間違い</th></tr>
+<tr><td>千葉県<b>市川市</b>八幡…</td><td>最初の「市」で切ると「市」だけになる（市原市・四日市市・廿日市市なども同じ）</td></tr>
+<tr><td>神奈川県<b>横浜市中区</b>山下町…</td><td>政令指定都市は「市」の後ろに「区」が続く。「横浜市」で切ると区が町域側に入る</td></tr>
+<tr><td>北海道<b>余市郡余市町</b>…</td><td>「郡」が入る住所は、郡と町をまとめて取り出す必要がある</td></tr>
+<tr><td>東京都<b>町田市</b>…／大阪府<b>大阪市北区</b>…</td><td>「町」で切ると「町」だけになる。「大阪市北区」の「区」の扱いも必要</td></tr>
+</table></div>
+<p>こうした例外を1つずつ IF で足していくと、式が長くなり、例外の漏れにも気づきにくくなります。件数が少なければ、目で見て直すのが確実です。</p>
+
+<h2>件数が多いときは</h2>
+<div class="box">
+<p><b><a href="../jusho-bunkatsu/">住所の列分割</a></b>（500円・買い切り）は、CSV の住所の列を「都道府県／市区町村／町域・番地／建物名」の4列に分けるツールです。上の表のような郡・政令指定都市の区・「市」で始まる市名も考えて分けます。<b>先頭10件までは無料で試せます。</b>名簿はブラウザの中だけで処理し、どこにも送信しません。</p>
+<p><a class="cta" href="../jusho-bunkatsu/">住所の列分割を見る</a></p>
+</div>
+<p class="note">関数だけで十分な場合は、ツールを使う必要はありません。</p>
+
+<footer><a href="./">ほかのガイド</a>　<a href="../">道具の一覧</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

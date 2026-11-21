@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSV を Excel で開くと文字化けするときの直し方｜GENHAYL</title>
+<meta name="description" content="ダウンロードした CSV を Excel で開くと日本語が文字化けする原因（UTF-8 と Shift_JIS）と、Excel の機能だけで正しく開く2つの方法、郵便番号の先頭の0が消える問題の防ぎ方。">
+<style>body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.85}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}h1{font-size:25px;line-height:1.5;margin:0 0 8px}h2{font-size:19px;margin:32px 0 8px;border-left:4px solid #0f766e;padding-left:10px}h3{font-size:16px;margin:20px 0 4px}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid #e5e7eb;border-radius:6px}code{padding:1px 5px;font-size:14px}pre{padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.6}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}th{background:#f3f4f6}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:20px 0}.cta{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px}
+.note{font-size:13px;color:#6b7280}.crumb{font-size:13px}.crumb a,footer a{color:#0f766e}footer{margin-top:40px;font-size:13px}</style>
+</head>
+<body>
+<main>
+<p class="crumb"><a href="../">GENHAYL の小さな道具</a> ＞ <a href="./">使い方ガイド</a></p>
+<h1>CSV を Excel で開くと文字化けするときの直し方</h1>
+<p class="note">2026-11-21 公開</p>
+<p>ネットショップの管理画面や Web サービスからダウンロードした CSV をダブルクリックで開くと、日本語が「縺薙ｓ縺ｫ縺｡縺ｯ」のような文字になってしまう。よくある原因と、Excel の機能だけで直す方法です。</p>
+
+<h2>原因：ファイルの文字コードと、Excel の思い込みが違う</h2>
+<p>日本語の CSV には、主に <b>UTF-8</b> と <b>Shift_JIS</b> の2つの文字コードがあります。最近の Web サービスの多くは UTF-8 で書き出しますが、日本語版の Excel は、CSV をダブルクリックで開くと Shift_JIS だとみなして読みます。この食い違いで文字化けします。</p>
+<p>ただし、UTF-8 の中でも、ファイルの先頭に「BOM」という目印が付いているものは、Excel が UTF-8 だと気づいて正しく開きます。</p>
+
+<h2>直し方1：Excel の「データ」から読み込む（ファイルはそのまま）</h2>
+<ol>
+<li>Excel で空のブックを開き、<b>「データ」タブ →「テキストまたは CSV から」</b>を選ぶ</li>
+<li>CSV ファイルを選ぶ</li>
+<li>表示された画面の<b>「元のファイル」を「65001: Unicode (UTF-8)」</b>にする（プレビューの文字化けが直ります）</li>
+<li>「読み込み」を押す</li>
+</ol>
+<p class="note">Microsoft 365 などの最近の Windows 版 Excel の手順です。版によって画面の名前が少し違うことがあります。</p>
+
+<h2>直し方2：メモ帳で「UTF-8 (BOM 付き)」に保存し直す</h2>
+<ol>
+<li>CSV を右クリック →「プログラムから開く」→「メモ帳」</li>
+<li>「ファイル」→「名前を付けて保存」</li>
+<li>下の「エンコード」を<b>「UTF-8 (BOM 付き)」</b>にして保存</li>
+</ol>
+<p>これで、ダブルクリックでも文字化けせずに開けるようになります（Windows 10 / 11 のメモ帳）。</p>
+
+<h2>あわせて起きやすい問題：先頭の0が消える</h2>
+<p>ダブルクリックで開くと、郵便番号「0600001」が「600001」に、電話番号「09012345678」が「9012345678」に、長い番号が「4.90E+12」になることがあります。Excel が数値だとみなすためです。<b>この状態で上書き保存すると、元の値は戻りません。</b></p>
+<p>直し方1の画面で「データの変換」を押し、その列のデータ型を「テキスト」にしてから読み込むと防げます。</p>
+
+<h2>逆に「Shift_JIS の CSV で」と言われたら</h2>
+<p>取込先のシステムが Shift_JIS しか受け付けないことがあります。日本語版 Excel で「CSV（コンマ区切り）」として保存すると Shift_JIS になりますが、<b>Shift_JIS にない文字（「髙」「﨑」などの一部の漢字や絵文字）は「?」に置き換わります</b>。どの行が置き換わったかは、保存したあとでは分かりません。</p>
+<div class="box">
+<p><b><a href="../mojicode-henkan/">文字コード・改行コードの変換</a></b>（500円・買い切り）は、CSV を Shift_JIS ⇔ UTF-8 に変換し、改行コードもそろえるツールです。<b>Shift_JIS にできない文字が、何行目のどこにあるかを一覧にします。</b>ファイルはブラウザの中だけで処理し、どこにも送信しません。</p>
+<p><a class="cta" href="../mojicode-henkan/">文字コード・改行コードの変換を見る</a></p>
+</div>
+<p class="note">文字化けを直すだけなら、上の2つの方法で十分です。</p>
+
+<footer><a href="./">ほかのガイド</a>　<a href="../">道具の一覧</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
