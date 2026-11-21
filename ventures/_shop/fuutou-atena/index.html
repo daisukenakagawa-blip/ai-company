@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>封筒の宛名印刷（長形3号・角形2号）ブラウザだけで・Mac でも｜GENHAYL</title>
+<meta name="description" content="請求書・案内を送る封筒（長形3号・長形4号・角形2号）に、Excel・CSV の住所録から宛名を1通1枚で縦書き印刷。会社名・部署・御中、「請求書在中」の朱色の表示、裏面の差出人に対応。インストール不要、住所録は送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin-left:8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+</style>
+</head>
+<body>
+<main>
+<h1>封筒の宛名印刷（縦書き）</h1>
+<p>請求書・見積書・案内状を送る<b>封筒（長形3号・長形4号・角形2号）</b>に、Excel や CSV の住所録から宛名を直接印刷するツールです。1通1枚、縦書きで、会社名・部署・「御中」「様」、左下の「請求書在中」、裏面の差出人まで印刷できます。ソフトのインストールは不要で、<b>Mac でも Windows でも</b>、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/8x2bJ27SMdib3jCcAC1gs0l">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、印刷は表・裏とも先頭3通まで（枠つきの試し刷りは何度でも）。プリンターでの位置合わせまで、購入前に確かめられます。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-print.png" alt="印刷結果の例：長形3号の表（宛名・請求書在中）、裏（差出人）、角形2号の表（架空の住所・氏名）" width="720"></p>
+<p class="note">印刷結果の例（左から：長形3号の表、長形3号の裏、角形2号の表。角形2号は縮小）。住所・氏名・会社名は架空のものです。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>毎月の請求書を封筒で送っていて、宛名を手書きしたり、ラベルを貼ったりしている</li>
+<li>Word の差し込み印刷で封筒の設定をするたびに、用紙の向きや位置でつまずく</li>
+<li>封筒用の宛名ソフトが Windows 用しかなく、Mac では使えない</li>
+<li>取引先の一覧は Excel で管理していて、それをそのまま使いたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>封筒の大きさ</b>：長形3号（120×235mm、A4三つ折り）・長形4号（90×205mm、B5三つ折り）・角形2号（240×332mm、A4そのまま）。印刷の用紙の大きさも自動で合わせます</li>
+<li><b>郵便番号</b>：長形は、日本郵便の示す定形郵便物の郵便番号枠の位置（上端から12mm・右端から8mm）に合わせて印刷。上端・右端から18mm の枠の封筒、枠のない封筒（「〒123-4567」と文字で）も選べます。角形2号は文字で印刷します</li>
+<li><b>会社あての宛名</b>：住所の左に会社名・部署・役職を並べ、氏名に「様」。会社名だけなら「御中」。敬称の列があればそれを使い、なければ「様」「殿」「先生」から選べます</li>
+<li><b>「請求書在中」などの表示</b>：表の左下に朱色の枠つきで。請求書・見積書・納品書・領収書・重要書類・履歴書の在中、親展、自由な文言（10文字まで）</li>
+<li><b>裏面の差出人</b>：住所・建物名・会社名・部署・氏名を、中央より左に縦書きで。郵便番号は「〒」つきの文字で。表と同じ通数をまとめて印刷します</li>
+<li><b>住所録の読み込み</b>：Excel（.xlsx）・CSV（UTF-8／Shift_JIS を自動判定）・表の貼り付け。見出しから列を自動で選びます（選び直し可）。連名（4人まで）にも対応</li>
+<li><b>縦書きの体裁</b>：番地の数字を漢数字に（「1-2-3」→「一ー二ー三」、「12階」→「十二階」）。長い住所は2列に、建物名は別の列に</li>
+<li><b>位置合わせ</b>：普通紙に枠つきで試し刷りし、ずれは 0.5mm 単位で補正できます。設定と差出人はブラウザに保存され、次回も使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>封筒は<b>縦書き・縦長の向き</b>だけです。横書きの宛名や、洋形（横長）の封筒には対応していません</li>
+<li>窓付き封筒の窓の位置には合わせていません。窓付き封筒には、書類のほうに宛名を入れてください</li>
+<li>封筒の製品によって郵便番号枠の位置が違うことがあります。<b>お試し版で試し刷りしてから</b>お使いください</li>
+<li>封筒に印刷できるかどうかは、お使いのプリンターによります（封筒に対応していないプリンターでは印刷できません）</li>
+<li>人名・社名の外字（パソコンにない字）は印刷できません。住所の正しさ（郵便番号と住所が合っているか）は調べません</li>
+<li>はがきは <a href="../atena-hagaki/">はがきの宛名印刷</a>、A4 のラベル用紙は <a href="../atena-label/">宛名ラベルの面付け印刷</a> をお使いください</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>住所録はどこかに送られますか？</th><td>送られません。読み込み・配置の計算・印刷は、すべてお使いのブラウザの中で行います。</td></tr>
+<tr><th>印刷画面で封筒の大きさが選べません</th><td>プリンターの設定で「長形3号」などの封筒を選ぶか、ない場合は「ユーザー定義（カスタム）サイズ」で封筒の大きさ（例：120×235mm）を作ってください。倍率は「100%（実際のサイズ）」、余白は「なし」にします。</td></tr>
+<tr><th>郵便番号が枠からずれます</th><td>まず倍率と余白を確かめてください。それでもずれる場合は「ずれの補正」で mm 単位で直せます。補正の値はブラウザに保存されます。</td></tr>
+<tr><th>何通まで印刷できますか？</th><td>製品版は通数の制限はありません。毎月の請求書の発送に、同じ画面で使えます。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>住所録はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>封筒の宛名印刷（縦書き）お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px}
+.drop.over{border-color:var(--accent);background:#f0fdfa}.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
+.mf{display:flex;flex-direction:column;font-size:13px}.mf span{color:var(--sub)}
+.two{display:grid;grid-template-columns:1fr 380px;gap:16px}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+.tbl{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left;vertical-align:top}
+thead th{background:#f3f4f6;position:sticky;top:0}
+tr{cursor:pointer}tr.cur td{background:#ecfeff}tr.off td{color:#9ca3af}td.w,.wtxt{color:#b45309}
+.note{font-size:12px;color:var(--sub)}
+.pvs{display:flex;gap:10px;justify-content:center}.pvs>div{flex:1;max-width:180px}.pvs .cap{font-size:12px;color:var(--sub);text-align:center}
+.pvw{width:100%;overflow:hidden;border:1px solid #d1d5db;background:#fff}
+.pvw .env{transform-origin:0 0}
+/* 封筒（実寸。大きさは style で指定） */
+.env{position:relative;overflow:hidden;background:#fff;color:#000}
+.env.mincho{font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif CJK JP","Noto Serif JP","MS PMincho",serif}
+.env.gothic{font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans CJK JP","Noto Sans JP","MS PGothic",sans-serif}
+.env.test{outline:0.3mm solid #9ca3af;outline-offset:-0.3mm}
+.zbox{position:absolute;border:0.3mm solid #e11d48}
+.zd{position:absolute;text-align:center;font-family:"Helvetica Neue",Arial,"Noto Sans",sans-serif;font-size:5.6mm}
+.ch{position:absolute;writing-mode:vertical-rl;text-align:center;line-height:1;display:flex;align-items:center;justify-content:center}
+.tx{position:absolute;white-space:nowrap;line-height:1.2}
+.tx.zipt{font-family:"Helvetica Neue",Arial,"Noto Sans",sans-serif}
+.stamp{position:absolute;border:0.5mm solid #d6001c;color:#d6001c;writing-mode:vertical-rl;display:flex;align-items:center;justify-content:center;line-height:1;font-weight:700;font-family:"Hiragino Sans","Yu Gothic","Noto Sans CJK JP","Noto Sans JP",sans-serif}
+.ch.sndname{font-weight:600}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block}
+  #printArea .env{page-break-after:always;break-after:page}
+  #printArea .env.test{outline:0.2mm solid #9ca3af}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>封筒の宛名印刷（縦書き）</h1>
+<p class="lead">住所録（CSV・Excel）から、長形3号・長形4号・角形2号の封筒に、宛名を1通1枚で縦書きに直接印刷します。裏面の差出人や「請求書在中」も印刷できます。住所録はこのブラウザの中だけで処理し、どこにも送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、印刷できるのは表・裏とも先頭 3 通までです（試し刷りは何度でも）。全件を印刷するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<section class="box">
+<h2>1. 住所録を読み込む</h2>
+<div class="drop" id="drop">CSV または Excel（.xlsx）のファイルをここに置くか、選んでください<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></div>
+<div class="row"><label><input type="checkbox" id="hasHead" checked> 1行目は見出し（「氏名」「住所」など）</label>
+<button class="sub" id="sampleBtn">見本のデータで試す</button></div>
+<details><summary class="note">Excel の表をコピーして貼り付ける</summary>
+<textarea id="paste" rows="5" placeholder="Excel で見出しごと範囲を選んでコピーし、ここに貼り付け"></textarea>
+<button class="sub" id="pasteBtn">貼り付けたデータを読み込む</button></details>
+<p id="loadMsg" class="note"></p>
+</section>
+
+<section class="box" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note">見出しの名前から自動で選んでいます。違っていれば選び直してください。氏名は「姓・名」が別の列でも、1列（姓と名の間に空白）でも使えます。連名は「花子」のように名だけなら、上の人の名の位置にそろえます。1つのセルに「花子、一郎」と複数書いても構いません。</p>
+<div class="grid" id="mapBox"></div>
+</section>
+
+<section class="box" id="step3" hidden>
+<h2>3. 封筒と印刷の設定</h2>
+<div class="grid">
+<label class="mf"><span>封筒の大きさ</span><select id="env"><option value="naga3">長形3号（120×235mm・A4三つ折り）</option><option value="naga4">長形4号（90×205mm・B5三つ折り）</option><option value="kaku2">角形2号（240×332mm・A4そのまま）</option></select></label>
+<label class="mf"><span>郵便番号</span><select id="frame"><option value="auto">封筒に合わせる（長形は枠、角形は文字）</option><option value="jis">枠に合わせる：上端12mm・右端8mm（JIS）</option><option value="r18">枠に合わせる：上端18mm・右端18mm</option><option value="none">枠のない封筒：「〒123-4567」と文字で</option></select></label>
+<label class="mf"><span>表の左下の表示（朱色の枠）</span><select id="stamp"><option value="">なし</option><option>請求書在中</option><option>見積書在中</option><option>納品書在中</option><option>領収書在中</option><option>重要書類在中</option><option>履歴書在中</option><option>親展</option><option value="other">そのほか（入力）</option></select>
+<input type="text" id="stampText" maxlength="10" placeholder="例：案内状在中" hidden></label>
+<label class="mf"><span>番地などの数字</span><select id="numStyle"><option value="kanji">漢数字（一ー二ー三）</option><option value="zen">そのまま（１ー２ー３）</option></select></label>
+<label class="mf"><span>書体</span><select id="font"><option value="mincho">明朝体</option><option value="gothic">ゴシック体</option></select></label>
+<label class="mf"><span>敬称（敬称の列が空のとき）</span><select id="keisho"><option>様</option><option>殿</option><option>先生</option><option>さん</option></select></label>
+<label class="mf"><span>ずれの補正：右へ（mm、左はマイナス）</span><input type="number" id="offX" value="0" step="0.5" min="-10" max="10"></label>
+<label class="mf"><span>ずれの補正：下へ（mm、上はマイナス）</span><input type="number" id="offY" value="0" step="0.5" min="-10" max="10"></label>
+</div>
+<p class="note">郵便番号枠の位置は封筒の製品によって違うことがあります。下の「試し刷り」で枠に入るか確かめ、ずれは補正で直してください。会社名だけの宛名は「御中」、会社名と氏名があるときは住所の左に会社名・部署を入れて氏名に「様」を付けます。</p>
+<h2 style="margin-top:14px">裏面の差出人</h2>
+<div class="row"><label><input type="checkbox" id="useSender" checked> 差出人（裏面）を使う</label></div>
+<div class="grid">
+<label class="mf"><span>郵便番号</span><input type="text" id="sZip" placeholder="105-0023"></label>
+<label class="mf"><span>住所</span><input type="text" id="sAddr1" placeholder="東京都港区芝浦1-2-3"></label>
+<label class="mf"><span>建物名など</span><input type="text" id="sAddr2" placeholder="サンプルビル4階"></label>
+<label class="mf"><span>会社名・屋号</span><input type="text" id="sCompany" placeholder="サンプル事務所"></label>
+<label class="mf"><span>部署</span><input type="text" id="sDept" placeholder="総務部"></label>
+<label class="mf"><span>氏名</span><input type="text" id="sName" placeholder="山田 太郎"></label>
+</div>
+<p class="note">裏面は、封筒の中央より左・下半分に縦書きで印刷します（郵便番号は下に「〒」つきの文字で）。差出人と設定は、このブラウザに保存され、次回も使えます（サーバーには送りません）。</p>
+</section>
+
+<section class="box" id="step4" hidden>
+<h2>4. 確かめて印刷する</h2>
+<div class="two">
+<div>
+<div class="row"><span id="count"></span><button class="sub" id="allOn">全部選ぶ</button><button class="sub" id="allOff">全部外す</button></div>
+<div class="tbl"><table><thead><tr><th>印刷</th><th>#</th><th>宛名</th><th>〒</th><th>住所</th><th>確認</th></tr></thead><tbody id="list"></tbody></table></div>
+<p class="note">行を押すと右に表示します。チェックを外した行は印刷しません。</p>
+</div>
+<div>
+<div class="pvs"><div><div class="pvw" id="pvw"><div id="pv"></div></div><div class="cap">表（宛名）</div></div><div><div class="pvw" id="pvwb"><div id="pvb"></div></div><div class="cap">裏（差出人）</div></div></div>
+<div class="row" style="justify-content:center"><button class="sub" id="prev">← 前</button><span id="pvNote" class="note"></span><button class="sub" id="next">次 →</button></div>
+<p class="note">画面の赤い枠は位置の目安です（本番の印刷では印刷しません）。</p>
+</div>
+</div>
+<div class="box" style="margin-top:12px;background:#f9fafb">
+<b>印刷の手順</b>
+<ol style="font-size:14px;margin:6px 0 10px;padding-left:20px">
+<li>まず<b>普通紙で試し刷り</b>：「表の試し刷り（1枚）」を押し、印刷画面で用紙サイズを封筒（例：「長形3号」）か、ない場合は「ユーザー定義」で封筒の大きさに、倍率を「100%（実際のサイズ）」、余白を「なし」にします。印刷した紙を封筒に重ねて、郵便番号が枠に入るか確かめます</li>
+<li>ずれていたら、上の「ずれの補正」で mm 単位で直します</li>
+<li>封筒をプリンターにセットし、「表を印刷する」を押します。選んだ宛名を1通1枚で印刷します</li>
+<li>差出人を入れたときは、封筒を裏返して入れ直し、「裏（差出人）を印刷する」を押します。表と同じ枚数を印刷します</li>
+</ol>
+<div class="row"><button class="sub" id="testBtn">表の試し刷り（1枚・枠つき）</button><button id="printBtn">表を印刷する</button>
+<label><input type="checkbox" id="printBoxes"> 本番でも枠を印刷する（普通紙に印刷するとき）</label></div>
+<div class="row"><button class="sub" id="backTestBtn">裏の試し刷り（1枚）</button><button id="backBtn">裏（差出人）を印刷する</button></div>
+<p class="note">封筒の向き・入れ方（ふたを上にするか下にするか）はプリンターによって違います。プリンターの説明書の「封筒」の入れ方に従ってください。封筒に対応していないプリンターでは印刷できません。</p>
+</div>
+</section>
+
+<p class="note">住所録はこのブラウザの中だけで処理し、どこにも送信しません。お問い合わせ・返金は <a href="../tokushoho.html">特定商取引法に基づく表記</a> の連絡先へ。</p>
+</main>
+<div id="printArea"></div>
+<script>window.FUUTOU_LIMIT=3;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="fuutou.js"></script>
+<script src="app.js"></script>
+<script>
+// 画面の封筒表示を枠の大きさに合わせる
+(function(){function fitOne(id){var w=document.getElementById(id);var h=w.querySelector(".env");if(!h){w.style.height="0";return;}var s=w.clientWidth/h.offsetWidth;h.style.transform="scale("+s+")";w.style.height=(h.offsetHeight*s)+"px";}
+function fitPv(){fitOne("pvw");fitOne("pvwb");}
+["pv","pvb"].forEach(function(id){new MutationObserver(fitPv).observe(document.getElementById(id),{childList:true});});window.addEventListener("resize",fitPv);})();
+</script>
+</body>
+</html>
