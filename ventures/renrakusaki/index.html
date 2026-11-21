@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>連絡先ファイル（.vcf）を CSV・Excel の表に変換｜GENHAYL</title>
+<meta name="description" content="スマホや連絡先アプリから書き出した連絡先ファイル（.vcf・vCard）を、Excel で開ける CSV に変換します。文字化けしやすい古い形式（Shift_JIS・Quoted-Printable）にも対応。宛名印刷用の列だけの書き出し、CSV の名簿から .vcf を作る逆変換もできます。ブラウザ内で完結。先頭3件は無料で確かめられます。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;font-size:15px}
+.try input{max-width:100%}
+#t_tbl table{font-size:13px}#t_tbl td,#t_tbl th{white-space:nowrap}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>連絡先ファイル（.vcf）⇔ CSV 変換</h1>
+<p>スマホの連絡先を書き出したら「.vcf」というファイルになって、Excel で開くと1列にずらっと文字が並ぶだけ……。このツールに入れると、<b>姓・名・ふりがな・携帯・自宅の電話・メール・郵便番号・住所</b>を列に分けた表（CSV）にします。年賀状の送り先の整理や、名簿の移し替えにお使いください。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/8x2cN6eha2Dx8DWasu1gs0g">購入する（Stripe）</a></p>
+<p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>先頭3件だけ、ここで無料で確かめられます</h2>
+<div class="try">
+  <p style="margin:0 0 6px">お手元の .vcf ファイルを選ぶと、正しく読めるかを先頭3件で表示します（ファイルは送信されません）。</p>
+  <input type="file" id="t_file" accept=".vcf,.vcard,text/vcard,text/x-vcard">
+  <div id="t_info" class="note" style="margin-top:8px"></div>
+  <div id="t_tbl" class="tw"></div>
+</div>
+<p class="note">全件の書き出し、CSV の保存、宛名印刷用の形式、ふりがなのそろえ、CSV から .vcf を作る逆変換は、購入後のツールでできます。</p>
+
+<h2>できること</h2>
+<ul>
+<li><b>.vcf → CSV</b>：1人1行の表にします。電話は「携帯」「自宅」「勤務先」「FAX」の種類ごとに列を分け、2つ以上ある人は「携帯1」「携帯2」のように列を増やします。メール・住所も同じです</li>
+<li><b>住所は5つの列に</b>：郵便番号・都道府県・市区町村・番地・建物名に分け、つなげた住所の列も付けます</li>
+<li><b>宛名印刷用の形式</b>：「姓・名・郵便番号・住所・建物名・会社名」だけの列にし、住所が入っている人だけに絞れます。同じお店の<a href="../atena-hagaki/">はがきの宛名印刷（縦書き）</a>にそのまま入ります</li>
+<li><b>そろえる</b>：「+81 90-…」を「090-…」に、郵便番号を「123-4567」に、ふりがなをひらがな・カタカナにそろえられます。半角カナのふりがなも全角にします</li>
+<li><b>古い形式も読める</b>：vCard 2.1・3.0・4.0、UTF-8 と Shift_JIS、Quoted-Printable（「=E5=B1=B1…」のような文字）、折り返された長い行に対応しています。複数のファイルをまとめて入れられます</li>
+<li><b>CSV → .vcf</b>：名簿の CSV から、全員分が入った連絡先ファイルを作ります。「氏名」「電話番号」「メールアドレス」などの見出しから列を自動で選び、違っていれば選び直せます。先頭の0が消えた電話番号や、7桁でない郵便番号を一覧にします</li>
+</ul>
+
+<h2>使い方の例</h2>
+<div class="tw"><table>
+<tr><th>こんなとき</th><th>このツールでの使い方</th></tr>
+<tr><td>年賀状・喪中はがきの送り先を、スマホの連絡先から作りたい</td><td>「宛名印刷用」＋「住所が入っている人だけ」で CSV にし、送らない人の行を消す</td></tr>
+<tr><td>お店のお客さんの連絡先を、表で整理したい</td><td>「すべての項目」で CSV にし、Excel で並べ替える</td></tr>
+<tr><td>新しく入ったスタッフのスマホに、取引先の連絡先をまとめて入れたい</td><td>取引先一覧の CSV から .vcf を作り、スマホで開いて取り込む</td></tr>
+</table></div>
+
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>Excel で .vcf を開くと、文字化けする・1列になる</b>：.vcf は表の形ではなく「項目名:値」が縦に並んだファイルです。このツールは1人を1行にまとめ、項目ごとに列を分けます</li>
+<li><b>名前が「=E5=B1=B1=E7=94=B0」のようになっている</b>：古い形式の書き出しでよく使われる書き方（Quoted-Printable）です。このツールは元の文字に戻して読みます</li>
+<li><b>電話番号が「+81」で始まっている</b>：国番号つきの書き方です。チェック1つで「0」から始まる書き方に直せます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>スマホや連絡先アプリから .vcf を書き出す操作、取り込む操作は、それぞれのアプリで行ってください（このツールはファイルの変換だけを行います）</li>
+<li>写真は書き出しません。SNS のアカウント・メッセンジャーの ID などの項目も CSV には入りません（入らなかった項目は画面に件数を表示します）</li>
+<li>CSV → .vcf では、住所は1人1件（自宅として）です。連絡先アプリの「グループ」には対応していません</li>
+<li>同じ人が二重に登録されていないかの確認はしません（同じお店の「名簿の重複チェック」をお使いください）</li>
+<li>Excel ファイル（.xlsx）は扱えません。CSV・TSV（UTF-8・Shift_JIS）が対象です。保存する CSV は UTF-8（BOM 付き）です</li>
+</ul>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>連絡先はお使いのブラウザの中だけで処理し、サーバーには送信しません。保存もしません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン推奨）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+
+<footer><a href="../">ほかのツール</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+<script src="vcard.js"></script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const h=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  $("t_file").addEventListener("change",async()=>{
+    const f=$("t_file").files[0];if(!f) return;
+    const u8=new Uint8Array(await f.arrayBuffer());
+    const list=VCF.parseVCF(VCF.readText(u8).text);
+    if(!list.length){$("t_info").innerHTML='<div class="warn">連絡先が見つかりませんでした。「BEGIN:VCARD」で始まる .vcf ファイルか確かめてください。</div>';$("t_tbl").innerHTML="";return;}
+    const t=VCF.contactsToTable(list,{});
+    $("t_info").textContent=`${list.length}件の連絡先を読み取りました。先頭${Math.min(3,list.length)}件を表示しています。`+(list.length>3?`残り${list.length-3}件と CSV の保存は購入後のツールでできます。`:"");
+    $("t_tbl").innerHTML="<table><thead><tr>"+t.head.map(x=>"<th>"+h(x)+"</th>").join("")+"</tr></thead><tbody>"+t.rows.slice(0,3).map(r=>"<tr>"+r.map(v=>"<td>"+h(v)+"</td>").join("")+"</tr>").join("")+"</tbody></table>";
+  });
+})();
+</script>
+</body>
+</html>

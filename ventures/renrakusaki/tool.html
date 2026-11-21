@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>連絡先ファイル（.vcf）⇔ CSV 変換</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.tabs{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.tabs button{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.tabs button.on{background:var(--accent);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:14px;overflow:hidden}
+.drop.over{border-color:var(--accent);background:#f0fdfa}
+.drop b{display:block;color:var(--ink);margin-bottom:6px}
+.drop input{max-width:100%}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+.opts{display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+select{font-size:14px;max-width:100%}
+.stat{font-size:14px;color:var(--sub);margin:8px 0}
+.warn{font-size:13px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0}
+.good{font-size:14px;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 10px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.tbl{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;min-width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 8px;white-space:nowrap;text-align:left}
+thead th{position:sticky;top:0;background:#f3f4f6}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:14px}
+.sum b{font-size:18px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>連絡先ファイル（.vcf）⇔ CSV 変換</h1>
+<p class="lead">スマホや連絡先アプリから書き出した連絡先ファイル（.vcf・vCard）を、Excel で開ける表（CSV）にします。逆に、CSV の名簿から連絡先ファイルを作ることもできます。データはお使いのブラウザの中だけで処理され、どこにも送信されません。</p>
+
+<div class="tabs"><button id="tabA" class="on">連絡先ファイル → CSV</button><button id="tabB">CSV → 連絡先ファイル</button></div>
+
+<section id="paneA">
+<div class="card">
+  <h2>1. 連絡先ファイル（.vcf）を入れる</h2>
+  <div class="drop" id="dropA"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="fileA" accept=".vcf,.vcard,text/vcard,text/x-vcard,text/directory" multiple></div>
+  <p class="note">複数のファイルをまとめて入れることもできます（1人1ファイルで書き出された場合など）。</p>
+  <div id="infoA"></div>
+</div>
+<div class="card" id="optA" hidden>
+  <h2>2. 書き出し方を選ぶ</h2>
+  <div class="opts">
+    <label>形式 <select id="a_preset"><option value="all">すべての項目（電話・メール・住所を種類ごとの列に）</option><option value="atena">宛名印刷用（姓・名・郵便番号・住所・建物名・会社名）</option></select></label>
+    <label><input type="checkbox" id="a_onlyAdr"> 住所が入っている人だけにする</label>
+    <label>ふりがな <select id="a_kana"><option value="keep">そのまま</option><option value="hira">ひらがなにそろえる</option><option value="kata">カタカナ（全角）にそろえる</option></select></label>
+    <label><input type="checkbox" id="a_jp0" checked> 「+81 90-…」を「090-…」に直す</label>
+    <label><input type="checkbox" id="a_digits"> 電話番号のハイフン・空白を取る（数字だけにする）</label>
+    <label><input type="checkbox" id="a_zip" checked> 郵便番号を「123-4567」にそろえる</label>
+    <label><input type="checkbox" id="a_drop" checked> 誰も入っていない列は出さない</label>
+    <label><input type="checkbox" id="a_excel"> Excel で開いても電話番号・郵便番号の先頭の0が消えないようにする（="090…" の形で保存。ほかのシステムに取り込む場合は付けない）</label>
+  </div>
+  <p class="note" id="atenaNote" hidden>この形式の CSV は、同じお店の「はがきの宛名印刷（縦書き）」にそのまま入れられます。住所が複数ある人は「自宅」の住所（なければ1件目）を使います。</p>
+</div>
+<div class="card" id="outA" hidden>
+  <h2>3. 結果を確かめて保存する</h2>
+  <div class="sum" id="sumA"></div>
+  <div class="tbl"><table id="tblA"></table></div>
+  <p class="note" id="moreA"></p>
+  <p><button id="dlA">CSV を保存する</button></p>
+  <p class="note">保存する CSV は UTF-8（BOM 付き）です。Excel でそのまま開けます。Shift_JIS が必要な場合は、同じお店の「文字コード・改行コードの変換」をお使いください。</p>
+</div>
+</section>
+
+<section id="paneB" hidden>
+<div class="card">
+  <h2>1. CSV ファイルを入れる</h2>
+  <div class="drop" id="dropB"><b>ここにファイルをドラッグ&ドロップ</b>または <input type="file" id="fileB" accept=".csv,.tsv,.txt,text/csv,text/plain"></div>
+  <p class="note">1行目に見出し（「氏名」「電話番号」など）がある CSV・TSV（UTF-8 または Shift_JIS）を入れてください。</p>
+  <div id="infoB"></div>
+</div>
+<div class="card" id="mapB" hidden>
+  <h2>2. 列の中身を確かめる</h2>
+  <p class="note">見出しから自動で選んでいます。違っていたら選び直してください。電話・メールは複数の列を選べます。</p>
+  <div class="tbl" style="max-height:none"><table id="tblMap"></table></div>
+  <div class="opts" style="margin-top:10px">
+    <label><input type="checkbox" id="b_split" checked> 「氏名（1列）」が「山田 太郎」のように空白で区切られていたら、姓と名に分ける</label>
+    <label>ふりがな <select id="b_kana"><option value="keep">そのまま</option><option value="hira">ひらがなにそろえる</option><option value="kata">カタカナ（全角）にそろえる</option></select></label>
+  </div>
+</div>
+<div class="card" id="outB" hidden>
+  <h2>3. 連絡先ファイルを作る</h2>
+  <div id="resB"></div>
+  <p><button id="dlB">連絡先ファイル（.vcf）を保存する</button></p>
+  <p class="note">全員分が1つのファイル（vCard 3.0・UTF-8）に入ります。スマホに送って開くか、連絡先アプリの「読み込み（インポート）」で取り込んでください。取り込みの前に、今の連絡先のバックアップをおすすめします。同じ人がすでに登録されている場合、アプリによっては二重に登録されます。</p>
+</div>
+</section>
+
+<p class="note">うまく動かない場合は、ご購入から7日以内にご連絡いただければ返金します（<a href="../tokushoho.html">特定商取引法に基づく表記</a>）。</p>
+</main>
+<script src="vcard.js"></script>
+<script>
+"use strict";
+(function(){
+const $=id=>document.getElementById(id);
+const h=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function save(bytes,name,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([bytes],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+function drop(el,input,cb){
+  el.addEventListener("dragover",e=>{e.preventDefault();el.classList.add("over");});
+  el.addEventListener("dragleave",()=>el.classList.remove("over"));
+  el.addEventListener("drop",e=>{e.preventDefault();el.classList.remove("over");cb([...e.dataTransfer.files]);});
+  input.addEventListener("change",()=>cb([...input.files]));
+}
+const readAll=files=>Promise.all(files.map(f=>f.arrayBuffer().then(b=>({name:f.name,u8:new Uint8Array(b)}))));
+function table(el,head,rows){
+  el.innerHTML="<thead><tr>"+head.map(x=>"<th>"+h(x)+"</th>").join("")+"</tr></thead><tbody>"+rows.map(r=>"<tr>"+r.map(v=>"<td>"+h(v)+"</td>").join("")+"</tr>").join("")+"</tbody>";
+}
+$("tabA").onclick=()=>{$("tabA").classList.add("on");$("tabB").classList.remove("on");$("paneA").hidden=false;$("paneB").hidden=true;};
+$("tabB").onclick=()=>{$("tabB").classList.add("on");$("tabA").classList.remove("on");$("paneB").hidden=false;$("paneA").hidden=true;};
+
+/* ---------- A：vcf → CSV ---------- */
+let contacts=[],srcName="contacts",curA=null;
+drop($("dropA"),$("fileA"),async files=>{
+  if(!files.length) return;
+  const got=await readAll(files);contacts=[];const encs=new Set();
+  for(const f of got){const r=VCF.readText(f.u8);encs.add(r.enc==="utf-8"?"UTF-8":"Shift_JIS");contacts=contacts.concat(VCF.parseVCF(r.text));}
+  srcName=got.length===1?got[0].name.replace(/\.[^.]+$/,""):"contacts";
+  if(!contacts.length){$("infoA").innerHTML='<div class="warn">連絡先が見つかりませんでした。「BEGIN:VCARD」で始まる .vcf ファイルか確かめてください。</div>';$("optA").hidden=$("outA").hidden=true;return;}
+  const photo=contacts.filter(c=>c.photo).length,other={};
+  contacts.forEach(c=>c.other.forEach(n=>other[n]=(other[n]||0)+1));
+  let html=`<p class="stat">${got.length}個のファイル（${[...encs].join("・")}）から <b>${contacts.length}件</b> の連絡先を読み取りました。</p>`;
+  const notes=[];
+  if(photo) notes.push(`写真が入っている連絡先が ${photo}件あります。写真は CSV には書き出しません`);
+  const ok=Object.keys(other).filter(k=>!/^X-/.test(k)||/^X-(SOCIALPROFILE|AIM|JABBER|MSN|SKYPE|IMPP)/.test(k));
+  if(ok.length) notes.push("次の項目は CSV に書き出しません："+ok.map(k=>`${k}（${other[k]}件）`).join("、"));
+  if(notes.length) html+='<div class="warn">'+notes.map(h).join("<br>")+"</div>";
+  $("infoA").innerHTML=html;$("optA").hidden=$("outA").hidden=false;renderA();
+});
+function optsA(){return {preset:$("a_preset").value,onlyAdr:$("a_onlyAdr").checked,kana:$("a_kana").value,jp0:$("a_jp0").checked,telDigits:$("a_digits").checked,zipHyphen:$("a_zip").checked,dropEmpty:$("a_drop").checked,excel:$("a_excel").checked};}
+function renderA(){
+  if(!contacts.length) return;
+  const o=optsA();$("atenaNote").hidden=o.preset!=="atena";
+  curA=VCF.contactsToTable(contacts,o);
+  const withAdr=contacts.filter(c=>c.adr.length).length,withTel=contacts.filter(c=>Object.values(c.tel).some(a=>a.length)).length;
+  $("sumA").innerHTML=`<div>書き出す件数 <b>${curA.rows.length}</b></div><div>列の数 <b>${curA.head.length}</b></div><div>電話あり <b>${withTel}</b></div><div>住所あり <b>${withAdr}</b></div>`;
+  table($("tblA"),curA.head,curA.rows.slice(0,100));
+  $("moreA").textContent=curA.rows.length>100?`画面には先頭100件を表示しています（保存する CSV には全${curA.rows.length}件が入ります）。`:"";
+  $("dlA").disabled=!curA.rows.length;
+}
+["a_preset","a_onlyAdr","a_kana","a_jp0","a_digits","a_zip","a_drop","a_excel"].forEach(id=>$(id).addEventListener("change",renderA));
+$("dlA").onclick=()=>{if(!curA) return;save(VCF.encodeUTF8(VCF.toCSV([curA.head].concat(curA.rows)),true),srcName+".csv","text/csv");};
+
+/* ---------- B：CSV → vcf ---------- */
+let bHead=[],bRows=[],bLine=[],bName="contacts";
+drop($("dropB"),$("fileB"),async files=>{
+  if(!files.length) return;
+  const f=(await readAll(files.slice(0,1)))[0];
+  const r=VCF.readText(f.u8),p=VCF.parseCSV(r.text);
+  bName=f.name.replace(/\.[^.]+$/,"");
+  if(p.rows.length<2){$("infoB").innerHTML='<div class="warn">見出しの行と、1行以上のデータが必要です。</div>';$("mapB").hidden=$("outB").hidden=true;return;}
+  bHead=p.rows[0];bRows=p.rows.slice(1);bLine=p.line.slice(1);
+  $("infoB").innerHTML=`<p class="stat">${h(f.name)}（${r.enc==="utf-8"?"UTF-8":"Shift_JIS"}・${p.delim==="\t"?"タブ区切り":"カンマ区切り"}）：${bRows.length}行、${bHead.length}列</p>`;
+  const opts=VCF.FIELDS.map(([k,l])=>`<option value="${k}">${h(l)}</option>`).join("");
+  $("tblMap").innerHTML="<thead><tr><th>CSV の列</th><th>1行目の値</th><th>連絡先の項目</th></tr></thead><tbody>"+bHead.map((x,j)=>`<tr><td>${h(x)}</td><td>${h((bRows[0][j]||"").slice(0,30))}</td><td><select data-j="${j}">${opts}</select></td></tr>`).join("")+"</tbody>";
+  const used=new Set();
+  $("tblMap").querySelectorAll("select").forEach(s=>{let g=VCF.guessField(bHead[+s.dataset.j]);
+    if(g&&used.has(g)&&!/^(cell|home|work|fax|tel|email|street|url|note)$/.test(g)) g="";
+    used.add(g);s.value=g;s.addEventListener("change",renderB);});
+  $("mapB").hidden=$("outB").hidden=false;renderB();
+});
+let curB=null;
+function renderB(){
+  const map=[...$("tblMap").querySelectorAll("select")].map(s=>s.value);
+  curB=VCF.tableToVCF(bHead,bRows,map,{splitName:$("b_split").checked,kana:$("b_kana").value});
+  let html=`<div class="sum"><div>作る連絡先 <b>${curB.count}</b>件</div>${curB.skipped.length?`<div>飛ばした行 <b>${curB.skipped.length}</b></div>`:""}</div>`;
+  if(!map.some(m=>/^(sei|mei|name|org)$/.test(m))) html+='<div class="warn">名前（姓・名・氏名）か会社名の列を選んでください。</div>';
+  if(curB.skipped.length) html+=`<div class="warn">名前・会社名・電話・メールがどれも空の行は飛ばしました（${curB.skipped.slice(0,20).map(i=>bLine[i]).join("、")}${curB.skipped.length>20?" ほか":""}行目）</div>`;
+  if(curB.warn.length) html+='<div class="warn">確かめてほしい行：<br>'+curB.warn.slice(0,30).map(w=>`${bLine[w.row]}行目：${h(w.msg)}`).join("<br>")+(curB.warn.length>30?`<br>ほか${curB.warn.length-30}件`:"")+"</div>";
+  if(curB.warn.some(w=>/先頭の0/.test(w.msg))) html+='<p class="note">先頭の0が消えた番号は、同じお店の「Excel で壊れた番号の検出と復元」で直せます。</p>';
+  if(curB.count&&!curB.warn.length&&!curB.skipped.length) html+='<div class="good">すべての行を連絡先にできます。</div>';
+  $("resB").innerHTML=html;$("dlB").disabled=!curB.count;
+}
+["b_split","b_kana"].forEach(id=>$(id).addEventListener("change",renderB));
+$("dlB").onclick=()=>{if(!curB||!curB.count) return;save(VCF.encodeUTF8(curB.text,false),bName+".vcf","text/vcard");};
+})();
+</script>
+</body>
+</html>

@@ -21,6 +21,7 @@
 - `renban-check/index.html` と `tool.html`・`renban.js` … 番号の抜け・重複チェック（500円）
 - `atena-hagaki/index.html`・`demo.html`（お試し）・`tool.html`・`atena.js`・`app.js`・`vendor/` … はがきの宛名印刷（980円）
 - `eigyoubi/index.html` と `tool.html`・`eigyo.js` … 営業日の計算（500円）
+- `renrakusaki/index.html` と `tool.html`・`vcard.js` … 連絡先ファイル（.vcf）⇔ CSV 変換（500円）
 
 ## 消さないこと
 - `index.html` の `<meta name="google-site-verification" ...>` は Google Search Console の所有権確認用（7日目にオーナーが登録）。トップを作り直すときも必ず残す

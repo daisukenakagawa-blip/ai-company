@@ -1,0 +1,29 @@
+BEGIN:VCARD
+VERSION:3.0
+PRODID:-//Apple Inc.//iPhone OS 17.0//EN
+N:山田;太郎;;;
+FN:山田 太郎
+X-PHONETIC-LAST-NAME:やまだ
+X-PHONETIC-FIRST-NAME:たろう
+ORG:サンプル商事株式会社;営業部;
+TITLE:課長
+TEL;type=CELL;type=VOICE;type=pref:090-1234-5678
+TEL;type=HOME;type=VOICE:03-1234-5678
+item1.TEL:+81 6-1111-2222
+item1.X-ABLabel:_$!<Work>!$_
+EMAIL;type=INTERNET;type=HOME;type=pref:taro@example.com
+EMAIL;type=INTERNET;type=WORK:t.yamada@example.co.jp
+item2.ADR;type=HOME;type=pref:;グリーンハイツ101;千代田1-1-1;千代田区;東京都;1000001;日本
+item2.X-ABADR:jp
+BDAY:1980-04-05
+NOTE:年賀状は毎年\n送る\, 夫婦連名
+PHOTO;ENCODING=b;TYPE=JPEG:/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL
+ /2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjI
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+N:;;;;
+FN:さくら歯科（予約）
+ORG:さくら歯科;
+TEL;type=WORK:0120-000-111
+END:VCARD
