@@ -65,7 +65,7 @@ const path = require("path"), fs = require("fs");
   await p.click("#printBtn");
   await p.emulateMedia({ media: "print" });
   const pdf = await p.pdf({ preferCSSPageSize: true, printBackground: true });
-  fs.writeFileSync("print-test.pdf", pdf);
+  
   const n = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
   t("PDF：2ページ（" + n + "）", n === 2);
   const mb = pdf.toString("latin1").match(/\/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)/);
