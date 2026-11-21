@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CSV 表記ゆれ整形｜GENHAYL</title>
-<meta name="description" content="名簿や受注 CSV の全角/半角、電話番号、郵便番号、和暦の日付、会社名の（株）などの表記ゆれをまとめてそろえます。ブラウザ内で処理し、ファイルは送信しません。980円・買い切り。">
+<meta name="description" content="名簿や受注 CSV の全角/半角、電話番号、郵便番号、和暦の日付、会社名の（株）などの表記ゆれをまとめてそろえます。ブラウザ内で処理し、ファイルは送信しません。980円・買い切り。先頭10行までなら無料で試せます。">
 <style>
 body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
 main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
@@ -12,6 +12,11 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
 .price{font-size:22px;font-weight:700;margin:16px 0 4px}
 .buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px}
 table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left}
+.try{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px}
+.try textarea{width:100%;box-sizing:border-box;font-family:ui-monospace,Menlo,monospace;font-size:13px;min-height:130px}
+.try button{background:#0f766e;color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:15px;cursor:pointer}
+.tw{overflow:auto;margin-top:10px}.tw table{min-width:100%;font-size:13px}.tw td,.tw th{white-space:nowrap}
+td.chg{background:#fef3c7}.tw td.chg small{display:block;color:#6b7280;text-decoration:line-through}
 .note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
 </style>
 </head>
@@ -23,6 +28,19 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 <div class="price">980円（税込・買い切り）</div>
 <p><a class="buy" id="buy" href="https://buy.stripe.com/3cI28s0qk0vpdYgasu1gs00">購入する（Stripe）</a></p>
 <p class="note">決済が終わると、そのままツールの画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<h2>先頭10行まで、ここで無料で試せます</h2>
+<div class="try">
+<p class="note" style="margin-top:0">CSV を貼り付けるか、ファイルを選んでください（1行目は見出し）。見出しの名前から電話・郵便番号・日付・会社名の列を見分けます。データはこのページの中だけで処理し、送信しません。下の例は架空のデータです。</p>
+<textarea id="t_text" aria-label="CSV の貼り付け欄">会社名,担当,電話,郵便番号,登録日
+（株）サンプル商事,ﾔﾏﾀﾞ　ﾀﾛｳ,０９０１２３４５６７８,〒1050023,令和6年4月1日
+㈲見本工業,  佐藤 花子 ,03(1234)5678,１０５－００２３,R6.4.15
+テスト合同会社,ＳＵＺＵＫＩ,0120123456,105 0023,2024年5月7日</textarea>
+<p style="margin:8px 0 0"><button id="t_run" type="button">整形してみる</button> または <input type="file" id="t_file" accept=".csv,.txt,text/csv" aria-label="CSV ファイルを選ぶ"></p>
+<div class="note" id="t_info" style="margin-top:8px"></div>
+<div class="tw" id="t_out"></div>
+<p class="note" id="t_after" hidden>黄色が変わったセルです（取り消し線が元の値）。<b>全部の行の整形と、CSV の保存はご購入後</b>のツールで行えます。列ごとの形式を手で選ぶ・日付の書き方を選ぶ・空の行や同じ行の削除もツールでできます。</p>
+</div>
 
 <h2>できること</h2>
 <ul>
@@ -46,6 +64,14 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 </table>
 <p class="note">変更したセルは黄色で表示され、元の値も確認できます。読み取れない値は変更せずに残します。</p>
 
+<h2>よくある困りごと</h2>
+<ul>
+<li><b>Excel の置換や関数との違い</b>：Excel で同じことをするには、置換を何度も繰り返したり、ASC・JIS・TEXT などの関数を列ごとに組み合わせたりする必要があります。このツールはチェックを入れるだけで、全角・半角、空白、電話番号、郵便番号、日付、会社名をまとめてそろえ、変わったセルを色で確かめてから保存できます</li>
+<li><b>和暦と西暦が混ざっていて並べ替えられない</b>：「令和6年4月1日」「R6.4.1」「2024/4/1」「20240401」を同じ書き方にそろえるので、日付順の並べ替えや期間の絞り込みができるようになります</li>
+<li><b>同じ会社なのに別々に数えられる</b>：「（株）サンプル」「㈱サンプル」「株式会社サンプル」や、全角・半角の違いをそろえてから集計や重複のチェックができます（よく似た行を探すのは別の商品<a href="../meibo-choufuku/">「名簿の重複チェック」</a>の役目です）</li>
+<li><b>取込先から「半角で入力」「ハイフン付きで」と言われる</b>：電話番号と郵便番号の区切りを「-」にそろえる、または数字だけにする、を選べます</li>
+</ul>
+
 <h2>安心してお使いいただくために</h2>
 <ul>
 <li>ファイルはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
@@ -55,5 +81,33 @@ table{border-collapse:collapse;font-size:14px;width:100%;background:#fff}th,td{b
 
 <footer><a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
 </main>
+<script src="seikei.js"></script>
+<script>
+"use strict";
+(function(){
+const $=id=>document.getElementById(id), LIMIT=10;
+const O={trim:true,space:true,zen2han:true,kana:true,dash:true};
+const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function run(text,name){
+  const p=parseCSV(text);
+  const rows=p.rows.filter((r,i)=>i===0||r.some(v=>v.trim()!==""));
+  if(rows.length<2){$("t_info").textContent="見出しの行と、データの行を1行以上入れてください。";$("t_out").innerHTML="";$("t_after").hidden=true;return;}
+  const head=rows[0],body=rows.slice(1),ncol=Math.max(...rows.map(r=>r.length));
+  const types=[];for(let c=0;c<ncol;c++)types[c]=guessType(head[c]||"",body.map(r=>r[c]||""));
+  const shown=body.slice(0,LIMIT);let changed=0;
+  let h="<table><thead><tr>";
+  for(let c=0;c<ncol;c++)h+=`<th>${e(normGlobal(head[c]||"",O))}<br><span class="note">${TYPES[types[c]]}</span></th>`;
+  h+="</tr></thead><tbody>";
+  shown.forEach(r=>{h+="<tr>";for(let c=0;c<ncol;c++){const v=r[c]??"";let s=normGlobal(v,O);const t=types[c];
+    if(t==="tel")s=fmtTel(s,false);else if(t==="zip")s=fmtZip(s);else if(t==="date")s=fmtDate(s,"-");else if(t==="company")s=fmtCompany(s);
+    if(s!==v){changed++;h+=`<td class="chg">${e(s)}<small>${e(v)}</small></td>`;}else h+=`<td>${e(s)}</td>`;}h+="</tr>";});
+  h+="</tbody></table>";
+  $("t_out").innerHTML=h;$("t_after").hidden=false;
+  $("t_info").textContent=(name?name+"：":"")+`データ ${body.length} 行のうち、先頭 ${shown.length} 行を整形しました（変わったセル ${changed} 件）。`+(body.length>LIMIT?`残りの ${body.length-LIMIT} 行はご購入後のツールで整形できます。`:"");
+}
+$("t_run").onclick=()=>run($("t_text").value,"");
+$("t_file").onchange=async ev=>{const f=ev.target.files[0];if(!f)return;const {text}=decode(await f.arrayBuffer());run(text,f.name);};
+})();
+</script>
 </body>
 </html>
