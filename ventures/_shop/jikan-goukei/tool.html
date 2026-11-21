@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>作業時間の集計</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n{text-align:right}.lt td.n{text-align:right;font-variant-numeric:tabular-nums}.lt tr.tot td{font-weight:700;border-top:2px solid #9ca3af}
+.lt tr.bad td{background:#fff7ed}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 4mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:10pt}.pt th,.pt td{border:.3mm solid #555;padding:1.4mm 2.2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n{text-align:right}.pt td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.pt tr{break-inside:avoid}
+  .pt tr.tot td{font-weight:700;border-top:.6mm solid #000}
+  .ft{font-size:10pt;margin-top:4mm}.ft.small{font-size:8pt;color:#444}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<main>
+<h1>作業時間の集計</h1>
+<p class="lead">「1:30」「90分」「1.5h」「1時間半」がまざった作業記録の時間を分にそろえて、人ごと・案件ごと・月ごとに合計します。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+
+<div class="box" id="step1">
+  <h2>1. 作業記録を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="日付&#9;担当者&#9;案件&#9;作業時間&#10;2026/11/02&#9;青木&#9;A社&#9;1:30"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="cols">
+<div class="box" id="step2" hidden>
+  <h2>2. 時間の読み方</h2>
+  <div class="row"><label><input type="radio" name="mode" value="dur" checked> 時間の列がある（「1:30」「90分」など）</label>
+    <label><input type="radio" name="mode" value="range"> 開始と終了の時刻から計算する</label></div>
+  <div id="durBox">
+    <div class="row"><label>時間の列 <select id="cDur"></select></label></div>
+    <div class="row"><label>単位のない数字（「1.5」「90」）は <select id="bare"><option value="h">時間</option><option value="m">分</option></select> として読む</label></div>
+  </div>
+  <div id="rangeBox" hidden>
+    <div class="row"><label>開始 <select id="cStart"></select></label><label>終了 <select id="cEnd"></select></label></div>
+    <div class="row"><label>休憩（引く） <select id="cBrk"></select></label><label>単位のない休憩は <select id="brkBare"><option value="m">分</option><option value="h">時間</option></select></label></div>
+    <div class="row"><label><input type="checkbox" id="overnight" checked> 終了が開始より前なら、日をまたいだとみなす（22:00〜1:00 → 3時間）</label></div>
+  </div>
+  <div class="row">1件ずつの丸め
+    <select id="rUnit"><option value="0">しない</option><option value="1">1分</option><option value="5">5分</option><option value="10">10分</option><option value="15">15分</option><option value="30">30分</option><option value="60">60分</option></select>
+    <select id="rHow"><option value="down">切り捨て</option><option value="up">切り上げ</option><option value="near">四捨五入</option></select></div>
+  <p class="note">丸めは記録1件ごとに行ってから合計します。どう丸めるかは、社内や取引先との決まりに合わせて選んでください。</p>
+</div>
+<div class="box" id="step3" hidden>
+  <h2>3. 分け方と表示</h2>
+  <div class="row"><label>表の行 <select id="gRow"></select></label></div>
+  <div class="row"><label>表の列 <select id="gCol"></select></label></div>
+  <div class="row"><label>表示 <select id="fmt"><option value="hm">時間:分（25:30）</option><option value="h">時間（25.50）</option><option value="m">分（1530）</option></select></label></div>
+  <p class="note">例：行を「担当者」、列を「日付（月ごと）」にすると、人×月の表になります。日付の列は「2026/11/21」「令和8年11月21日」「11月21日」などの書き方を読めます。</p>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>集計表</h2>
+  <div id="sumMsg"></div>
+  <div class="scroll" id="tableView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="作業時間の集計（2026年11月）"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><button id="pTable">集計表を印刷（A4）</button><button class="sub" id="cTable">集計表を CSV で保存</button><button class="sub" id="cDetail">明細を CSV で保存（1件ずつの分を足した表）</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。CSV は Excel で開ける形（UTF-8・BOM 付き）です。</p>
+</div>
+<div class="box">
+  <h2>明細（1件ずつの読み取り結果）</h2>
+  <div class="scroll" id="detailView"></div>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="jikan.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
