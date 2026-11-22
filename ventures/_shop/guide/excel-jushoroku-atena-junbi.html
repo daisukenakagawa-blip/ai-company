@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>年賀状の宛名印刷の前に、Excel の住所録を整える方法（郵便番号・建物名・出さない人）｜GENHAYL</title>
+<meta name="description" content="Word の差し込み印刷や宛名印刷ツールで住所録を使う前に、郵便番号を7桁にそろえる式、住所と建物名を分ける式、喪中などで今年出さない人の分け方、表の作り方をまとめました。">
+<style>body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.85}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}h1{font-size:25px;line-height:1.5;margin:0 0 8px}h2{font-size:19px;margin:32px 0 8px;border-left:4px solid #0f766e;padding-left:10px}h3{font-size:16px;margin:20px 0 4px}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid #e5e7eb;border-radius:6px}code{padding:1px 5px;font-size:14px}pre{padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.6}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;white-space:nowrap}th{background:#f3f4f6}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:20px 0}.cta{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px}
+.note{font-size:13px;color:#6b7280}.crumb{font-size:13px}.crumb a,footer a{color:#0f766e}footer{margin-top:40px;font-size:13px}</style>
+</head>
+<body>
+<main>
+<p class="crumb"><a href="../">GENHAYL の小さな道具</a> ＞ <a href="./">使い方ガイド</a></p>
+<h1>年賀状の宛名印刷の前に、Excel の住所録を整える方法（郵便番号・建物名・出さない人）</h1>
+<p class="note">2026-11-23 公開</p>
+<p>年賀状や喪中はがきの宛名を Excel の住所録から印刷するとき、失敗の多くは印刷の操作ではなく<b>住所録の中身</b>で起きます。郵便番号の先頭の0が消えている、建物名が番地と同じ行に詰まっている、今年は出さない人が混ざっている、などです。印刷の前に Excel の中で直しておく方法をまとめました。</p>
+<p class="note">作業の前に、住所録のファイルをコピーして「差し込み用」のファイルを作り、そちらで作業すると安心です。</p>
+
+<h2>1. 表の形：1行目に見出し、1件1行</h2>
+<p>Word の差し込み印刷も、多くの宛名印刷ツールも、次の形の表を前提にしています。</p>
+<ul>
+<li><b>1行目が見出し</b>、2行目から1件ずつ。見出しの上にタイトルや空行を入れない</li>
+<li><b>セルの結合をしない</b>。1人の情報は必ず1行に入れる</li>
+<li>郵便番号・住所・建物名・氏名・連名・敬称は、<b>それぞれ別の列</b>にする</li>
+</ul>
+<p>例えば次のような列にしておくと、どの方法でもそのまま使えます。</p>
+<div class="tw"><table>
+<tr><th>郵便番号</th><th>住所1</th><th>住所2</th><th>氏名</th><th>連名</th><th>敬称</th><th>出す</th></tr>
+<tr><td>105-0023</td><td>東京都港区芝浦1-2-3</td><td>サンプルハイツ101</td><td>山田 太郎</td><td>花子</td><td>様</td><td>○</td></tr>
+<tr><td>060-0001</td><td>北海道札幌市中央区北一条西1-1</td><td></td><td>佐藤 一郎</td><td></td><td>様</td><td>×</td></tr>
+</table></div>
+
+<h2>2. 郵便番号を「123-4567」の形にそろえる</h2>
+<p>住所録の郵便番号は、入力した人や時期によって「1050023」「105-0023」「〒105-0023」「１０５－００２３」（全角）などが混ざりがちです。さらに、北海道などの「0」で始まる番号は、Excel が数値とみなして<b>「060-0001」が「600001」に</b>なっていることがあります。</p>
+<p>郵便番号が A2 に入っているとして、空いている列に次の3つの式を入れて下へコピーします。</p>
+<p>B2（数字だけを取り出す）：</p>
+<pre>=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(ASC(A2),"〒",""),"-","")," ","")</pre>
+<p>C2（桁数の確認）：</p>
+<pre>=IF(LEN(B2)=7,"",IF(LEN(B2)=6,"先頭の0？","要確認"))</pre>
+<p>D2（「123-4567」の形にする）：</p>
+<pre>=IF(C2="要確認","",TEXT(B2,"000-0000"))</pre>
+<p><code>ASC</code> で全角の数字とハイフンを半角にし、「〒」・ハイフン・空白を消してから、<code>TEXT</code> で7桁（足りなければ先頭に0を補う）のハイフン付きにしています。</p>
+<ul>
+<li><b>「先頭の0？」</b>と出た行は、6桁しかない番号です。先頭の0が消えた可能性が高いので、D 列のとおり「0」を補った番号で合っているか住所と見比べてください</li>
+<li><b>「要確認」</b>と出た行は、桁が足りない・多い、または空欄です。ハイフンの代わりに長音の「ー」が入っている場合もここに出ます</li>
+</ul>
+<p>確かめ終わったら、D 列をコピーして、元の郵便番号の列に<b>「値の貼り付け」</b>で貼り付けます。その列の表示形式を「文字列」にしておくと、あとで0が消えにくくなります。</p>
+
+<h2>3. 住所と建物名が同じセルに入っているとき</h2>
+<p>縦書きの宛名では、マンション名やビル名は番地とは別の行に書くのが一般的です。「東京都港区芝浦1-2-3 サンプルハイツ101」のように、<b>番地と建物名の間に空白がある</b>場合は、式で2つに分けられます（住所が E2 にあるとして）。</p>
+<p>住所1（最初の空白まで）：</p>
+<pre>=IFERROR(LEFT(E2,FIND(" ",SUBSTITUTE(E2,"　"," "))-1),E2)</pre>
+<p>住所2（最初の空白より後ろ）：</p>
+<pre>=IFERROR(MID(E2,FIND(" ",SUBSTITUTE(E2,"　"," "))+1,LEN(E2)),"")</pre>
+<p>全角の空白も半角に置き換えてから、最初の空白の位置で分けています。空白がない住所は、住所1に全部が入り、住所2は空欄になります。</p>
+<p class="note">「芝浦1-2-3サンプルハイツ101」のように空白がない住所は、式では分けられません。件数が少なければ手で空白を入れてから使ってください。また、「北一条西1-1 第2ビル 3階」のように空白が2つ以上あると、最初の空白で分かれます。</p>
+
+<h2>4. 今年出さない人（喪中など）を分ける</h2>
+<p>住所録を消さずに、今年出す・出さないを1列で管理しておくと、来年も使えます。</p>
+<ol>
+<li>「出す」の列を作り、出す人に「○」、喪中の方や今年は出さない方に「×」を入れる</li>
+<li>見出しの行を選んで「データ」→「フィルター」を押し、「出す」の列で「×」だけを表示する</li>
+<li>差し込み用のファイルなら、表示された行を選んで削除し、フィルターを解除する</li>
+</ol>
+<p class="note">フィルターで隠しただけの行は、差し込み印刷では隠れずに読み込まれることがあります。差し込み用のファイルでは、出さない行を削除しておくのが確実です。</p>
+
+<h2>5. 連名と敬称</h2>
+<ul>
+<li>連名は「連名」の列に<b>名前だけ</b>（「花子」）を入れます。3人以上なら「連名2」「連名3」と列を増やします</li>
+<li>先生・御中など、人によって敬称が違うときは「敬称」の列を作ります。会社あては「御中」、会社の中の個人あては「様」で、両方は付けません</li>
+</ul>
+
+<h2>6. Word の差し込み印刷で使うとき（Windows 版）</h2>
+<p>Windows 版の Word では、<b>「差し込み文書」タブ →「はがき印刷」→「宛名面の作成」</b>で「はがき宛名面印刷ウィザード」が開きます。途中の住所録を指定する画面で<b>「既存の住所録ファイル」</b>を選び、整えた Excel ファイルを指定します。シートを選ぶ画面では「先頭行をタイトル行として使用する」にチェックを入れます。ウィザードの画面には、縦書きのときに番地の数字を漢数字にするかどうかの設定もあります。</p>
+<p>宛名に違う列が入ってしまったときは、「差し込み文書」タブの<b>「フィールドの対応」</b>で、Excel の列と Word の項目（住所_1、住所_2、氏名など）の組み合わせを直します。</p>
+<p class="note">手順と画面の名前は Office 2021 の Windows 版のものです（参考：窓の杜「Word で年賀状の宛名を印刷」の記事、FMV サポートの Q&amp;A）。版によって名前や順番が違うことがあります。はがきに印刷する前に、普通紙で1枚試し刷りして、はがきに重ねて位置を確かめてください。</p>
+
+<h2>Word を使わない・Mac で印刷したいときは</h2>
+<div class="box">
+<p><b><a href="../atena-hagaki/">はがきの宛名印刷（縦書き）</a></b>（980円・買い切り）は、上のように整えた Excel（.xlsx）や CSV の住所録を読み込んで、はがきの宛名面を縦書きで印刷するツールです。Mac でも Windows でもブラウザで動きます。見出しから列を自動で選び、番地の数字を漢数字にし、連名・敬称の列にも対応します。「出す」の列で「×」「喪中」などとした行は印刷しません。<b>お試し版はすべての機能を使えて、印刷は先頭3枚まで</b>なので、プリンターでの位置合わせを購入前に確かめられます。住所録はブラウザの中だけで処理し、どこにも送信しません。</p>
+<p><a class="cta" href="../atena-hagaki/">はがきの宛名印刷を見る</a></p>
+</div>
+<p class="note">Word の差し込み印刷で問題なく印刷できる場合は、ツールを使う必要はありません。</p>
+
+<footer><a href="./">ほかのガイド</a>　<a href="../">道具の一覧</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
