@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>座席表の作成 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+input[type=number]{width:4.5em}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.ok{color:#047857}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:6px 12px 8px;margin:8px 0}legend{font-size:13px;color:var(--sub);padding:0 4px}
+#msg{font-size:14px;margin:0 0 8px}#msg ul{margin:4px 0;padding-left:20px}
+.mapwrap{overflow:auto;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fcfcfb}
+.front{background:#334155;color:#fff;text-align:center;font-size:13px;border-radius:4px;padding:3px 0;margin:4px auto}
+.grid{display:grid;gap:4px;margin:6px 0}
+.seat{border:1px solid #94a3b8;border-radius:5px;background:#fff;min-height:46px;padding:2px 4px;font-size:12px;line-height:1.3;cursor:pointer;position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.seat .no{position:absolute;top:1px;left:3px;font-size:9px;color:var(--sub)}
+.seat .nm{font-size:13px;font-weight:600;word-break:break-all}.seat .sb{font-size:10px;color:var(--sub)}
+.seat.empty{background:#f8fafc;border-style:dashed}.seat.off{background:#e5e7eb;border-color:#e5e7eb;color:#9ca3af;cursor:default}
+.seat.same{border-color:#d97706;box-shadow:inset 0 0 0 2px #fbbf24}.seat.pick{outline:3px solid #2563eb}.seat.fx{background:#eff6ff}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}
+.scroll{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:15pt;margin:0 0 1mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pfront{border:.4mm solid #000;text-align:center;font-size:11pt;padding:1mm 0;margin:2mm auto;width:40%}
+  .pgrid{display:grid;gap:1.5mm}
+  .pseat{border:.35mm solid #333;border-radius:1mm;position:relative;display:flex;flex-direction:column;justify-content:center;text-align:center;overflow:hidden;line-height:1.2}
+  .pseat .no{position:absolute;top:.4mm;left:.8mm;font-size:6.5pt;color:#444}
+  .pseat .nm{font-weight:700;white-space:nowrap}.pseat .sb{font-size:7pt;color:#333;white-space:nowrap}
+  .pseat.off{border-style:dotted;border-color:#999}.pseat.empty{border-style:dashed;border-color:#777}
+  .ft{font-size:10pt;margin-top:3mm}
+  .pl{border-collapse:collapse;width:100%;font-size:10pt}.pl th,.pl td{border:.3mm solid #555;padding:1mm 2mm;text-align:left}
+  .pl th{background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pl tr{break-inside:avoid}
+  .brk{break-before:page}
+}
+</style>
+<style id="pageStyle">@page{size:A4 landscape;margin:12mm}</style>
+</head>
+<body>
+<main>
+<h1>座席表の作成</h1>
+<p class="lead">名簿から、会議・研修・試験会場・宴会などの座席表を作ります。机の並び（行×列・通路／島型）を決めて、名簿の順・並べ替え・ランダムで名前を入れ、決めてある席・前の方の席・隣どうしで同じ部署にしない、といった条件も守ります。A4 で印刷、Excel・CSV で保存できます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、座席表に入れる・印刷・保存は名簿の先頭 20 人までです。全員を入れるには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 名簿を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="氏名&#9;部署&#10;見本 太郎&#9;総務"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 机の並び</h2>
+  <div class="row">
+    <label><input type="radio" name="ltype" value="school" checked> 教室・スクール形式（行×列）</label>
+    <label><input type="radio" name="ltype" value="island"> 島型（机のかたまり）</label>
+  </div>
+  <fieldset id="fsSchool"><legend>教室・スクール形式</legend>
+    <div class="row">
+      <label>前から <input type="number" id="rows" min="1" max="60" value="5"> 行</label>
+      <label>横に <input type="number" id="cols" min="1" max="40" value="6"> 席</label>
+      <label>通路 <select id="aisle"><option value="0">なし</option><option value="1">1席ごと</option><option value="2" selected>2席ごと</option><option value="3">3席ごと</option><option value="4">4席ごと</option><option value="5">5席ごと</option><option value="6">6席ごと</option><option value="8">8席ごと</option></select></label>
+      <label>席番号の振り方 <select id="order"><option value="row">前の行から横へ（1・2・3…）</option><option value="col">左の列から縦へ（前→後ろ）</option></select></label>
+    </div>
+  </fieldset>
+  <fieldset id="fsIsland" hidden><legend>島型</legend>
+    <div class="row">
+      <label>島の数：前から <input type="number" id="irows" min="1" max="20" value="2"> × 横に <input type="number" id="icols" min="1" max="20" value="3"></label>
+      <label>1つの島の席：<input type="number" id="srows" min="1" max="10" value="2"> 列 × <input type="number" id="scols" min="1" max="10" value="3"> 席</label>
+    </div>
+    <p class="note">席番号は、1つ目の島（前の左）から島ごとに続けて振ります。島型では、同じ島の席どうしを「隣」とみなします。</p>
+  </fieldset>
+  <div class="row"><label>使わない席の番号（任意） <input type="text" id="unused" size="22" placeholder="例：1, 6, 25-30"></label></div>
+  <div id="seatMsg" class="note" style="font-size:13px"></div>
+
+  <h3>名前の入れ方</h3>
+  <div class="row">
+    <label>名前の列 <select id="nameCol"></select></label>
+  </div>
+  <div class="row">
+    <label><input type="radio" name="how" value="list" checked> 名簿の順</label>
+    <label><input type="radio" name="how" value="sort"> 列で並べ替え <select id="sortCol"></select> <label><input type="checkbox" id="desc"> 逆順</label></label>
+    <label><input type="radio" name="how" value="random"> ランダム</label>
+  </div>
+  <p class="note">席番号の小さい席から順に入れます。「列で並べ替え」は、番号・受験番号などの数は数の順、文字は文字コードの順です（ふりがなの列があれば、その列で五十音順になります）。</p>
+  <div class="row">
+    <label>席を決めてある列（任意） <select id="fixCol"></select></label>
+    <label>前の方の席にする列（任意） <select id="frontCol"></select></label>
+  </div>
+  <p class="note">席を決めてある列：「12」「12番」などの席番号が入っている人はその席に入れます。前の方の席にする列：「○」「1」「はい」などが入っている人を、前の行から先に座らせます（見え方・聞こえ方への配慮など）。</p>
+  <div class="row">
+    <label>隣どうしで同じ値にしない列（任意） <select id="avoidCol"></select></label>
+    <label><input type="checkbox" id="frontBack"> 前後の席も隣とみなす</label>
+  </div>
+  <p class="note">同じ部署・同じ学校・同じ会社の人が隣り合わないように、席を入れ替えます（並び順は崩れます）。通路をはさんだ席は隣とみなしません。</p>
+  <div class="row"><button id="go">座席表を作る</button><button class="sub" id="again">別の並びを作る</button>
+    <label>並びの番号 <input type="number" id="seed" min="1" value="1"></label><span class="note">ランダム・隣の入れ替えは、同じ名簿・条件・番号なら同じ結果になります。</span></div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>座席表</h2>
+  <div id="msg"></div>
+  <div class="row">
+    <label>向き <select id="view"><option value="top">前を上に（座る人から見た向き）</option><option value="bottom">前を下に（前に立つ人から見た向き）</option></select></label>
+    <label>席に小さく出す列 <select id="subCol"></select></label>
+    <label>前の表示 <input type="text" id="frontText" size="16" value="前（教卓・スクリーン）"></label>
+  </div>
+  <p class="note">席を2つ続けて押すと、その2つの席の人を入れ替えます（空いている席へも移せます）。もう一度「座席表を作る」を押すと、手で入れ替えた分は元に戻ります。</p>
+  <div class="mapwrap" id="map"></div>
+  <h3>席の一覧</h3>
+  <div class="scroll" id="list"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="第1回 新人研修 座席表"></label>
+    <label>用紙 <select id="paper"><option value="landscape">A4 横</option><option value="portrait">A4 縦</option></select></label>
+    <label><input type="checkbox" id="showNo" checked> 席番号を入れる</label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2" placeholder="受付で名前を伝え、指定の席にお座りください。"></textarea>
+  <div class="row"><button id="pMap">座席表を印刷</button>
+    <label>席の一覧の並び <select id="listOrder"><option value="seat">席番号の順</option><option value="list">名簿の順</option><option value="name">名前の文字の順</option></select></label>
+    <button class="sub" id="pList">席の一覧を印刷（受付用）</button></div>
+  <div class="row"><button class="sub" id="xSave">Excel で保存（座席表と一覧）</button><button class="sub" id="cSave">席の一覧を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">Excel には「座席表」（向きは画面と同じ）と「席の一覧」（席番号・前から何行目・左から何席目〔島型は島と島の中の番号〕と、元の名簿の列）の2つのシートを入れます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.ZASEKI_LIMIT=20;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="zaseki.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
