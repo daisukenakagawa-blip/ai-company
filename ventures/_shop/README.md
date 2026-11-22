@@ -39,3 +39,4 @@
 - `fukusu-sentaku/index.html`・`demo.html`（お試し）・`tool.html`・`sentaku.js`・`app.js`・`vendor/` … 複数選択の回答の分割と集計（500円）
 - `mail-tenken/index.html`・`demo.html`（お試し）・`tool.html`・`mail.js`・`app.js`・`vendor/` … メールアドレス一覧の点検（500円）
 - `dankai-hyouka/index.html`・`demo.html`（お試し）・`tool.html`・`dankai.js`・`app.js`・`vendor/` … 段階評価のアンケート集計（500円）
+- `han-wake/index.html`・`demo.html`（お試し）・`tool.html`・`hanwake.js`・`app.js`・`vendor/` … 班分け・グループ分け（500円）

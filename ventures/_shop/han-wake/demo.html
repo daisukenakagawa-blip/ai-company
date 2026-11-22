@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>班分け・グループ分け お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+input[type=number]{width:5em}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.ok{color:#047857}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.chk{display:flex;gap:4px 14px;flex-wrap:wrap;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:700px){.two{grid-template-columns:1fr}}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
+.card{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fcfcfb}
+.card h3{font-size:15px;margin:0 0 4px;display:flex;justify-content:space-between}.card h3 span{font-size:12px;color:var(--sub);font-weight:400}
+.card ol{margin:0;padding-left:22px;font-size:13px}.card li{margin:1px 0}
+.card li select{font-size:11px;padding:0;margin-left:4px;color:var(--sub);border:1px solid var(--line);border-radius:4px;background:#fff}
+.attr{color:var(--sub);font-size:12px}.fx{font-size:11px;color:#1d4ed8}
+#msg{font-size:14px;margin:0 0 8px}#msg ul{margin:4px 0;padding-left:20px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:10pt;margin-top:1mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt th:first-child,.pt td:first-child{white-space:nowrap}.pt th.no,.pt td.no{width:13mm;text-align:right}
+  .pg{break-inside:avoid;margin-top:4mm}.pg h2{font-size:13pt;margin:0 0 1mm}
+  .pg.one{break-after:page;break-inside:auto}.pg.one h2{font-size:18pt}.pg.one .pt{font-size:12pt}.pg.one .pt td{padding:2mm 2.5mm}
+  .pg.one:last-child{break-after:auto}
+  .ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>班分け・グループ分け</h1>
+<p class="lead">名簿から、人数がそろい、性別・学年・部署などが偏らない班を作ります。「同じ班にしない人」「同じ班にする人」、前回の班と同じ顔ぶれを減らす、点数・経験年数の平均をそろえる、といった条件も入れられます。班ごとの名簿の印刷、Excel・CSV 保存もできます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、班分け・印刷・保存は名簿の先頭 20 人までです。全員を班分けするには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 名簿を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="氏名&#9;性別&#9;部署&#10;見本 太郎&#9;男&#9;総務"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 分け方と条件</h2>
+  <div class="row">
+    <label>名前の列 <select id="nameCol"></select></label>
+    <label><input type="radio" name="mode" value="count" checked> 班の数 <input type="number" id="kCount" min="1" value="4"></label>
+    <label><input type="radio" name="mode" value="size"> 1班の人数の目安 <input type="number" id="kSize" min="1" value="5"></label>
+    <label>班の名前 <select id="style"><option value="num">1班・2班…</option><option value="abc">A班・B班…</option><option value="group">グループ1…</option><option value="team">チーム1…</option></select></label>
+  </div>
+  <div id="sizeMsg" class="note" style="font-size:13px"></div>
+  <h3>偏らないようにする列</h3>
+  <p class="note">チェックした列の値（男・女、1年・2年、総務・営業など）が、どの班にも同じくらいの人数ずつ入るようにします。</p>
+  <div class="chk" id="balCols"></div>
+  <div class="row">
+    <label>平均をそろえる数の列（任意） <select id="numCol"></select></label>
+    <label>前回の班の列（任意） <select id="prevCol"></select></label>
+    <label>班を決めてある列（任意） <select id="fixCol"></select></label>
+  </div>
+  <p class="note">前回の班の列：前回同じ班だった人どうしが、なるべく別の班になるようにします。班を決めてある列：「2」「2班」「B」などが入っている人はその班に入れ、空欄の人だけを分けます（リーダー役を先に決めるときなど）。</p>
+  <div class="two">
+    <div><h3>同じ班にしない人（1行に1組）</h3><textarea id="sepText" rows="4" placeholder="見本 一郎、見本 二郎&#10;見本 花子、見本 春子、見本 夏子"></textarea></div>
+    <div><h3>同じ班にする人（1行に1組）</h3><textarea id="togText" rows="4" placeholder="見本 三郎、見本 秋子"></textarea></div>
+  </div>
+  <p class="note">名前は名簿の名前の列と同じ書き方で、「、」「,」「・」で区切ります（空白の有無・全角半角の違いは気にしなくて大丈夫です）。</p>
+  <div class="row"><button id="go">班分けする</button><button class="sub" id="again">別の分け方を作る</button>
+    <label>分け方の番号 <input type="number" id="seed" min="1" value="1"></label><span class="note">同じ名簿・条件・番号なら、同じ班分けになります。</span></div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>班分けの結果</h2>
+  <div id="msg"></div>
+  <div class="scroll" id="sumView"></div>
+  <p class="note">名前の右の欄で、その人を別の班へ手で移せます（移したあとの人数・内訳もすぐ直ります）。もう一度「班分けする」を押すと、手で移した分は元に戻ります。</p>
+  <div class="cards" id="cards"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="新人研修 グループワークの班"></label>
+    <label>印刷の並べ方 <select id="layout"><option value="flow">班を続けて並べる</option><option value="one">1班1枚（大きな字）</option></select></label>
+    <label><input type="checkbox" id="pSumOn" checked> 班ごとの内訳の表も印刷</label></div>
+  <div class="row"><span>名簿に出す列：</span><span class="chk" id="showCols"></span></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2" placeholder="13:30 までに各班の机に集まってください。"></textarea>
+  <div class="row"><button id="pPrint">班ごとの名簿を印刷</button><button class="sub" id="xGroup">班ごとの名簿を Excel で保存</button><button class="sub" id="cGroup">班ごとの名簿を CSV で保存</button></div>
+  <div class="row"><button class="sub" id="xAdd">元の名簿に班の列を足して Excel で保存</button><button class="sub" id="cAdd">元の名簿に班の列を足して CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">「班ごとの名簿」は班の順に並べ、班と班の中の番号の列を付けた表です（Excel では「内訳」のシートも付きます）。「元の名簿に班の列を足す」は、元の表の並びのまま左に「班」の列を足した表です。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.HANWAKE_LIMIT=20;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="hanwake.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
