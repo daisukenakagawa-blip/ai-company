@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>予約の重なりチェック お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.cols>*{min-width:0}@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+.tlw{overflow-x:auto}
+.tl{display:flex;align-items:stretch;min-width:640px;border-bottom:1px solid var(--line)}
+.tn{width:110px;flex:none;font-size:13px;padding:4px 6px;font-weight:600}
+.tb{position:relative;flex:1;min-height:30px;margin-right:14px}
+.tb.ax{height:20px;min-height:20px}.tk{position:absolute;top:0;font-size:11px;color:var(--sub);transform:translateX(-50%)}
+.off{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 4px,#e5e7eb 4px,#e5e7eb 8px)}
+.bar{position:absolute;height:22px;background:#99f6e4;border:1px solid #0f766e;border-radius:4px;font-size:11px;line-height:20px;padding:0 4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar.hit{background:#fecaca;border-color:#b91c1c;color:#7f1d1d;font-weight:700}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}#printArea h2{font-size:12pt;margin:3mm 0 2mm}
+  .per{margin:0 0 3mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td:nth-child(-n+3){white-space:nowrap}
+  .tl{min-width:0;break-inside:avoid}.tlw{overflow:visible}.off{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note{font-size:8pt;color:#444}.ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<main>
+<h1>予約の重なりチェック</h1>
+<p class="lead">会議室・社用車・貸出品などの予約の一覧から、同じ物で時間が重なっている予約と、物ごと・日ごとの空いている時間を出します。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、調べる・印刷・保存は先頭 30 行までです。全部の行を調べるには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 予約の一覧を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="物&#9;利用日&#9;開始&#9;終了&#9;予約者&#10;会議室A&#9;2026/11/24&#9;9:00&#9;10:00&#9;青木"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="cols">
+<div class="box" id="step2" hidden>
+  <h2>2. 列の選び方</h2>
+  <div class="row"><label>予約する物（部屋・車など） <select id="cRes"></select></label></div>
+  <div class="row"><label><input type="radio" name="mode" value="two" checked> 開始と終了が別の列</label>
+    <label><input type="radio" name="mode" value="one"> 1つの列に「9:00〜10:30」</label></div>
+  <div id="twoBox" class="row"><label>開始 <select id="cStart"></select></label><label>終了 <select id="cEnd"></select></label></div>
+  <div id="oneBox" class="row" hidden><label>時間帯 <select id="cRange"></select></label></div>
+  <div class="row"><label>日付 <select id="cDate"></select></label><span class="note">開始・終了に日付も入っていれば「使わない」で大丈夫です</span></div>
+  <div class="row"><label>予約者 <select id="cPerson"></select></label><label>用途 <select id="cPurpose"></select></label></div>
+  <div class="row"><label>年のない日付（「11/24」）は <input type="number" id="year" min="2000" max="2100" style="width:5.5em"> 年とみなす</label></div>
+  <div class="row"><label><input type="checkbox" id="overnight" checked> 終了の時刻が開始より前なら、翌日までの予約とみなす（22:00〜7:00）</label></div>
+</div>
+<div class="box" id="step3" hidden>
+  <h2>3. 調べ方</h2>
+  <div class="row"><label>予約と予約の間に空けたい時間
+    <select id="gap"><option value="0">なし</option><option value="5">5分</option><option value="10">10分</option><option value="15">15分</option><option value="30">30分</option><option value="60">60分</option></select></label></div>
+  <p class="note">「なし」では、10:00 に終わる予約と 10:00 に始まる予約は重なりにしません。片付け・清掃・車の移動などで間をあけたいときに選ぶと、足りない組も一覧に出します。</p>
+  <div class="row"><label>空き時間を見る時間帯 <input type="text" id="open" value="9:00" size="5"> 〜 <input type="text" id="close" value="18:00" size="5"></label></div>
+  <div class="row"><label>空き時間として出すのは <select id="minFree"><option value="1">1分以上</option><option value="15">15分以上</option><option value="30" selected>30分以上</option><option value="60">60分以上</option></select></label></div>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>重なっている予約</h2>
+  <div id="sumMsg"></div>
+  <div id="ovView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>1日の表</h2>
+  <div class="row"><label>日付 <select id="day"></select></label></div>
+  <div id="dayView"></div>
+</div>
+<div class="box">
+  <h2>空いている時間（物ごと・日ごと）</h2>
+  <div id="freeView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="会議室の予約（11月第4週）"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><button id="pOv">重なりの一覧を印刷</button><button id="pDay">1日の表を印刷（A4 横）</button><button id="pFree">空き時間を印刷</button></div>
+  <div class="row"><button class="sub" id="cOv">重なりの一覧を CSV で保存</button><button class="sub" id="cFree">空き時間を CSV で保存</button><button class="sub" id="cDetail">明細を CSV で保存（元の表に「重なり」の列を足したもの）</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。1日の表の色を印刷するには、印刷画面の「背景のグラフィック」をオンにしてください。CSV は Excel で開ける形（UTF-8・BOM 付き）です。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.YOYAKU_LIMIT=30;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="yoyaku.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

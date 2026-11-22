@@ -34,3 +34,4 @@
 - `sitemap.xml` は商品を追加したら1行足す
 - `touban/index.html`・`demo.html`（お試し）・`tool.html`・`touban.js`・`eigyo.js`・`app.js` … 当番表の自動作成（500円）
 - `jikan-goukei/index.html`・`demo.html`（お試し）・`tool.html`・`jikan.js`・`app.js`・`vendor/` … 作業時間の集計（500円）
+- `yoyaku-kasanari/index.html`・`demo.html`（お試し）・`tool.html`・`yoyaku.js`・`app.js`・`vendor/` … 予約の重なりチェック（500円）
