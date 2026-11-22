@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>期限の一覧 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=date],input[type=number],select{font-size:14px;max-width:100%}
+input[type=number]{width:80px}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px 16px;font-size:14px}
+.grid label{display:flex;flex-direction:column;gap:2px}.grid label span{font-size:12px;color:var(--sub)}
+#dateCols{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;margin:4px 0 10px}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:160px}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.grp td{background:#f0fdfa;font-weight:700}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;border:1px solid transparent;white-space:nowrap}
+.t-over{background:#fee2e2;color:#991b1b;border-color:#fecaca}.t-soon{background:#ffedd5;color:#9a3412;border-color:#fed7aa}
+.t-next{background:#fef9c3;color:#854d0e;border-color:#fde68a}.t-later{background:#f3f4f6;color:#374151;border-color:#e5e7eb}.t-done{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+.lt tr.r-over td{background:#fff5f5}.lt tr.r-done td{color:#6b7280}
+#sumMsg{font-size:14px;margin:0 0 10px;line-height:2}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm 12mm 12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  .sheet{break-after:page}.sheet:last-child{break-after:auto}
+  .sheet h1{font-size:15pt;margin:0 0 2mm}.per{font-size:9pt;margin:0 0 3mm}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt}.pt th,.pt td{border:.3mm solid #555;padding:1.3mm 2mm;text-align:left;vertical-align:top}
+  .pt th{background:#eee;font-weight:normal}.pt .n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}
+  .pt tr.sec td{background:#f0f0f0;font-weight:700}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>期限の一覧</h1>
+<p class="lead">契約の更新日・資格や免許の有効期限・保険の満期・車検・点検日などの表から、期限切れと、近い順に「もうすぐ」「近いうち」の期限を抜き出して一覧にします。A4 印刷、Excel・CSV 保存、カレンダー（.ics）への書き出しができます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、一覧・印刷・保存・カレンダーは表の先頭 15 行までです。全部の行を使うには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 期限の表を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="項目&#9;区分&#9;担当&#9;期限&#10;社用車 車検&#9;車&#9;鈴木&#9;2027/1/31"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 列と、いつから知らせるか</h2>
+  <p class="note">見出しから自動で選んでいます。違っていたら選び直してください。<b>期限の列</b>は複数選べます（例：「車検」「自賠責」「任意保険」の列を1台1行で持っている表）。そのときは列ごとに別の期限として並べます。</p>
+  <div class="note"><b>期限の列（必須・複数可）</b></div>
+  <div id="dateCols"></div>
+  <div class="grid" id="colGrid"></div>
+  <h3>いつから知らせるか</h3>
+  <div class="row">
+    <label>基準日 <input type="date" id="base"></label>
+    <label>「もうすぐ」＝ <input type="number" id="soon" value="30" min="0"> 日以内</label>
+    <label>「近いうち」＝ <input type="number" id="next" value="90" min="0"> 日以内</label>
+  </div>
+  <p class="note">基準日はふつう今日です。「何日前から知らせるか」の列があれば、その行はその日数で「もうすぐ」に入ります（例：車検は45日前から、賃貸の更新は90日前から）。「済み」の列は、空欄・「未」「×」「いいえ」以外が入っていれば済みとして分けます。日付は「2026/12/1」「2026年12月1日」「令和8年12月1日」「R8.12.1」「20261201」などを読みます。「2027年3月」のように日がないものは月末として計算します。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row">表示する：
+    <label><input type="checkbox" id="f_over" checked> 期限切れ</label>
+    <label><input type="checkbox" id="f_soon" checked> もうすぐ（<span id="lblSoon">30</span>日以内）</label>
+    <label><input type="checkbox" id="f_next" checked> 近いうち（<span id="lblNext">90</span>日以内）</label>
+    <label><input type="checkbox" id="f_later"> 先の予定</label>
+    <label><input type="checkbox" id="f_done"> 済み</label>
+  </div>
+  <div class="row"><label>まとめ方 <select id="group"><option value="">期限の近い順に全部</option><option value="cat">区分ごと</option><option value="who">担当者ごと</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存・カレンダー</h2>
+  <p class="note">印刷・保存・カレンダーに入るのは、上の「表示する」で選んだものです。</p>
+  <div class="row"><label>印刷の見出し <input type="text" id="ptitle" placeholder="期限の一覧" value=""></label><label><input type="checkbox" id="perGroup"> 区分・担当者ごとに1枚ずつ印刷（まとめ方を選んだとき）</label></div>
+  <div class="row"><button id="pList">一覧を印刷（A4）</button></div>
+  <div class="row"><button class="sub" id="xList">一覧を Excel（.xlsx）で保存</button><button class="sub" id="cList">一覧を CSV で保存</button><button class="sub" id="xAll">明細（元の表＋読み取った日付・残り日数・状態）を Excel で保存</button><button class="sub" id="cAll">明細を CSV で保存</button></div>
+  <h3>カレンダーに入れる（.ics ファイル）</h3>
+  <div class="row">
+    <label>通知 <select id="alarm"><option value="">付けない</option><option value="1">期限の1日前</option><option value="7" selected>期限の7日前</option><option value="30">期限の30日前</option></select></label>
+    <label><input type="checkbox" id="notice" checked> 「知らせ始める日」（期限の30日前など）にも予定を入れる</label>
+    <button class="sub" id="ics">カレンダーのファイル（.ics）を保存</button>
+  </div>
+  <p class="note">期限の日に終日の予定を作ります（期限切れと済みは入れません）。保存したファイルを Google カレンダー・Outlook・iPhone のカレンダーなどで読み込んでください。カレンダーのアプリによっては、ファイルの中の通知の設定は使われず、アプリの既定の通知になります。そのため、知らせ始める日にも予定を入れる設定をおすすめします。</p>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">表示の設定はこのブラウザに保存し、表の中身は保存しません。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.KIGEN_LIMIT=15;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="kigen.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

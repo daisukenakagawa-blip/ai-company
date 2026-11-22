@@ -43,3 +43,4 @@
 - `mendan-wariate/index.html`・`demo.html`（お試し）・`tool.html`・`mendan.js`・`app.js`・`vendor/` … 面談の日程の割り当て（500円）
 - `zaseki-hyou/index.html`・`demo.html`（お試し）・`tool.html`・`zaseki.js`・`app.js`・`vendor/` … 座席表の作成（500円）
 - `hacchu-sho/index.html`・`demo.html`（お試し）・`tool.html`・`hacchu.js`・`app.js`・`vendor/` … 発注点チェックと発注書（500円）
+- `kigen-ichiran/index.html`・`demo.html`（お試し）・`tool.html`・`kigen.js`・`app.js`・`vendor/` … 期限の一覧（500円）
