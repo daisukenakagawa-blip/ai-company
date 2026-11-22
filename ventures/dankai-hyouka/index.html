@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>段階評価のアンケート集計｜「とても満足〜とても不満」「1〜5」の回答を人数・割合・平均と色の帯の表に｜GENHAYL</title>
+<meta name="description" content="研修・講座・イベント・店のアンケートで「とても満足〜とても不満」「そう思う〜そう思わない」「1〜5」のような段階で答える設問を、設問ごとの人数・割合・平均点・上位2段階の割合と、段階ごとの割合を色の帯で並べた表にします。部署別などのグループ別、A4 印刷、Excel・CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>段階評価のアンケート集計</h1>
+<p>研修・講座・イベント・店のアンケートでよく使う、<b>「とても満足〜とても不満」「そう思う〜そう思わない」「1〜5」のような段階で答える設問</b>の集計表を作ります。設問ごとの<b>人数・割合・平均点</b>と、<b>段階ごとの割合を色の帯で並べた一覧</b>を出し、部署・学年・会場などの<b>グループ別</b>の表も作れます。A4 で印刷してそのまま報告に使えます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/28E14o0qk5PJ6vOasu1gs0t">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、集計・印刷・保存は先頭30行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本のアンケート11件から、4つの設問の回答数・平均・良い側の割合と、段階ごとの割合を色の帯で並べた一覧と、満足度の段階ごとの人数・部署別の表を作った画面" width="620"></p>
+<p class="note">見本のデータ（架空の研修のアンケート11件）を集計した例。氏名は説明用のもので、実在の人とは関係ありません。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>研修や講座のあとのアンケートの満足度を、毎回 Excel で COUNTIF を並べて集計している</li>
+<li>「とても満足」などの言葉のままでは平均が出せず、1つずつ点数に置き換えている</li>
+<li>設問が何問もあり、段階ごとの割合を並べた帯グラフのような表を報告書に入れたい</li>
+<li>部署別・回ごと・会場ごとに満足度を比べたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>段階を自動で見分ける</b>：「とても満足／満足／どちらともいえない／不満／とても不満」「満足／やや満足／普通／やや不満／不満」「そう思う／ややそう思う／あまりそう思わない／そう思わない」「良い／普通／悪い」「1〜5」「0〜10」などを、回答から読み取って良い順に並べます。「大変満足」「非常に満足」と「とても満足」、「普通」と「どちらとも言えない」のような書き方の違いは同じ段階として数えます。違っていれば、段階の一覧を書き直せます</li>
+<li><b>設問の一覧</b>：設問ごとの回答数・平均点・良い側（上位2段階）と悪い側の割合と、段階ごとの割合を色の帯で並べた表</li>
+<li><b>設問ごとの表</b>：段階ごとの点数・人数・割合、平均・標準偏差。わからない・無回答・空欄は除いて数え、その人数も出します</li>
+<li><b>グループ別</b>：部署・学年・会場などの列を選ぶと、グループごとの回答数・平均・上位2段階の割合・段階ごとの人数を並べます。回答が5人未満のグループがあれば知らせます</li>
+<li><b>段階にない答え</b>（「最高」など、段階の一覧にない答え）は集計に入れず、行番号つきで一覧にします</li>
+<li><b>低いほど良い設問</b>（「待ち時間の長さ」など）は、点数を逆にできます</li>
+<li><b>保存と印刷</b>：集計表（Excel ファイル・CSV、A4 縦で印刷）、元の表の各設問の右に「点数」の列を足した表（Excel ファイル・CSV）</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>自由記述の文章は集計しません（段階で答える設問だけを数えます）</li>
+<li>「当てはまるものをすべて選ぶ」設問は数えません。そちらは <a href="../fukusu-sentaku/">複数選択の回答の分割と集計</a> をお使いください</li>
+<li>統計的な検定（差があるかどうかの判定）や、結果の良し悪しの判断・助言はしません</li>
+<li>グラフの画像は作りません（画面と印刷の表に、段階ごとの割合の帯が入ります）</li>
+<li>フォームのサービスにつないで回答を取ってくる機能はありません。回答を CSV か Excel ファイルに書き出してから読み込んでください</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで集計するなら</h2>
+<p>B 列に「とても満足〜とても不満」の回答があるとき、C2 に</p>
+<p><code>=IFERROR(6-MATCH(B2,{"とても満足","満足","どちらともいえない","不満","とても不満"},0),"")</code></p>
+<p>と入れて下までコピーすると、とても満足＝5 〜 とても不満＝1 の点数になります（空欄や「わからない」は空けたまま）。平均は <code>=AVERAGE(C2:C1000)</code>、上位2段階の割合は <code>=(COUNTIF(B2:B1000,"とても満足")+COUNTIF(B2:B1000,"満足"))/COUNT(C2:C1000)</code>、段階ごとの人数は <code>=COUNTIF(B2:B1000,"満足")</code> のように数えられます。</p>
+<p>このツールが向いているのは、<b>設問が何問もある</b>、<b>設問ごとに段階の言葉が違う</b>、<b>「大変満足」「普通」のように書き方がまざっている</b>、<b>部署別の表や印刷用の一覧もほしい</b>、<b>毎回のアンケートで同じ作業をくり返す</b>、といった式を組むのに手間がかかるときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・集計・印刷・保存はすべてお使いのブラウザの中で行います。表題の設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>平均点はどう計算しますか？</th><td>いちばん良い段階を最高点（5段階なら5点）、いちばん悪い段階を1点として、回答の点数を平均します。数字で答える設問は、その数字のまま平均します。わからない・無回答・空欄は入れません。</td></tr>
+<tr><th>「良い側の割合」とは？</th><td>4段階以上の設問は良い側の端から2段階（とても満足＋満足など）、3段階の設問は端の1段階の割合です。</td></tr>
+<tr><th>段階の判定が違っていたら？</th><td>設問ごとに、段階の一覧（良い順に1行に1つ）を書き直せます。数字の設問は、いちばん低い・高い数字を変えられます。</td></tr>
+<tr><th>何行まで使えますか？</th><td>製品版は行数の制限はありません。2万行・3問の回答で、読み込みから集計まで1秒ほどでした（パソコンの性能によります）。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">「当てはまるものをすべて選ぶ」設問は <a href="../fukusu-sentaku/">複数選択の回答の分割と集計</a>、月別×店舗のような集計表は <a href="../tate-yoko/">縦持ち⇔横持ち変換</a>、研修の名札は <a href="../nafuda/">名札・席札の一括印刷</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

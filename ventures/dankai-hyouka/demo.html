@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>段階評価のアンケート集計 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+.bar{display:inline-block;height:10px;border-radius:2px;vertical-align:middle}
+.band{display:inline-flex;height:18px;border-radius:3px;overflow:hidden;vertical-align:middle;background:#f3f4f6;max-width:100%}
+.band span{display:flex;align-items:center;justify-content:center;font-size:10px;color:#111;overflow:hidden;white-space:nowrap}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.colbox{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
+.colbox summary{cursor:pointer;font-size:13px;color:var(--accent)}
+.res{margin-bottom:18px}.res h3{font-size:15px;margin:10px 0 4px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}
+  .band{height:4.5mm;width:100%;border-radius:0}.band span{font-size:7pt}
+  .sec{break-inside:avoid;margin-top:5mm}.sec h2{font-size:12pt;margin:3mm 0 1mm}
+  .ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>段階評価のアンケート集計</h1>
+<p class="lead">「とても満足〜とても不満」「そう思う〜そう思わない」「1〜5」のような段階で答えるアンケートの表から、設問ごとの人数・割合・平均点と、段階ごとの割合を色の帯で並べた表を作ります。部署・学年などのグループ別の集計、A4 の印刷、Excel・CSV 保存もできます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、集計・印刷・保存は先頭 30 行までです。全部の行を集計するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 回答の表を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="氏名&#9;満足度&#10;見本 太郎&#9;とても満足"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 集計する設問と段階</h2>
+  <p class="note">段階で答える設問らしい列に、最初からチェックを入れています。段階（良い順）は回答から推定しています。違っていれば書き直してください。</p>
+  <div id="cols"></div>
+  <div class="row"><label>グループ別にも数える列（任意） <select id="group"></select></label></div>
+  <details class="colbox"><summary>集計から除く答え（わからない・無回答など）を直す</summary>
+    <p class="note">ここにある答えは人数・割合・平均に入れず、「集計から除いた答え」として数だけ出します。1行に1つ。</p>
+    <textarea id="naList" rows="5"></textarea></details>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>集計</h2>
+  <div id="sumMsg"></div>
+  <div id="resView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="研修アンケートの集計（11月）"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><button id="pSum">集計表を印刷</button><button class="sub" id="xSum">集計表を Excel で保存</button><button class="sub" id="cSum">集計表を CSV で保存</button></div>
+  <div class="row"><button class="sub" id="xScore">点数の列を足した表を Excel で保存</button><button class="sub" id="cScore">点数の列を足した表を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">「点数の列を足した表」は、元の表の各設問のすぐ右に「設問（点数）」の列（とても満足＝5 など）を足した表です。わからない・無回答・空欄は空けます。Excel で AVERAGE やピボットテーブルに使えます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.DANKAI_LIMIT=30;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="dankai.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
