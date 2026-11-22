@@ -40,4 +40,5 @@
 - `mail-tenken/index.html`・`demo.html`（お試し）・`tool.html`・`mail.js`・`app.js`・`vendor/` … メールアドレス一覧の点検（500円）
 - `dankai-hyouka/index.html`・`demo.html`（お試し）・`tool.html`・`dankai.js`・`app.js`・`vendor/` … 段階評価のアンケート集計（500円）
 - `han-wake/index.html`・`demo.html`（お試し）・`tool.html`・`hanwake.js`・`app.js`・`vendor/` … 班分け・グループ分け（500円）
+- `mendan-wariate/index.html`・`demo.html`（お試し）・`tool.html`・`mendan.js`・`app.js`・`vendor/` … 面談の日程の割り当て（500円）
 - `zaseki-hyou/index.html`・`demo.html`（お試し）・`tool.html`・`zaseki.js`・`app.js`・`vendor/` … 座席表の作成（500円）
