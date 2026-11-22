@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>部品表の必要数と作れる数｜作る数から部品・材料の必要数と不足、在庫で作れる数を一覧に｜GENHAYL</title>
+<meta name="description" content="製品・セット・詰め合わせの部品表（構成表）の CSV／Excel から、作る数に必要な部品・材料・中身の数を合計し、在庫と比べて足りない部品を一覧にします。在庫だけで製品ごとにあと何個作れるか、先に足りなくなる部品も出します。半製品のある何段の部品表でも使えます。印刷、Excel・CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>部品表の必要数と作れる数</h1>
+<p><b>部品表</b>（製品・セットごとに、使う部品・材料・中身と数を並べた表）から、<b>作る数に必要な部品の数を合計</b>し、<b>在庫と比べて足りない部品</b>を一覧にするツールです。在庫の表を入れると、製品ごとに<b>「いまの在庫であと何個作れるか」</b>と、<b>先に足りなくなる部品</b>も出します。小さな工房・作家・製造業の材料の準備や、ギフトセット・詰め合わせの中身の数の確認に使えます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/3cI4gAc927XRdYg3021gs0A">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、部品表と在庫の表はそれぞれ先頭15行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本のギフトセット2種の部品表と在庫から、部品の必要数・不足と、在庫で作れる数を一覧にした画面" width="620"></p>
+<p class="note">見本のデータ（架空のギフトセットの部品表と在庫）で計算した例。品名・数は説明用のもので、実在の商品・会社とは関係ありません。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>「セットAを30個、セットBを12個」作るのに、箱・袋・リボンがそれぞれいくつ要るかを電卓で出している</li>
+<li>いくつもの製品で同じ部品を使っていて、全部でいくつ足りないのかがすぐ分からない</li>
+<li>部品をまとめた半製品（小袋・組立品）があり、その中身まで数えるのが手間</li>
+<li>在庫で福袋・詰め合わせがあといくつ作れるか、どの中身が先に切れるかを知りたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>必要数の合計</b>：作る数を製品ごとに入れると、部品ごとに必要な数を合計します。どの製品の分がいくつかの内訳もメモに出します。数は「0.6」（m・kg など）のような小数でも計算します</li>
+<li><b>何段の部品表でも</b>：子の部品がさらに部品でできている（製品 → 半製品 → 部品）ときも、いちばん下の部品まで数えます。半製品の在庫があれば先にそれを使い、足りない分だけ部品から作る計算にできます（切り替え可）</li>
+<li><b>足りない部品</b>：在庫の表と比べて、部品ごとに在庫・不足・在庫の残りを出します。在庫の表にない部品は在庫 0 として数え、その旨を出します</li>
+<li><b>在庫であと何個作れるか</b>：製品ごとに、いまの在庫だけで作れる数と、先に足りなくなる部品を出します（半製品の在庫も使って計算）</li>
+<li><b>表の点検</b>：数が空欄・数字でない行、同じ親と子の組み合わせが2回ある行（数を足して計算）、ある品が自分自身の部品になっている輪を一覧にします</li>
+<li><b>印刷と保存</b>：部品の準備表（準備の確認欄つき）・足りない部品だけ・作れる数の表を A4 で印刷できます。結果は Excel ファイル（.xlsx、「必要数」「作る数」「作れる数」のシート）か CSV で保存できます</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。列は見出し（「製品」「部品」「員数」「在庫」など）から自動で選び、違っていたら画面で選び直せます。品番のハイフン・空白、全角・半角の違いは同じとみなします</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li><b>部品表そのものは作りません</b>。製品ごとの部品と数の表（CSV・Excel）が必要です</li>
+<li>歩留まり・ロス率、最小発注数・入数への切り上げ、リードタイム（いつまでに発注するか）は計算しません。必要数と不足の数までです</li>
+<li>ケースとバラ、m と cm のような<b>単位の換算はしません</b>。部品表と在庫の表で単位をそろえてください</li>
+<li>「作れる数」は製品ごとに、その製品だけを作るとしたときの数です。いくつもの製品を合わせて作るときは「作る数」に入れて「不足」で確かめてください（作る数の最適な組み合わせは出しません）</li>
+<li>発注・仕入先への送信の機能はありません</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで計算するなら（部品表が1段のとき）</h2>
+<p>シート「部品表」の A 列に製品、B 列に部品、C 列に員数（1個あたりの数）、シート「作る数」の A 列に製品、B 列に作る数、シート「在庫」の A 列に部品、B 列に在庫数があるとします。</p>
+<ol>
+<li>「部品表」の D2 に <code>=C2*SUMIF(作る数!$A:$A,A2,作る数!$B:$B)</code> と入れて下までコピーすると、行ごとの必要数になります</li>
+<li>部品の一覧（A 列に部品）を作り、B2 に <code>=SUMIF(部品表!$B:$B,A2,部品表!$D:$D)</code> で部品ごとの必要数、C2 に <code>=MAX(0,B2-SUMIF(在庫!$A:$A,A2,在庫!$B:$B))</code> で不足の数です</li>
+<li>在庫で作れる数は、「部品表」の E2 に <code>=INT(SUMIF(在庫!$A:$A,B2,在庫!$B:$B)/C2)</code> と入れ、<code>=MINIFS(部品表!$E:$E,部品表!$A:$A,"G-A")</code> で製品「G-A」の作れる数です（MINIFS は Excel 2019 以降・Microsoft 365）</li>
+</ol>
+<p>このツールが向いているのは、<b>半製品があって部品表が2段以上</b>、<b>半製品の在庫を先に使って数えたい</b>、<b>製品が多く、どの部品が先に切れるかも知りたい</b>、<b>品番の書き方が表ごとに違う</b>、<b>準備表をそのまま印刷したい</b>、といった式だけでは手間のかかるときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・計算・印刷・保存はすべてお使いのブラウザの中で行います。表題などの一部の設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>部品表はどんな形なら使えますか？</th><td>1行に「親（製品・セット）」「子（部品・材料・中身）」「親1個に使う子の数」が並んだ表です。名前・単位の列はあってもなくても使えます。親の列が同じ値でまとまっていなくても構いません。</td></tr>
+<tr><th>作る数はどこに入れますか？</th><td>部品表を読むと、いちばん上の製品の一覧が出るので、そこに数を入れます。製品と数の2列の表を貼り付けて入れることもできます。</td></tr>
+<tr><th>何行まで使えますか？</th><td>製品版は行数の制限はありません（製品200・部品表1万行ほどで、1秒前後で計算できることを確かめています）。画面の一覧は500品まで表示し、全部は保存したファイルに入ります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">足りない部品の発注書を作るなら <a href="../hacchu-sho/">発注点チェックと発注書</a>、届いた部品の検品は <a href="../nyuka-kenpin/">入荷の検品の照合</a>、在庫を数える記入用シートは <a href="../tanaoroshi/">棚卸の記入用シート印刷</a> が使えます。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

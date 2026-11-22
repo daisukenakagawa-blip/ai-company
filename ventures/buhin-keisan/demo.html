@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>部品表の必要数と作れる数 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+input[type=number]{width:90px;font-size:14px;text-align:right}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}.okc{color:#047857}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}.scroll.short{max-height:320px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:220px}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.nl{font-size:13px;margin:0;padding-left:20px}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td.nw{white-space:nowrap}.pt td.nm{min-width:40mm}.pt td.ck{width:12mm}.pt td.mm{font-size:8pt}
+  .sign{margin-top:5mm;font-size:10pt}.sign span{display:inline-block;border-bottom:.3mm solid #000;min-width:40mm;margin-right:8mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>部品表の必要数と作れる数</h1>
+<p class="lead">部品表（製品・セットごとの部品・材料・中身と数）から、作る数に必要な部品の数を合計し、在庫と比べて足りない部品を一覧にします。在庫だけで製品ごとに「あと何個作れるか」も出します。途中の部品（半製品）がある何段の部品表でも使えます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、部品表と在庫の表はそれぞれ先頭 15 行までを使います。全部の行を使うには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる（部品表・作る数・在庫）</button></div>
+<div class="two">
+<div class="box">
+  <h2>1. 部品表（必須）</h2>
+  <div class="drop" id="dropA">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileA" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteA" rows="4" placeholder="製品&#9;部品&#9;員数&#10;セットA&#9;箱&#9;1&#10;セットA&#9;小袋&#9;2"></textarea>
+  <div class="row"><button id="pasteGoA">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadA" checked> 1行目は見出し</label></div>
+  <div id="loadMsgA" class="note" style="font-size:13px"></div>
+  <div id="colsA" class="colgrid" hidden></div>
+  <div id="colMsgA" class="note"></div>
+  <p class="note">1行に「親（製品・セット）」「子（部品・材料・中身）」「親1個に使う子の数」。子がさらに部品でできているときは、その子を親にした行を足してください（何段でも）。</p>
+</div>
+<div class="box">
+  <h2>3. 在庫（任意）</h2>
+  <div class="drop" id="dropB">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileB" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteB" rows="4" placeholder="部品&#9;在庫数&#10;箱&#9;40"></textarea>
+  <div class="row"><button id="pasteGoB">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadB" checked> 1行目は見出し</label></div>
+  <div id="loadMsgB" class="note" style="font-size:13px"></div>
+  <div id="colsB" class="colgrid" hidden></div>
+  <div id="colMsgB" class="note"></div>
+  <p class="note">部品の品番と在庫数の表。入れると、足りない部品と、製品ごとの「あと何個作れるか」を出します。同じ品番が何行かあれば足します。</p>
+</div>
+</div>
+
+<div class="box" id="planBox" hidden>
+  <h2>2. 作る数</h2>
+  <div class="row"><button class="sub" id="planClear">全部 0 にする</button><label>全部に <input type="number" id="planAllN" min="0" step="any" value="1"></label><button class="sub" id="planAll">を入れる</button><label><input type="checkbox" id="planMid"> 途中の部品（半製品）も一覧に出す</label></div>
+  <div id="planList"></div>
+  <details style="margin-top:8px"><summary class="note" style="cursor:pointer">作る数の表を貼り付ける（製品の品番と数の2列）</summary>
+    <textarea id="planPaste" rows="3" placeholder="製品&#9;作る数&#10;セットA&#9;30"></textarea>
+    <div class="row"><button class="sub" id="planPasteGo">貼り付けた作る数を入れる</button></div>
+  </details>
+  <div id="planMsg" class="note"></div>
+</div>
+
+<div class="box" id="optBox" hidden>
+  <h2>計算のしかた</h2>
+  <div class="row"><label><input type="checkbox" id="net" checked> 途中の部品（半製品）の在庫があれば、先にそれを使う（足りない分だけ部品から作る）</label></div>
+  <div class="row"><label><input type="checkbox" id="hyphen" checked> 品番のハイフン・空白・ドットの違いは同じとみなす（「AB-12」と「AB12」）</label></div>
+  <p class="note">品番の全角・半角、大文字・小文字の違いも同じとみなします。在庫の表にない部品は、在庫 0 として計算します。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <h3>部品の必要数</h3>
+  <div class="row"><span id="stockOpts"><label><input type="checkbox" id="onlyShort"> 足りない部品だけを出す</label></span><label><input type="checkbox" id="showMid"> 途中の部品（半製品）も出す</label></div>
+  <div id="listView"></div>
+  <h3>在庫であと何個作れるか</h3>
+  <div id="mkView"></div>
+  <div id="noteView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>印刷するもの <select id="pKind"><option value="need">部品の準備表（必要数）</option><option value="short">足りない部品だけ</option><option value="mk">在庫で作れる数</option></select></label><label>表題 <input type="text" id="title" size="22" placeholder="部品の準備表（12月分）"></label><label>メモ <input type="text" id="memo" size="22"></label></div>
+  <div class="row"><button id="pGo">印刷</button><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cNeed">必要数を CSV で保存</button><button class="sub" id="cShort">足りない部品だけ CSV</button><button class="sub" id="cMk">作れる数を CSV</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">Excel ファイルには「必要数」「作る数」「作れる数」のシートが入ります。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.BUHIN_LIMIT=15;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="buhin.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
