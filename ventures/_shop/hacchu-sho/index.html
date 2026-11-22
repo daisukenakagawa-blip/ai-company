@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>発注点チェックと発注書｜在庫表から発注する品と数を計算し、仕入先ごとの発注書を印刷｜GENHAYL</title>
+<meta name="description" content="在庫の表（品名・今の在庫数・発注点）から、発注が必要な品と発注する数を計算し、仕入先ごとに1枚の発注書を A4 で印刷します。目標在庫・発注単位（ケース入数）・最小発注数・入荷予定も計算に入れ、Excel・CSV で保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>発注点チェックと発注書</h1>
+<p>在庫の表（品名・今の在庫数・発注点）を入れると、<b>発注が必要な品</b>と<b>発注する数</b>を計算し、<b>仕入先ごとに1枚の発注書</b>を A4 で印刷できるツールです。目標在庫・発注単位（ケース入数など）・最小発注数・入荷予定の列があれば、それも計算に入れます。在庫表を見ながら電卓で発注数を出し、発注書の雛形に1行ずつ写している作業をまとめて済ませられます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/6oU4gA1uo7XRcUc8km1gs0x">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、計算・印刷・保存は表の先頭15行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の在庫表から、発注が必要な品と発注する数を仕入先ごとにまとめて一覧にした画面" width="620"></p>
+<p><img src="screenshot-print.png" alt="仕入先ごとに印刷した発注書の見本（宛名・発注番号・発注日・納品希望日・品名・数量・単価・金額・合計・備考）" width="620"></p>
+<p class="note">見本のデータ（架空の事務所の備品11品、仕入先の名前も架空）で計算し、印刷した例です。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>事務所の備品・店の消耗品・飲食店の食材の在庫表を毎週見て、発注する品と数を電卓で出している</li>
+<li>「ケース単位でしか頼めない」「最低10個から」といった条件があり、発注数の計算をよく間違える</li>
+<li>仕入先が何社かあり、発注書を Word や Excel の雛形に1社ずつ写して作っている</li>
+<li>発注済みでまだ届いていない分を数え忘れて、二重に発注してしまったことがある</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>発注が必要な品を出す</b>：「今の在庫数（＋入荷予定）」が発注点「以下」になった品（「下回ったら」にも切り替えられます）</li>
+<li><b>発注する数の計算</b>：目標在庫の列があれば「目標在庫 − 在庫」、なければ発注点を上回るいちばん少ない数。発注単位（ケース入数など）の倍数に切り上げ、最小発注数より少なければ増やします。品ごとに計算の式（例：「目標 20 − 3 ＝ 17 → 5 ずつで 20」）を表示します</li>
+<li><b>手で直せる</b>：計算した数は画面で直せます（0 にするとその品は発注書に入りません）。直した品は色が変わります</li>
+<li><b>仕入先ごとの発注書</b>：1社につき A4 1枚（品が多ければ続きのページ）。宛名と敬称、発注番号（「20261122-01」のように自動）、発注日、納品希望日、納品場所、自社の名前・住所・電話・担当者、品番・品名・数量・単位、単価と金額（税抜・税込の表示を選ぶか、出さないこともできます）、合計、備考。記入用の空いた行も足せます</li>
+<li><b>社内用の発注リスト</b>：全部の仕入先の発注する品を1枚にまとめ、「済」の欄つきで印刷</li>
+<li><b>保存</b>：発注一覧（発注番号・仕入先・品名・数・金額…）と、元の表に「判定・発注する数・金額・計算」の列を足した明細を、Excel ファイル（.xlsx）か CSV で</li>
+<li><b>そのほか</b>：「1日の使用数」の列があれば、在庫があと何日もつかを表示。在庫が「なし」など数字でない行は、行番号と理由を一覧にします。「1,200」「12個」「¥300」「３．５」のような書き方も数として読みます</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。列は見出し（「在庫」「発注点」「入数」「仕入先」など）から自動で選び、画面で選び直せます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li><b>発注書の送信・発注そのもの</b>はしません。印刷するか PDF に保存して、いつもの方法（FAX・メール・手渡し）でお送りください</li>
+<li>発注点や目標在庫を<b>決める</b>（売れ行きの予測など）ことはしません。表に入っている発注点・目標在庫で計算します</li>
+<li>消費税の計算はしません。金額は「発注する数 × 単価の列の値」です。請求書・適格請求書（インボイス）の作成用ではありません</li>
+<li>在庫の数そのものを管理する（入出庫を記録する）道具ではありません。数えた在庫の表を入れて使います</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで発注数を出すなら</h2>
+<p>B 列に在庫、C 列に発注点、D 列に目標在庫、E 列に発注単位（1個ずつなら 1）があるとき、F2 に</p>
+<p><code>=IF(B2&lt;=C2,CEILING(D2-B2,E2),0)</code></p>
+<p>と入れて下までコピーすると、発注点以下の品だけ「目標在庫 − 在庫」を発注単位の倍数に切り上げた数が出ます（CEILING は指定した数の倍数に切り上げる関数です）。目標在庫を決めていないなら、発注点を上回る最小の数は</p>
+<p><code>=IF(B2&lt;=C2,(INT((C2-B2)/E2)+1)*E2,0)</code></p>
+<p>で出せます。あとはフィルターで 0 以外の行を出し、仕入先で並べ替えてください。</p>
+<p>このツールが向いているのは、<b>入荷予定や最小発注数も計算に入れたい</b>、<b>仕入先が何社かあって発注書を1社ずつ作るのが手間</b>、<b>在庫の欄に「なし」などが混ざっていて式がエラーになる</b>、といったときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・計算・印刷・保存はすべてお使いのブラウザの中で行います。自社の名前・住所などの設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>どんな列が要りますか？</th><td>必ず要るのは「品名」「今の在庫数」「発注点」の3つです。目標在庫・発注単位・最小発注数・入荷予定・仕入先・単価・品番・単位・1日の使用数は、あれば使います。仕入先の列がなければ、全部を1枚の発注書にまとめます。</td></tr>
+<tr><th>発注書の書式は変えられますか？</th><td>宛名の敬称（御中・様）、金額の欄（出さない・税抜・税込）、品番の列、空いた行の数、納品希望日・納品場所・備考の有無を選べます。ロゴや印影を入れることはできません（印刷してから押印してください）。</td></tr>
+<tr><th>何品まで使えますか？</th><td>製品版は行数の制限はありません。2万行の表で、計算は1秒かからないことを確かめています（パソコンの性能によります）。画面の一覧は1,000品まで表示し、全部は印刷・保存に入ります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">年末・期末の棚卸で数を数える記入用の表は <a href="../tanaoroshi/">棚卸の記入用シート印刷</a>、発注書を FAX で送るときの送付状は <a href="../soufujou/">送付状の一括作成</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

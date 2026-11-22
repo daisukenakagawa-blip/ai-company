@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>発注点チェックと発注書</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=date],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px 16px;font-size:14px}
+.grid label{display:flex;flex-direction:column;gap:2px}.grid label span{font-size:12px;color:var(--sub)}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}.ok{color:#047857}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:480px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:200px}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.sup td{background:#f0fdfa;font-weight:700}
+.lt input.q{width:80px;text-align:right;font-size:13px}.lt tr.edited input.q{background:#fef3c7}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:14mm 14mm 12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  .sheet{break-after:page}.sheet:last-child{break-after:auto}
+  .sheet h1{font-size:20pt;text-align:center;letter-spacing:.5em;margin:0 0 6mm}
+  .hd{display:flex;justify-content:space-between;gap:8mm;font-size:10pt;margin-bottom:4mm}
+  .to{font-size:14pt;border-bottom:.4mm solid #000;padding-bottom:1mm;min-width:80mm;margin:0 0 3mm}
+  .me{text-align:right;line-height:1.5}.meta{text-align:right;font-size:10pt;margin:0 0 3mm}
+  .msg{font-size:10pt;margin:0 0 2mm}
+  .cond{font-size:10pt;border-collapse:collapse;margin:0 0 3mm}.cond th,.cond td{border:.3mm solid #555;padding:1mm 3mm;text-align:left}.cond th{background:#eee;font-weight:normal}
+  .pt{border-collapse:collapse;width:100%;font-size:10pt}.pt th,.pt td{border:.3mm solid #555;padding:1.4mm 2mm;text-align:left}
+  .pt th{background:#eee;font-weight:normal}.pt .n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.pt tr{break-inside:avoid}
+  .pt tfoot td{font-weight:700}
+  .rem{border:.3mm solid #555;min-height:14mm;padding:1.5mm 2mm;font-size:10pt;margin-top:3mm;white-space:pre-wrap}
+  .small{font-size:8.5pt;color:#333;margin-top:2mm}
+  .list h1{font-size:15pt;text-align:left;letter-spacing:0;margin:0 0 2mm}.list .per{font-size:9pt;margin:0 0 2mm}
+  .list .pt{font-size:9pt}.list .pt tr.sup td{background:#f3f3f3;font-weight:700}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>発注点チェックと発注書</h1>
+<p class="lead">在庫の表（品名・今の在庫数・発注点）から、発注が必要な品と発注する数を計算し、仕入先ごとに1枚の発注書を A4 で印刷します。目標在庫・発注単位（ケース入数など）・最小発注数・入荷予定の列があれば計算に入れます。データはこのブラウザの外へ送信せず、発注書の送信もしません。</p>
+<!--DEMO-->
+
+<div class="box" id="step1">
+  <h2>1. 在庫の表を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="5" placeholder="品名&#9;在庫&#9;発注点&#9;目標在庫&#9;発注単位&#9;仕入先&#9;単価&#10;コピー用紙 A4&#9;3&#9;5&#9;20&#9;5&#9;見本紙業&#9;2500"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 列と計算のしかた</h2>
+  <p class="note">見出しから自動で選んでいます。違っていたら選び直してください。<b>必ず要るのは「品名」「今の在庫数」「発注点」</b>で、ほかは無くても計算できます。</p>
+  <div class="grid" id="colGrid"></div>
+  <h3>計算のしかた</h3>
+  <div class="row"><label>発注する時 <select id="rule"><option value="le">在庫が発注点「以下」になったら</option><option value="lt">在庫が発注点を「下回ったら」</option></select></label></div>
+  <p class="note">在庫は「今の在庫数 ＋ 入荷予定」で比べます。発注する数は、<b>目標在庫の列があれば「目標在庫 − 在庫」</b>、なければ<b>発注点を上回る（「下回ったら」のときは発注点に届く）いちばん少ない数</b>です。発注単位があればその倍数に切り上げ、最小発注数より少なければ最小発注数まで増やします。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label><input type="checkbox" id="showAll"> 発注しない品も出す</label><label><input type="checkbox" id="bySup" checked> 仕入先ごとにまとめて出す</label><button class="sub" id="resetQty">手で直した数を元に戻す</button></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+  <p class="note">「発注する数」の欄は手で直せます（0 にするとその品は発注書に入りません）。直した数は黄色で表示します。</p>
+</div>
+<div class="box">
+  <h2>3. 発注書の印刷・保存</h2>
+  <div class="grid">
+    <label><span>自社の名前</span><input type="text" id="me" placeholder="見本商店"></label>
+    <label><span>住所</span><input type="text" id="addr" placeholder="〒000-0000 ○○市○○町1-2-3"></label>
+    <label><span>電話・FAX</span><input type="text" id="tel" placeholder="TEL 000-000-0000 / FAX 000-000-0001"></label>
+    <label><span>担当者</span><input type="text" id="person" placeholder="見本"></label>
+    <label><span>発注日</span><input type="date" id="odate"></label>
+    <label><span>発注番号の頭（後ろに -01, -02… が付きます）</span><input type="text" id="prefix"></label>
+    <label><span>納品希望日（空欄なら欄を出しません）</span><input type="text" id="ddate" placeholder="12月4日（金）まで"></label>
+    <label><span>納品場所（空欄なら欄を出しません）</span><input type="text" id="dplace" placeholder="本店 倉庫"></label>
+    <label><span>宛名の敬称</span><select id="hon"><option>御中</option><option>様</option><option value="">（付けない）</option></select></label>
+    <label><span>金額の欄</span><select id="money"><option value="none">単価・金額を出さない</option><option value="ex">出す（単価は税抜）</option><option value="in">出す（単価は税込）</option><option value="plain">出す（税の表示なし）</option></select></label>
+    <label><span>品番の列</span><select id="showCode"><option value="1">出す（品番の列があるとき）</option><option value="0">出さない</option></select></label>
+    <label><span>空いた行を足して最低何行にするか</span><select id="minRows"><option value="0">足さない</option><option>10</option><option selected>15</option><option>20</option></select></label>
+  </div>
+  <label class="note">備考（発注書の下に入れます）</label>
+  <textarea id="remark" rows="2" placeholder="納品書を同封してください。"></textarea>
+  <div class="row"><button id="pOrder">発注書を印刷（仕入先ごとに1枚）</button><button class="sub" id="pList">発注リストを印刷（社内用・全部の仕入先）</button></div>
+  <div class="row"><button class="sub" id="xOrd">発注一覧を Excel（.xlsx）で保存</button><button class="sub" id="cOrd">発注一覧を CSV で保存</button><button class="sub" id="xAll">明細（元の表＋計算の列）を Excel で保存</button><button class="sub" id="cAll">明細を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">消費税の計算はしません。金額は「発注する数 × 単価」で、単価の列のとおりです。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください（FAX・メールで送るときに便利です）。自社の名前などの設定はこのブラウザに保存し、表の中身は保存しません。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="hacchu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
