@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>商品コードの検査 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:220px}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td:nth-child(-n+4){white-space:nowrap}
+  .ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>商品コードの検査（JAN・ISBN・ITF・UPC）</h1>
+<p class="lead">商品マスタや在庫表の番号の列を1行ずつ調べ、チェックデジット（末尾の数字）の違い・桁数の違い・Excel で崩れた番号・同じ番号の重複を一覧にします。末尾の数字を付けて番号を作ることもできます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、調べる・印刷・保存は先頭 30 行までです。全部の行を調べるには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+
+<div class="box" id="step1">
+  <h2>1. 表を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け（番号の列だけでも大丈夫です）</label>
+  <textarea id="paste" rows="5" placeholder="品名&#9;JANコード&#10;ノート&#9;4900000000016"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="box" id="step2" hidden>
+  <h2>2. 調べ方</h2>
+  <div class="row"><label>番号の列 <select id="col"></select></label>
+    <label>番号の種類 <select id="kind">
+      <option value="auto">桁数で自動（8・12・13・14桁、10桁は ISBN）</option>
+      <option value="jan">JAN（13桁・8桁）</option>
+      <option value="jan13">JAN 13桁だけ</option>
+      <option value="jan8">JAN 短縮 8桁だけ</option>
+      <option value="upc">UPC-A 12桁だけ</option>
+      <option value="gtin14">ITF-14・GTIN-14（14桁）だけ</option>
+      <option value="isbn">ISBN（13桁・10桁）</option>
+    </select></label></div>
+  <div class="row"><label><input type="radio" name="job" value="check" checked> 番号を調べる</label>
+    <label><input type="radio" name="job" value="gen"> 末尾の数字（チェックデジット）を付けて番号を作る</label></div>
+  <p class="note" id="genNote" hidden>末尾を付ける前の番号（JAN なら12桁、短縮なら7桁、UPC-A なら11桁、ITF-14 なら13桁、ISBN なら12桁か9桁）の列を選んでください。番号そのものの取得（事業者コードの登録）は、このツールではできません。</p>
+  <p class="note">種類を決めると、桁数が足りない番号のうち「先頭に0を補うと正しい番号」になるもの（Excel で先頭の0が消えたもの）も見つけます。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label><input type="checkbox" id="onlyBad" checked> 問題のある行・重複・注意書きのある行だけを出す</label></div>
+  <div id="listView"></div>
+  <div id="dupView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="商品マスタの JAN の点検（11月）"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><button id="pList">問題の一覧を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">明細を Excel（.xlsx）で保存</button><button class="sub" id="cAll">明細を CSV で保存</button><button class="sub" id="cBad">問題の行だけ CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">明細は元の表に「整えた番号」「判定」「直した案」などの列を足したものです。Excel ファイルで保存すると、番号は文字として入るので、開いても 4.90E+12 のような表示や先頭の0の消えは起きません。CSV を Excel でそのまま開くと番号が崩れることがあるので、CSV は取込先のシステムに入れるときにお使いください。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.CODEK_LIMIT=30;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="code.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
