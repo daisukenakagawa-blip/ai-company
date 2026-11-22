@@ -44,3 +44,4 @@
 - `zaseki-hyou/index.html`・`demo.html`（お試し）・`tool.html`・`zaseki.js`・`app.js`・`vendor/` … 座席表の作成（500円）
 - `hacchu-sho/index.html`・`demo.html`（お試し）・`tool.html`・`hacchu.js`・`app.js`・`vendor/` … 発注点チェックと発注書（500円）
 - `kigen-ichiran/index.html`・`demo.html`（お試し）・`tool.html`・`kigen.js`・`app.js`・`vendor/` … 期限の一覧（500円）
+- `nyuka-kenpin/index.html`・`demo.html`（お試し）・`tool.html`・`kenpin.js`・`app.js`・`vendor/` … 入荷の検品の照合（500円）

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>入荷の検品の照合｜注文した明細と納品書を突き合わせ、不足・未着・注文外を一覧に｜GENHAYL</title>
+<meta name="description" content="発注書・注文履歴と、納品書・出荷明細の CSV／Excel を品番か品名で突き合わせ、数の不足・多すぎ、届いていない品、注文にない品、単価の違いを一覧にします。分納の行は合計して比べ、品番の書き違いの疑いも組にして出します。検品表の印刷、Excel・CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>入荷の検品の照合</h1>
+<p><b>注文した明細</b>（発注書・注文履歴）と、<b>届いた品の明細</b>（納品書・出荷明細、または届いた品を数えて入れた表）を<b>品番か品名で突き合わせて</b>、<b>数の不足・多すぎ</b>、<b>届いていない品</b>、<b>注文にない品</b>、<b>単価の違い</b>を一覧にするツールです。品数の多い入荷の検品で、納品書と発注書を1行ずつ見比べる手間を減らせます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/6oU00k6OIemf4nG0RU1gs0z">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、照合・印刷・保存はそれぞれの表の先頭15行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の注文9行と納品書8行を照合し、不足・届いていない・注文にない・多い・単価の違いを一覧にした画面" width="620"></p>
+<p class="note">見本のデータ（架空の文具の注文と納品書）を照合した例。品名・数は説明用のもので、実在の商品・会社とは関係ありません。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>何十品目もの入荷を、納品書と発注書を指でなぞって見比べている</li>
+<li>分納や欠品があり、どの品がまだ届いていないかを仕入先に問い合わせたい</li>
+<li>頼んでいない品が入っていないか、単価が注文と違っていないかも同時に確かめたい</li>
+<li>ネットショップの仕入れ・店舗の発注・事務用品の購入など、発注の記録が Excel や CSV で手元にある</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>突き合わせ</b>：品番で（品番が空欄の行は品名で）、または品番だけ・品名だけで突き合わせます。品番のハイフン・空白の違い（「AB-12」と「AB12」）、品名の全角・半角、大文字・小文字、空白、カッコの種類の違いは同じとみなします。Excel で先頭の0が消えた番号（「0123」と「123」）を同じとみなすこともできます</li>
+<li><b>判定</b>：品ごとに「一致」「不足」「多い」「届いていない」「注文にない」と差（届いた数−注文の数）を出し、不足・届いていない品から順に並べます</li>
+<li><b>分納・まとめ書き</b>：同じ品が注文や納品書に何行かあるときは、数を合計して比べ、その旨をメモに出します</li>
+<li><b>書き違いの疑い</b>：「届いていない品」と「注文にない品」で品名が同じもの・品番の書き方だけが違うものを、「〜ではありませんか」と組にして出します</li>
+<li><b>単価・品名・単位の違い</b>：単価の列があれば注文と納品書の単価の違いを、品番が同じで品名や単位が違うものもメモに出します</li>
+<li><b>読めない行</b>：数量が空欄・数字でない行（「なし」「未定」など）は、照合に入れずに一覧にします。「12個」「1,200」「３」のような書き方は数として読みます</li>
+<li><b>印刷と保存</b>：合わない品（または全部の品）の検品表を A4 で印刷できます（確認欄、検品日・検品者の記入欄つき）。結果は Excel ファイル（.xlsx）か CSV で保存でき、不足・届いていない品だけの CSV は問い合わせや追加の発注に使えます</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。列は見出しから自動で選び、違っていたら画面で選び直せます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li><b>紙の納品書や PDF は読めません</b>。CSV・Excel のデータか、届いた品を数えて入れた表が必要です（数えた数を Excel に入れて貼り付ければ使えます）</li>
+<li>ケースとバラ（「2ケース」と「24個」）のような<b>単位の換算はしません</b>。単位の列が違う品はメモに出すので、数をそろえてから照合してください</li>
+<li>品名が大きく違う（略称・別の呼び名）品は、同じ品とみなせません。品番がある場合は品番で突き合わせてください</li>
+<li>届いた品が良品かどうか（傷・賞味期限など）の判断はしません。数と単価の照合までです</li>
+<li>仕入先への連絡・発注の送信の機能はありません</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで照合するなら</h2>
+<p>注文のシートを「注文」、納品書のシートを「納品」とし、どちらも A 列に品番、C 列に数量があるとき、「注文」の D2 に</p>
+<p><code>=SUMIF(納品!$A:$A,A2,納品!$C:$C)</code></p>
+<p>と入れると、その品番の届いた数の合計が出ます。E2 に <code>=D2-SUMIF($A:$A,A2,$C:$C)</code> と入れると「届いた数−注文の数」になり、マイナスは不足、0 は一致です（D2 が 0 なら届いていません）。注文にない品は、「納品」の D2 に <code>=COUNTIF(注文!$A:$A,A2)</code> と入れて 0 の行です。式を下までコピーして、フィルターで絞り込んでください。</p>
+<p>このツールが向いているのは、<b>品番の書き方（ハイフンの有無・先頭の0）が注文と納品書で違う</b>、<b>品番のない品を品名で突き合わせたい</b>、<b>単価の違いや書き違いの疑いもまとめて見たい</b>、<b>検品表をそのまま印刷したい</b>、といった式だけでは手間のかかるときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・照合・印刷・保存はすべてお使いのブラウザの中で行います。表題などの一部の設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>注文と納品書で列の並びや見出しが違っても使えますか？</th><td>使えます。それぞれの表で、品番・品名・数量・単価の列を見出しから自動で選び、画面で選び直せます。数量の列は「発注数」「納品数」「数量」などの見出しで見つけます。</td></tr>
+<tr><th>何回かに分けて届いた品はどうなりますか？</th><td>届いた明細を1つの表にまとめて入れれば、品ごとに合計して比べます。2回目の納品書だけを入れると、まだ届いていない分は「不足」と出ます。</td></tr>
+<tr><th>何行まで使えますか？</th><td>製品版は行数の制限はありません。画面の一覧は500品まで表示し、全部は保存したファイルに入ります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">在庫の表から発注する品と数を出して発注書を作るなら <a href="../hacchu-sho/">発注点チェックと発注書</a>、棚卸の記入用シートは <a href="../tanaoroshi/">棚卸の記入用シート印刷</a>、品番が JAN なら番号の誤りを <a href="../code-kensa/">商品コードの検査</a> で調べられます。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

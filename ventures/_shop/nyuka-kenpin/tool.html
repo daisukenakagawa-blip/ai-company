@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>入荷の検品の照合</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:220px}
+.lt tr.hd td{background:#f1f5f9;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.okc{color:#047857}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td.nw{white-space:nowrap}.pt td.nm{min-width:45mm}.pt td.ck{width:12mm}
+  .sign{margin-top:5mm;font-size:10pt}.sign span{display:inline-block;border-bottom:.3mm solid #000;min-width:40mm;margin-right:8mm}
+  .ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>入荷の検品の照合</h1>
+<p class="lead">注文した明細（発注書・注文履歴）と、届いた品の明細（納品書・出荷明細）を品番か品名で突き合わせ、数の不足・多すぎ、届いていない品、注文にない品、単価の違いを一覧にします。検品表の印刷と、Excel・CSV の保存ができます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる（注文と届いた明細の両方）</button></div>
+<div class="two">
+<div class="box">
+  <h2>1. 注文した明細</h2>
+  <div class="drop" id="dropA">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileA" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteA" rows="4" placeholder="品番&#9;品名&#9;発注数&#10;A-101&#9;見本の品&#9;10"></textarea>
+  <div class="row"><button id="pasteGoA">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadA" checked> 1行目は見出し</label></div>
+  <div id="loadMsgA" class="note" style="font-size:13px"></div>
+  <div id="colsA" class="colgrid" hidden></div>
+  <p class="note">発注書・注文履歴・発注点チェックで作った発注リストなど。</p>
+</div>
+<div class="box">
+  <h2>2. 届いた品の明細</h2>
+  <div class="drop" id="dropB">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileB" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteB" rows="4" placeholder="品番&#9;品名&#9;数量&#10;A-101&#9;見本の品&#9;8"></textarea>
+  <div class="row"><button id="pasteGoB">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadB" checked> 1行目は見出し</label></div>
+  <div id="loadMsgB" class="note" style="font-size:13px"></div>
+  <div id="colsB" class="colgrid" hidden></div>
+  <p class="note">納品書・出荷明細の CSV、または届いた品を数えて入れた表。</p>
+</div>
+</div>
+
+<div class="box" id="optBox" hidden>
+  <h2>3. 突き合わせ方</h2>
+  <div class="row"><label>何で突き合わせるか <select id="by"><option value="auto">品番（品番が空欄の行は品名）</option><option value="code">品番だけ</option><option value="name">品名だけ</option></select></label></div>
+  <div class="row"><label><input type="checkbox" id="hyphen" checked> 品番のハイフン・空白・ドットの違いは同じとみなす（「AB-12」と「AB12」）</label></div>
+  <div class="row"><label><input type="checkbox" id="zero"> 数字だけの品番の、先頭の0の違いは同じとみなす（Excel で「0123」が「123」になったとき）</label></div>
+  <p class="note">品名で突き合わせるときは、全角・半角、大文字・小文字、空白、カッコの種類の違いを同じとみなします。同じ品が何行かに分かれているときは、数を合計して比べます。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label><input type="checkbox" id="onlyBad" checked> 合わない品だけを出す</label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="26" placeholder="入荷の検品（11月22日着）"></label><label>仕入先・伝票番号など <input type="text" id="memo" size="26"></label></div>
+  <div class="row"><label><input type="checkbox" id="pAll"> 一致した品も印刷する（全部の品の検品表）</label></div>
+  <div class="row"><button id="pList">検品表を印刷</button><button class="sub" id="xAll">結果を Excel（.xlsx）で保存</button><button class="sub" id="cAll">結果を CSV で保存</button><button class="sub" id="cShort">不足・届いていない品だけ CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">保存する表は、品番・品名・注文の数・届いた数・差・判定・注文の単価・届いた単価・元の行番号・メモの列です。不足・届いていない品の CSV は、仕入先への問い合わせや追加の発注に使えます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="kenpin.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
