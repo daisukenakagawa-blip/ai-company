@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>メールアドレス一覧の点検｜全角の＠・空白・打ち間違い・重複を一覧にして整える｜GENHAYL</title>
+<meta name="description" content="会員名簿・顧客リスト・申込一覧のメールアドレスの列を1行ずつ調べ、全角の＠や空白、@ がない・2件入っているなどの形の誤り、＠の後ろのよくある打ち間違い（.co.jo・.con など）、同じアドレスの重複を一覧にします。整えたアドレスに置き換えた表も保存。データは送信せず、メールも送りません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>メールアドレス一覧の点検</h1>
+<p>会員名簿や顧客リスト、申込フォームの回答などにある<b>メールアドレスの列を1行ずつ調べて</b>、<b>全角の＠・空白などの書き方のゆれ</b>、<b>@ がない・2件入っているなどの形の誤り</b>、<b>＠の後ろのよくある打ち間違い</b>、<b>同じアドレスの重複</b>を一覧にするツールです。案内を一斉に送る前や、メール配信のサービスに名簿を取り込む前に、届かない形のアドレスをまとめて見つけて直せます。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/cNi3cwdd6gun7zS7gi1gs0r">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、調べる・印刷・保存は先頭30行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の名簿のメールアドレスを調べ、全角・打ち間違いの疑い・@ がない・2件入っている・重複を一覧にした画面" width="620"></p>
+<p class="note">見本のデータ（架空の名簿12件）を調べた例。アドレスは説明用のもので、実在の人・会社とは関係ありません。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>紙の申込書や電話で聞いたアドレスを手で入力した名簿を、案内を送る前に点検したい</li>
+<li>メール配信のサービスや会員システムに名簿を取り込もうとしたら「形式が正しくない」と言われ、どの行かを探したい</li>
+<li>全角の「＠」や「．」、前後の空白、「山田 太郎 &lt;taro@…&gt;」のような書き方がまざっていて、そろえたい</li>
+<li>同じ人のアドレスが2回入っていて、案内が二重に届くのを防ぎたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>書き方を整える</b>：全角の英数字・＠・ドットを半角に、前後や途中の空白、「名前 &lt;アドレス&gt;」の名前、「mailto:」、前後のカッコや句点を外し、＠の後ろを小文字にそろえます</li>
+<li><b>形の誤り</b>：@ がない（「(at)」「アットマーク」なら @ に直した案を出します）、@ が2つ以上、@ の前や後ろがない、使えない文字（日本語・全角の記号など）、＠の後ろに「.」がない、ドットの連続、末尾が「.123」のような形、長すぎるもの</li>
+<li><b>1つの欄に2件以上</b>：「a@…, b@…」のように複数のアドレスが入っている欄を見つけ、分けたものをメモに出します</li>
+<li><b>＠の後ろの打ち間違いの疑い</b>：「.co.jo」「.ne.pj」「.con」「.cmo」のような末尾の打ち間違いと、よく使われるメールのドメイン（36種）に1〜2文字違いのものを「〜ではありませんか」と案を出します</li>
+<li><b>注意</b>：説明用のドメイン（example.com など、実際には届かないもの）と、@ の前でドットが続く・ドットで終わる古い携帯電話のアドレスの形（受け付けないサービスがあります）を分けて出します</li>
+<li><b>重複</b>：大文字・小文字、全角・半角、空白の違いをそろえて、同じアドレスの行を組にして出します</li>
+<li><b>保存と印刷</b>：アドレスの列だけを整えたものに置き換えた表（打ち間違いの案も反映する・重複の2行目以降を除く、を選べます）を Excel ファイルか CSV で保存できます。元の表に判定・直した案・メモの列を足した明細や、問題の一覧（A4 で印刷）も出せます</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。アドレスの列は見出しと中身から自動で選びます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>アドレスが<b>実際にあるか・届くか</b>は確かめません（このツールはどこにも通信せず、メールも送りません）。分かるのは、アドレスの形が正しいかと、よくある打ち間違いの疑いまでです</li>
+<li>「打ち間違いの疑い」は、よく使われるドメインとの近さから出す<b>案</b>です。会社や学校の独自のドメインの打ち間違いは、末尾（.co.jo など）以外は見つけられません。案を使う前に、本人の申込書などで確かめてください</li>
+<li>@ の前（ユーザー名）の打ち間違いは分かりません</li>
+<li>メールの一斉送信・配信の機能はありません。送る前の名簿の点検用です</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで点検するなら</h2>
+<p>A 列にアドレスがあるとき、B2 に</p>
+<p><code>=LOWER(SUBSTITUTE(ASC(A2)," ",""))</code></p>
+<p>と入れると、全角の英数字・＠を半角に（ASC）、空白を取り（SUBSTITUTE）、小文字に（LOWER）そろえたアドレスになります。さらに C2 に <code>=LEN(B2)-LEN(SUBSTITUTE(B2,"@",""))</code> と入れると @ の数が出るので、1 でない行は形の誤りです。D2 に <code>=COUNTIF(B$2:B$1000,B2)</code> と入れて 2 以上なら、同じアドレスが2回以上あります。3つの式を下までコピーして、フィルターで絞り込んでください。</p>
+<p>このツールが向いているのは、<b>「名前 &lt;アドレス&gt;」や mailto: などの書き方もまざっている</b>、<b>「.co.jo」のような打ち間違いや、1つの欄に2件入っている行も見つけたい</b>、<b>整えたアドレスに置き換えた表をそのまま取り込みに使いたい</b>、といった式だけでは手間のかかるときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・点検・印刷・保存はすべてお使いのブラウザの中で行い、アドレスの存在を確かめる通信もしません。表題など一部の設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>どの列がアドレスか、自分で選ぶのですか？</th><td>「メール」「アドレス」「mail」などの見出しと、列の中に @ が多いかどうかから自動で選びます。違っていたら画面で選び直せます。</td></tr>
+<tr><th>電話番号など、ほかの列は変わりますか？</th><td>変わりません。置き換えるのはアドレスの列だけです。Excel ファイルで保存すると、すべてのセルを文字として入れるので、電話番号や郵便番号の先頭の0も消えません。</td></tr>
+<tr><th>何行まで使えますか？</th><td>製品版は行数の制限はありません。画面の一覧は500行まで表示し、全部は保存したファイルに入ります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">氏名・電話・住所も合わせて名簿の重複をまとめるなら <a href="../meibo-choufuku/">名簿の重複チェック</a>、表全体の全角・半角や空白をそろえるなら <a href="../csv-seikei/">CSV 表記ゆれ整形</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>
