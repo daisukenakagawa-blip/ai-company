@@ -36,4 +36,5 @@
 - `jikan-goukei/index.html`・`demo.html`（お試し）・`tool.html`・`jikan.js`・`app.js`・`vendor/` … 作業時間の集計（500円）
 - `yoyaku-kasanari/index.html`・`demo.html`（お試し）・`tool.html`・`yoyaku.js`・`app.js`・`vendor/` … 予約の重なりチェック（500円）
 - `code-kensa/index.html`・`demo.html`（お試し）・`tool.html`・`code.js`・`app.js`・`vendor/` … 商品コードの検査（JAN・ISBN・ITF・UPC）（500円）
+- `fukusu-sentaku/index.html`・`demo.html`（お試し）・`tool.html`・`sentaku.js`・`app.js`・`vendor/` … 複数選択の回答の分割と集計（500円）
 - `mail-tenken/index.html`・`demo.html`（お試し）・`tool.html`・`mail.js`・`app.js`・`vendor/` … メールアドレス一覧の点検（500円）
