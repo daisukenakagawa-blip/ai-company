@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>月謝の請求額の一覧</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.mk{text-align:center;padding:4px 3px;min-width:34px}
+.mk.A{color:#b91c1c;font-weight:700}.mk.H{color:#b45309;font-weight:700}.mk.X,.mk.N{color:#9ca3af}.mk.U{background:#fde68a}
+.bar{display:inline-block;height:9px;background:#99f6e4;border-radius:2px;vertical-align:middle;margin-left:6px}
+.grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.maps{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}.maps input{width:100%}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:8.5pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:.6mm 1.4mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt td.w{white-space:normal}.pt tr{break-inside:avoid}.pt tr.fl td{background:#f3f3f3;font-weight:700}
+  .pt td.mk{text-align:center;padding:.4mm .5mm}.pt.small{font-size:7pt}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .slips{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:66mm;gap:0}
+  .slip{border:.3mm dashed #888;padding:4mm 5mm;font-size:9pt;overflow:hidden;break-inside:avoid;position:relative}
+  .slip .t{font-size:10pt;font-weight:700;margin-bottom:1.5mm}.slip .nm{font-size:12pt;font-weight:700;margin:1mm 0 2mm}
+  .slip table{border-collapse:collapse;width:100%;font-size:8.5pt}.slip td{border-bottom:.2mm solid #bbb;padding:.5mm 1mm}.slip td.r{text-align:right}
+  .slip .sum{font-size:10.5pt;font-weight:700;text-align:right;margin-top:1.5mm}.slip .msg{font-size:8.5pt;margin-top:1.5mm;white-space:pre-wrap}.slip .by{text-align:right;font-size:8pt;margin-top:1mm}
+}
+.slip.many table{font-size:7.5pt}.slip.many td{padding:.15mm 1mm}.slip.many .msg{margin-top:.8mm}.slip.many .sum{margin-top:.6mm}
+.lt td.w{white-space:normal;min-width:160px}.lt tr.ex td{color:#9ca3af}.fees{font-family:ui-monospace,Menlo,Consolas,monospace}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>月謝の請求額の一覧</h1>
+<p class="lead">生徒の一覧（名前・コース・今月の回数）と<b>料金表</b>から、生徒ごとの<b>今月の請求額</b>を出します。家族（兄弟）の割引、月の途中の入会（日割り・半額・翌月から）、入会金、教材費などの追加、割引の列にも対応。<b>1人1枚の請求のお知らせ</b>を印刷できます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 生徒の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="名前&#9;コース&#9;回数&#9;家族&#10;青木 一郎&#9;ピアノ30分&#9;4&#9;青木"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden>
+    <div id="cols" class="colgrid"></div>
+    <h3>足す費用の列（教材費・設備費など） <span class="note">金額の列を選ぶと、その人の請求額に足します</span></h3><div class="sesl" id="extl"></div>
+    <div class="row"><label><input type="checkbox" id="splitCourse"> 1つのマスに「ピアノ、ソルフェージュ」のように2つ以上のコースを書いている</label></div>
+  </div>
+  <p class="note">1行に1人1コースの表を読みます。2つのコースをとる人は2行に書くか、上のチェックを入れて1つのマスに「、」で区切って書きます。同じ名前の行はまとめて1人にします。「合計」の行は外します。</p>
+</div>
+<div class="box">
+  <h2>2. 料金表と請求の決まり</h2>
+  <div class="grid">
+    <label for="bill">請求する月</label><div><input type="month" id="bill"> <span class="note">入会日・退会日と比べる月です</span></div>
+  </div>
+  <h3>料金表 <span class="note">1行に1つ、「,」で区切って書きます</span></h3>
+  <textarea id="fees" class="fees" rows="7" placeholder="ピアノ30分, 4回, 8000&#10;ピアノ30分, 3回, 6300&#10;ソルフェージュ, 3000&#10;個人レッスン, 1回あたり, 2500"></textarea>
+  <div class="row"><button class="sub" id="feeFill">一覧にあるコースを料金表に書き出す</button><span id="feeMsg" class="note"></span></div>
+  <p class="note">書き方：月額なら「コース, 金額」、回数で料金が変わるなら「コース, 4回, 金額」を回数ごとに、1回いくらなら「コース, 1回あたり, 金額」。回数の列がある人は、その回数の料金（なければ1回あたり×回数、それもなければ月額）を使います。金額は税込みの額として、書いたとおりに足します（消費税の計算はしません）。表に「月謝」の列があれば、料金表より先にその金額を使います。</p>
+  <h3>家族（兄弟）の割引</h3>
+  <div class="row"><select id="sibMode"><option value="none">しない</option><option value="yen">1人につき〇円引き</option><option value="pct">月謝の〇％引き</option></select>
+    <label><input type="number" id="sibAmt" value="1000" min="0" step="100" style="width:90px"> <span id="sibUnit">円</span></label>
+    <label>対象 <select id="sibFrom"><option value="2">2人目から</option><option value="3">3人目から</option></select></label>
+    <label>2人目にするのは <select id="sibTarget"><option value="cheaper">月謝の安い人</option><option value="order">表の順で後の人</option></select></label></div>
+  <p class="note">「家族」の列（家族の名前・世帯の番号など）が同じ人を家族とみなします。割引は月謝（コースの料金の合計）にかけ、教材費などの足す費用にはかけません。休みで月謝が0円の人は数えません。</p>
+  <h3>月の途中の入会</h3>
+  <div class="row"><select id="joinMode"><option value="full">全額</option><option value="days">日数で日割り</option><option value="half">〇日以降の入会は半額</option><option value="next">〇日以降の入会は翌月から（0円）</option></select>
+    <label id="dayL"><input type="number" id="joinDay" value="16" min="2" max="31" style="width:60px"> 日以降</label>
+    <label>入会金 <input type="number" id="enroll" value="0" min="0" step="100" style="width:100px"> 円</label></div>
+  <p class="note">入会日が請求する月にある人だけに使います。入会日が請求する月より後の人は「入会前」、退会日が請求する月より前の人は「退会」として請求から外します（請求する月の途中で退会する人は全額）。回数の列に今月の実際の回数を書いている場合は、「全額」のままで回数の料金になります。</p>
+  <div class="row"><label>端数 <select id="rUnit"><option value="1">1円単位</option><option value="10">10円単位</option><option value="100">100円単位</option></select></label>
+    <select id="rMode"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select><span class="note">日割り・半額・％引きの計算に使います</span></div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="per">1人ごと</option><option value="lines">明細（1行1コース）</option><option value="family">家族ごと</option><option value="course">コースごと</option><option value="group">組ごと</option><option value="ex">請求から外した人</option></select></label>
+    <label>並べ方 <select id="sort"><option value="orig">元の表の順</option><option value="group">組ごと（元の順）</option><option value="family">家族ごと</option><option value="high">請求額の多い順</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="12月分 月謝"></label><label>教室の名前 <input type="text" id="by" size="18" placeholder="〇〇音楽教室"></label></div>
+  <div class="row" style="align-items:flex-start"><label style="flex:1;min-width:260px">お知らせに添える文（任意）<textarea id="msg" rows="2" placeholder="例：12月10日までに、月謝袋に入れてお持ちください。"></textarea></label></div>
+  <div class="row"><label>お知らせの単位 <select id="slipUnit"><option value="person">1人1枚</option><option value="family">家族で1枚（家族の列が同じ人をまとめる）</option></select></label></div>
+  <div class="row"><button id="pList">請求の一覧を印刷（A4 縦）</button><button class="sub" id="pSlip">請求のお知らせを印刷（A4 に8枚）</button><button class="sub" id="pCourse">コースごとの集計を印刷（A4 縦）</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cPer">1人ごとを CSV で保存</button><button class="sub" id="cLines">明細を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">お知らせは A4 1枚に8人分（点線で切り取り）。コースごとの金額・割引・足した費用・合計を載せ、添える文は書いたとおりに入れます。Excel には「1人ごと」「明細」「家族ごと」「コースごと」「組ごと」「外した人」「確かめたい所」の各シートが入ります。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="gessha.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
