@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>時間帯ごとの人数と不足チェック</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.cols>*{min-width:0}@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+.hm{border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.hm th,.hm td{border:1px solid #d1d5db;padding:2px 3px;text-align:center;min-width:26px;white-space:nowrap}
+.hm th{background:#f9fafb;font-weight:600;position:sticky;top:0;z-index:1}.hm th.d,.hm td.d{text-align:left;position:sticky;left:0;background:#fff;z-index:2;min-width:120px}
+.hm th.d{z-index:3;background:#f9fafb}
+.hm td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hm td.s{background:#fecaca!important;color:#7f1d1d;font-weight:700;outline:2px solid #b91c1c;outline-offset:-2px}
+.hm td.k{color:#9ca3af}
+.lg{display:inline-block;width:14px;height:12px;vertical-align:middle;border:1px solid #9ca3af;margin:0 2px 0 8px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:15pt;margin:0 0 2mm}#printArea h2{font-size:11pt;margin:3mm 0 2mm}
+  .per{margin:0 0 3mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}
+  .hm{width:100%;font-size:7.5pt}.hm th,.hm td{padding:.6mm .3mm;min-width:0;border:.2mm solid #777}.hm th.d,.hm td.d{min-width:0;position:static;font-size:7.5pt}.hm th{position:static}.hm tr{break-inside:avoid}
+  .note{font-size:8pt;color:#444}.ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<main>
+<h1>時間帯ごとの人数と不足チェック</h1>
+<p class="lead">シフト表・勤務の予定・予約の一覧の開始と終了の時刻から、日ごとに 15分・30分・1時間ごとの「その時間にいる人数」を数え、決めた最低人数に足りない時間帯を一覧にします。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+
+<div class="box" id="step1">
+  <h2>1. シフト表・予約の一覧を入れる</h2>
+  <div id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け（1人1日1行の表）</label>
+  <textarea id="paste" rows="5" placeholder="日付&#9;氏名&#9;出勤&#9;退勤&#9;休憩&#10;2026/11/24&#9;青木&#9;9:00&#9;17:00&#9;12:00-13:00"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><button class="sub" id="sample">見本を入れる</button>
+    <label><input type="checkbox" id="hasHead" checked> 1行目は見出し（読み込む前に選ぶ）</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+</div>
+
+<div class="cols">
+<div class="box" id="step2" hidden>
+  <h2>2. 列の選び方</h2>
+  <div class="row"><label><input type="radio" name="mode" value="two" checked> 開始と終了が別の列</label>
+    <label><input type="radio" name="mode" value="one"> 1つの列に「9:00〜17:00」</label></div>
+  <div id="twoBox" class="row"><label>開始（出勤） <select id="cStart"></select></label><label>終了（退勤） <select id="cEnd"></select></label></div>
+  <div id="oneBox" class="row" hidden><label>時間帯 <select id="cRange"></select></label></div>
+  <div class="row"><label>日付 <select id="cDate"></select></label><span class="note">開始・終了に日付も入っていれば「使わない」で大丈夫です</span></div>
+  <div class="row"><label>氏名 <select id="cPerson"></select></label><label>職種・持ち場 <select id="cGroup"></select></label></div>
+  <div class="row"><label>休憩 <select id="bMode"><option value="none">引かない</option><option value="one">1つの列に「12:00-13:00」</option><option value="two">開始と終了が別の列</option></select></label>
+    <span id="bOne" hidden><select id="cBrange"></select></span><span id="bTwo" hidden><select id="cBstart"></select> 〜 <select id="cBend"></select></span></div>
+  <div class="row"><label>人数の列（予約の「4名」など） <select id="cCount"></select></label></div>
+  <div class="row"><label>年のない日付（「11/24」）は <input type="number" id="year" min="2000" max="2100" style="width:5.5em"> 年とみなす</label></div>
+  <div class="row"><label><input type="checkbox" id="overnight" checked> 終了の時刻が開始より前なら、翌日までとみなす（22:00〜6:00）</label></div>
+  <p class="note">「休」「公休」「有休」などと書かれた行は、休みとして数えません。</p>
+</div>
+<div class="box" id="step3" hidden>
+  <h2>3. 数え方</h2>
+  <div class="row"><label>区切り <select id="step"><option value="15">15分ごと</option><option value="30" selected>30分ごと</option><option value="60">1時間ごと</option></select></label>
+    <label>見る時間 <input type="text" id="from" value="8:00" size="5"> 〜 <input type="text" id="to" value="22:00" size="5"></label></div>
+  <div class="row"><label>数える人 <select id="how"><option value="full">その枠の間ずっといる人</option><option value="any">少しでもいる人</option></select></label></div>
+  <div class="row" id="grpRow" hidden><label>数える職種・持ち場 <select id="grp"></select></label></div>
+  <h3>必要な人数（足りない所を探す）</h3>
+  <textarea id="rules" rows="5" placeholder="9:00-18:00 2"></textarea>
+  <p class="note">1行に1つ、「時間帯 人数」で書きます。例：<code>9:00-18:00 2</code>　<code>平日 12:00-14:00 3</code>　<code>土日 10:00-18:00 4</code>　<code>月水金 17:00-19:00 2</code>　<code>11/29 9:00-17:00 5</code>。同じ時間に当てはまる行が複数あれば、下の行を使います（日付の行は曜日の行より優先）。空にすると人数だけを数えます。</p>
+  <div id="ruleMsg" class="note"></div>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>足りない時間帯</h2>
+  <div id="sumMsg"></div>
+  <div id="shortView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>日ごと・時間帯ごとの人数</h2>
+  <div id="hmView"></div>
+</div>
+<div class="box">
+  <h2>日ごとのまとめ</h2>
+  <div id="dayView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="11月 第4週のシフト"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><button id="pHm">人数の表を印刷（A4 横）</button><button id="pShort">足りない時間帯を印刷</button></div>
+  <div class="row"><button class="sub" id="cHm">人数の表を CSV で保存</button><button class="sub" id="cShort">足りない時間帯を CSV で保存</button><button class="sub" id="cDay">日ごとのまとめを CSV で保存</button><button class="sub" id="cDetail">明細を CSV で保存（元の表に読み取った時刻の列を足したもの）</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。表の色を印刷するには、印刷画面の「背景のグラフィック」をオンにしてください。CSV は Excel で開ける形（UTF-8・BOM 付き）です。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="ninzu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -50,3 +50,4 @@
 - `kakaku-kaitei/index.html`・`demo.html`（お試し）・`tool.html`・`kaitei.js`・`app.js`・`vendor/` … 価格改定の一括計算（500円）
 - `juchu-jikan/index.html`・`demo.html`（お試し）・`tool.html`・`juchu.js`・`app.js`・`vendor/` … 受注の曜日・時間帯の集計（500円）
 - `irisu-kansan/index.html`・`demo.html`（お試し）・`tool.html`・`irisu.js`・`app.js`・`vendor/` … ケース・バラの数の換算（500円）
+- `jikantai-ninzu/index.html`・`demo.html`（お試し）・`tool.html`・`ninzu.js`・`app.js`・`vendor/` … 時間帯ごとの人数と不足チェック（500円）
