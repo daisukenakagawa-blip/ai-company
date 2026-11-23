@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>受注の曜日・時間帯の集計</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=date],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt td.wk{color:#9ca3af}
+.mx{border-collapse:collapse;font-size:13px}.mx th,.mx td{border:1px solid var(--line);padding:4px 7px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mx th{background:#f9fafb;position:sticky;top:0;z-index:1}.mx th.l{text-align:left;position:sticky;left:0;z-index:2}.mx td.tot,.mx th.tot{font-weight:700;background:#f3f4f6}
+.mx tr.occ td{color:var(--sub);font-size:12px;background:#fff}
+.grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}.grid select{width:100%}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:15pt;margin:0 0 2mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pm{border-collapse:collapse;width:100%;font-size:8pt;margin-top:2mm}.pm th,.pm td{border:.25mm solid #666;padding:.8mm 1mm;text-align:right;white-space:nowrap}
+  .pm th{background:#eee}.pm th.l{text-align:left}.pm td.tot,.pm th.tot{font-weight:700;background:#eee}.pm tr.occ td{font-size:7pt;color:#333}
+  .pt{border-collapse:collapse;width:100%;font-size:8.5pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:.6mm 1.6mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt tr{break-inside:avoid}.pt tr.wk td{background:#f4f4f4}
+  .cols2{column-count:2;column-gap:6mm}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+}
+</style>
+<style id="pageSize">@page{size:A4 landscape;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>受注の曜日・時間帯の集計</h1>
+<p class="lead">受注・注文の一覧（CSV／Excel）の注文日時から、<b>曜日×時間帯の件数・点数・金額</b>の表と、<b>1日あたりの件数</b>、<b>日ごと・月ごとの件数</b>を出します。混む曜日・時間帯が色の濃さで分かり、A4 で印刷・Excel／CSV で保存できます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 受注の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="注文番号&#9;注文日時&#9;数量&#9;金額&#10;1001&#9;2026/11/16 9:10&#9;2&#9;3980"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="cols" class="colgrid" hidden></div>
+  <p class="note">日時は「2026/11/23 14:05」「2026-11-23T14:05:00+09:00」「2026年11月23日 14時05分」「20261123 140500」「午後2:05」などを読みます。日付と時刻が別の列なら、両方を選んでください。<b>商品ごとに1行</b>の表（1つの注文が何行にもなる表）は、注文番号の列を選ぶと1件として数えます。</p>
+</div>
+<div class="box">
+  <h2>2. 集計のしかた</h2>
+  <div class="grid">
+    <label for="band">時間帯</label>
+    <div><select id="band"><option value="1">1時間ごと</option><option value="2">2時間ごと</option><option value="3">3時間ごと</option><option value="4">4時間ごと</option><option value="6">6時間ごと</option><option value="custom">区切りを指定</option></select>
+      <input type="text" id="bandCustom" size="22" placeholder="9,12,15,18" hidden> <span class="note" id="bandNote"></span></div>
+    <label>期間</label><div><input type="date" id="from"> 〜 <input type="date" id="to"> <span class="note">空欄なら、データの最初の日〜最後の日</span></div>
+    <label for="ws">週の始まり</label><select id="ws"><option value="1">月曜</option><option value="0">日曜</option></select>
+    <label for="tz">時差の書かれた日時</label><select id="tz"><option value="jst">日本時間（+09:00）に直す</option><option value="asis">書かれた時刻のまま</option></select>
+    <label for="amtMode">金額の列</label><select id="amtMode"><option value="sum">同じ注文の行を全部足す（行ごとの小計）</option><option value="first">注文の最初の行だけ使う（注文の合計が各行に入っている表）</option></select>
+  </div>
+  <p class="note">「Z」「+00:00」「UTC」の付いた日時（海外のサービスから書き出した表など）は、初めは日本時間に直して数えます。時差の書かれていない日時は、そのまま使います。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="mx">曜日×時間帯</option><option value="days">日ごと</option><option value="months">月ごと</option><option value="orders">注文ごと（曜日・時間帯つき）</option></select></label>
+    <label id="measL">数える物 <select id="meas"><option value="cnt">件数</option><option value="avg">1日あたりの件数</option><option value="qty">点数</option><option value="amt">金額</option><option value="pct">件数の割合（%）</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="10月の受注"></label></div>
+  <div class="row"><button id="pMx">曜日×時間帯を印刷（A4 横）</button><button class="sub" id="pDays">日ごと・月ごとを印刷（A4 縦）</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cMx">表示中の曜日×時間帯を CSV で保存</button><button class="sub" id="cDays">日ごとを CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">Excel には「曜日×時間帯」（件数・1日あたり・点数・金額）、「日ごと」「月ごと」「注文ごと」（注文ごとの日付・曜日・時間帯。ピボットテーブルで別の切り口に使えます）、読めなかった行の各シートが入ります。数は数値で保存します。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="juchu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
