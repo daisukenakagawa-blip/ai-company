@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>価格改定の一括計算</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:200px}.lt tr.same td{color:#9ca3af}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.grid{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:1fr}}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}#printArea h2{font-size:12pt;margin:4mm 0 0;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1mm 1.6mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td.nw{white-space:nowrap}.pt td.nm{min-width:40mm}.pt td.ck{width:10mm}.pt td.sm{font-size:7.5pt}
+  .pt td.big{font-size:11pt;font-weight:700}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .sign{margin-top:5mm;font-size:10pt}.sign span{display:inline-block;border-bottom:.3mm solid #000;min-width:40mm;margin-right:8mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>価格改定の一括計算</h1>
+<p class="lead">商品の表（品番・品名・今の価格）の CSV／Excel から、「5%上げ」「+30円」などの改定後の価格を、端数（10円単位・末尾を8円や80円にそろえる など）と消費税（10%・8%）を合わせて一度に計算し、<b>改定前後の一覧</b>と<b>値札の差し替えリスト</b>を印刷、元の表に新しい価格の列を足して保存します。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="two">
+<div class="box">
+  <h2>1. 商品の表</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="品番&#9;品名&#9;価格&#10;A-101&#9;見本の品&#9;1,200"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="cols" class="colgrid" hidden></div>
+  <p class="note">1行に1品。今の価格は必須です。税率の列（10・8・「軽減」「※」など）がなければ下の既定の税率を使います。行ごとの改定の列には「5%」「+30円」「=1980」「据え置き」のように書けます。</p>
+</div>
+<div class="box">
+  <h2>2. 改定のしかた</h2>
+  <div class="grid">
+    <label for="input">読み込んだ価格は</label><select id="input"><option value="ex">税抜（本体価格）</option><option value="in">税込（総額）</option></select>
+    <label for="def">税率の列がない・空欄の品</label><select id="def"><option value="10">10%</option><option value="8">8%（軽減税率）</option></select>
+    <label for="side">改定と端数の処理は</label><select id="side"><option value="in">税込価格で（値札の金額をそろえる）</option><option value="ex">税抜価格で（本体価格をそろえる）</option></select>
+    <label for="rule">全体の改定</label><div><input type="text" id="rule" size="14" placeholder="5%"> <span id="ruleMsg" class="note"></span></div>
+    <label for="rmode">端数</label><div><select id="rmode"><option value="1">1円未満を</option><option value="10">10円未満を</option><option value="100">100円未満を</option><option value="suffix">末尾をそろえる</option></select>
+      <span id="suffixBox">末尾 <input type="text" id="suffix" size="4" value="80" inputmode="numeric"> 円</span>
+      <select id="rdir"><option value="up">切り上げ</option><option value="down">切り捨て</option><option value="near">四捨五入</option></select></div>
+    <label for="taxDir">消費税の1円未満</label><select id="taxDir"><option value="down">切り捨て</option><option value="near">四捨五入</option><option value="up">切り上げ</option></select>
+  </div>
+  <h3>分類ごとの改定（任意）</h3>
+  <textarea id="cats" rows="3" placeholder="食品 +3%&#10;雑貨 +5%&#10;セール品 据え置き"></textarea>
+  <div id="catMsg" class="note"></div>
+  <div class="row"><label><input type="checkbox" id="keep" checked> 値上げなのに端数の処理で前より安くなる品（値下げで高くなる品）は、元の価格のまま</label></div>
+  <p class="note">使われる順：行ごとの改定 → 分類ごとの改定 → 全体の改定。「=1980」のように価格を指定した品は端数の処理をしません。税込でそろえたときの税抜は、その税込価格になる本体価格を逆算します（ない場合はメモに出します）。</p>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="filter"><option value="all">全部の品</option><option value="changed">価格が変わる品だけ</option><option value="memo">メモのある品だけ</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="春の価格改定"></label><label>改定日 <input type="text" id="when" size="16" placeholder="4月1日"></label></div>
+  <div class="row"><label><input type="checkbox" id="byCat" checked> 値札の差し替えリストは分類（売場）ごとにページを分ける</label></div>
+  <div class="row"><button id="pTag">値札の差し替えリストを印刷</button><button class="sub" id="pAll">改定一覧を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cOrig">元の表＋新しい価格を CSV で保存</button><button class="sub" id="cList">改定一覧を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">値札の差し替えリストには、価格が変わる品だけが入ります（税込を大きく、税抜を小さく）。Excel には「改定一覧」と「元の表と新しい価格」（元の列のすべての後ろに新しい税抜・税込を足した表。レジやネットショップに取り込み直すとき用）の2つのシートが入ります。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="kaitei.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
