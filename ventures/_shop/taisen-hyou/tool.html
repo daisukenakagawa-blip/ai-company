@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>総当たりの対戦表づくり</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:14px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.cols>*{min-width:0}@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.sep td{border-top:2px solid #cbd5e1}
+.lt td.vs,.lt th.vs{text-align:center}.lt td.ta,.lt th.ta{text-align:right}
+.sc{width:4.6em;text-align:center;font-size:14px;padding:2px}.sc.err{border-color:#b91c1c;background:#fef2f2}
+#sumMsg{font-size:14px;margin:0 0 10px}
+.st{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;margin-bottom:12px}
+.st th,.st td{border:1px solid #9ca3af;padding:4px 6px;text-align:center;min-width:52px;white-space:nowrap}
+.st th{background:#f3f4f6}.st th.t,.st td.t{text-align:left;min-width:90px}
+.st td.x{background:#e5e7eb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.st .no{color:#9ca3af;font-size:11px}.st .w{font-weight:700}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:15pt;margin:0 0 2mm}#printArea h2{font-size:12pt;margin:4mm 0 2mm}
+  .per{margin:0 0 3mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:10.5pt}.pt th,.pt td{border:.3mm solid #555;padding:1.8mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt td.vs{text-align:center;width:22mm}.pt td.ta{text-align:right}.pt tr{break-inside:avoid}
+  .st{width:100%;font-size:10pt}.st th,.st td{border:.3mm solid #555;padding:2.5mm 1mm;min-width:0}.st .no{color:#666;font-size:8pt}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .tb{break-inside:avoid;margin-bottom:5mm}.tb h2{margin:0 0 1.5mm}
+  .note{font-size:8pt;color:#444}.ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<main>
+<h1>総当たりの対戦表づくり</h1>
+<p class="lead">参加チーム（人）の一覧から、総当たり（リーグ戦）の組み合わせ・試合の順番・コートと時刻を作り、記入欄つきの試合順の表と星取表（勝敗表）を印刷します。結果を入れれば勝点と順位も出します。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+
+<div class="cols">
+<div class="box" id="step1">
+  <h2>1. 参加チーム・参加者</h2>
+  <textarea id="teams" rows="10" placeholder="1行に1チーム（1人）&#10;青葉クラブ&#10;みどり台&#10;さくら&#10;…"></textarea>
+  <div class="row"><button class="sub" id="sample">見本を入れる</button><button class="sub" id="clearAll">入力を全部消す</button></div>
+  <p class="note">Excel の名簿の列をコピーして貼り付けても読めます。組（リーグ・ブロック）を自分で決めるときは「チーム名,A」のように、名前のあとに「,」かタブで組を書いてください。同じ名前は1つにまとめます。</p>
+  <div id="teamMsg" class="note" style="font-size:13px"></div>
+</div>
+<div class="box" id="step2">
+  <h2>2. 組み方</h2>
+  <div class="row"><label>総当たりの回数 <select id="legs"><option value="1">1回（どの相手とも1試合）</option><option value="2">2回（左右を入れ替えてもう1試合）</option></select></label></div>
+  <div class="row"><label>組（リーグ）の数 <input type="number" id="ngroups" min="1" max="26" value="1" style="width:4em"></label>
+    <label>分け方 <select id="how"><option value="snake">上から順に、行って戻る（1,2,3,3,2,1…）</option><option value="turn">上から順に、1,2,3,1,2,3…</option><option value="block">上から順に、まとめて</option><option value="given">名前のあとに書いた組のとおり</option></select></label></div>
+  <div class="row"><label>同時に使うコート・台の数 <input type="number" id="courts" min="1" max="50" value="1" style="width:4em"></label>
+    <label>名前（任意） <input type="text" id="courtNames" size="16" placeholder="A面,B面"></label></div>
+  <div class="row"><label>開始 <input type="text" id="start" value="9:00" size="5"></label><label>1試合 <input type="number" id="dur" min="1" max="600" value="20" style="width:4.5em"> 分</label><label>入れ替え <input type="number" id="gap" min="0" max="120" value="5" style="width:4em"> 分</label></div>
+  <div class="row"><label>休み時間 <input type="text" id="breaks" size="22" placeholder="12:00-13:00"></label><span class="note">開始を空にすると時刻なしで作ります</span></div>
+  <div class="row"><label><input type="checkbox" id="avoid" checked> 同じチームの連戦をできるだけ避ける</label></div>
+  <div class="row"><label>審判・記録係 <select id="referee"><option value="none">付けない</option><option value="rest">その時間に試合のないチームから割り当てる</option></select></label></div>
+  <div class="row"><label>勝点　勝ち <input type="number" id="pWin" value="3" style="width:3.5em"></label><label>引き分け <input type="number" id="pDraw" value="1" style="width:3.5em"></label><label>負け <input type="number" id="pLoss" value="0" style="width:3.5em"></label></div>
+  <div id="optMsg" class="note"></div>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>試合の順番（結果の記入）</h2>
+  <div id="sumMsg"></div>
+  <p class="note">得点の欄に「3-1」のように入れると（左のチームの得点が先）、星取表と順位に反映します。入れた結果はこのブラウザに保存されます。</p>
+  <div id="orderView" class="scroll"></div>
+</div>
+<div class="box">
+  <h2>星取表（勝敗表）・順位</h2>
+  <div id="starView"></div>
+  <p class="note">順位は 勝点 → 得失点差 → 総得点 の順で決め、すべて同じなら同順位（＝）にします。直接対決などの決め方は大会の決まりに従ってください。</p>
+</div>
+<div class="box">
+  <h2>チームごとのまとめ</h2>
+  <div id="teamView" class="scroll"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>大会の名前 <input type="text" id="title" size="28" placeholder="町内ソフトバレー大会"></label><label>日付・会場（任意） <input type="text" id="sub" size="24" placeholder="12月6日（日）市民体育館"></label></div>
+  <label class="note">下に入れる一言（任意）</label>
+  <textarea id="foot" rows="2"></textarea>
+  <div class="row"><label><input type="checkbox" id="blankPrint"> 結果を入れずに印刷する（手書き用）</label></div>
+  <div class="row"><button id="pOrder">試合順の表を印刷（A4 縦）</button><button id="pStar">星取表を印刷（A4 横・組ごと）</button><button id="pTeam">チームごとの予定を印刷</button></div>
+  <div class="row"><button class="sub" id="cOrder">試合順を CSV で保存</button><button class="sub" id="cRank">順位表を CSV で保存</button><button class="sub" id="cTeam">チームごとの予定を CSV で保存</button><button class="sub" id="clearRes">入れた結果を消す</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。CSV は Excel で開ける形（UTF-8・BOM 付き）です。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="taisen.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
