@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>出欠表の出席率の集計 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=date],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.mk{text-align:center;padding:4px 3px;min-width:26px}
+.mk.A{color:#b91c1c;font-weight:700}.mk.L,.mk.E{color:#b45309}.mk.X{color:#9ca3af}.mk.U{background:#fde68a}
+.bar{display:inline-block;height:9px;background:#99f6e4;border-radius:2px;vertical-align:middle;margin-left:6px}
+.grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.maps{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}.maps input{width:100%}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:8.5pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:.6mm 1.4mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt tr{break-inside:avoid}.pt tr.fl td{background:#f3f3f3;font-weight:700}
+  .pt td.mk{text-align:center;padding:.4mm .5mm}.pt.small{font-size:7pt}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>出欠表の出席率の集計</h1>
+<p class="lead">部活・教室・サークル・研修の<b>出欠表</b>（名前×日付のマスに ○ × 遅 などを書いた表）から、<b>1人ごとの出席回数・出席率・続けて休んでいる回数</b>、<b>日ごとの出席人数</b>、<b>月ごとの出席率</b>を出します。決めた率を下回る人・続けて休んでいる人を一覧にし、A4 で印刷・Excel／CSV で保存できます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、数えるのは表の先頭 10 人までです。全員を数えるには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 出欠表を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="氏名&#9;4/5&#9;4/12&#9;4/19&#10;青木 一郎&#9;○&#9;×&#9;遅"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label><label><input type="checkbox" id="trans"> 名前が横（1行目）に並んでいる表</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="shapeBox" hidden>
+    <div class="row"><label>表の形 <select id="shape"><option value="wide">名前×日付（マスに記号）</option><option value="long">1行に1件（日付・名前・出欠）</option></select></label></div>
+    <div id="cols" class="colgrid"></div>
+    <div id="sesBox"><h3>出欠の列（回）<span class="note" id="sesN"></span></h3><div class="sesl" id="sesl"></div>
+      <div class="row"><button class="sub" id="sesAll">全部選ぶ</button><button class="sub" id="sesNone">全部外す</button><label class="note">年のない日付（4/5 など）の年 <input type="number" id="year" style="width:80px"></label></div></div>
+    <div id="rosterBox" hidden><h3>名簿（任意）</h3><textarea id="roster" rows="3" placeholder="1行に1人。「名前,組」でも可。一度も来ていない人も欠席として数えるときに入れます"></textarea></div>
+  </div>
+  <p class="note">見出しに「4/5」「4月5日」「2026/4/5」「第3回」などの回が並ぶ表を読みます。「番号」「合計」「出席率」などの列と、「合計」の行は自動で外します。年のない日付は、月が戻ったところで次の年にします（4月→翌年3月の年度の表に対応）。</p>
+</div>
+<div class="box">
+  <h2>2. 記号と数え方</h2>
+  <div class="maps" id="maps"></div>
+  <p class="note">記号は「,」で区切って書きます。全角・半角、大文字・小文字の違いは同じとみなします。「数えない」は公欠・忌引・対象外などで、出席率の分母に入れません。</p>
+  <div class="grid" style="margin-top:8px">
+    <label for="blank">空欄のマス</label><select id="blank"><option value="skip">数えない（記録なし）</option><option value="absent">欠席として数える</option></select>
+    <label for="lateOk">遅刻・早退</label><select id="lateOk"><option value="1">出席に数える（回数は別に表示）</option><option value="0">出席に数えない（分母には入れる）</option></select>
+    <label>期間</label><div><input type="date" id="from"> 〜 <input type="date" id="to"> <span class="note">空欄なら全部の回</span></div>
+    <label>気になる人</label><div>出席率が <input type="number" id="th" value="70" min="0" max="100" style="width:64px">% 未満、または 直近 <input type="number" id="st" value="3" min="0" max="99" style="width:56px"> 回以上続けて欠席 <span class="note">（0 にすると使いません）</span></div>
+  </div>
+  <p class="note">全員が空欄の回（休みの日など）は、活動のなかった回として数えません。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="per">1人ごと</option><option value="flag">気になる人</option><option value="grid">出欠表（記号をそろえた表）</option><option value="ses">回ごと</option><option value="month">月ごと</option><option value="group">組ごと</option></select></label>
+    <label id="sortL">並べ方 <select id="sort"><option value="orig">元の表の順</option><option value="low">出席率の低い順</option><option value="high">出席率の高い順</option><option value="group">組ごと（元の順）</option><option value="kana">名前の順</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="4月〜6月の練習"></label></div>
+  <div class="row"><button id="pPer">1人ごとの一覧を印刷（A4 縦）</button><button class="sub" id="pSes">回ごとを印刷（A4 縦）</button><button class="sub" id="pGrid">出欠表を印刷（A4 横）</button><button class="sub" id="pMonth">月ごとを印刷（A4 横）</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cPer">1人ごとを CSV で保存</button><button class="sub" id="cSes">回ごとを CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">1人ごとの一覧の印刷では、気になる人の行を太字にし、先頭にその一覧を付けます。Excel には「1人ごと」「回ごと」「月ごと」「組ごと」「出欠表（そろえた記号）」「読めない記号」の各シートが入ります。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.SHUSSEKI_LIMIT=10;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="shusseki.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
