@@ -4,6 +4,7 @@ Typefully 無料プラン：月10件まで（毎月1日リセット）。同じ�
 
 | 予約日時（JST） | 状態 | 内容 | リンク先 | Typefully draft |
 |---|---|---|---|---|
-| 2026-11-23 12:00 | 予約済み（オーナー確認済み） | ガイド紹介：CSV を Excel で開くと文字化けする原因と直し方 | /guide/csv-mojibake.html | 12083700 |
+| 2026-11-23 12:00 | 投稿済み https://x.com/wl53o6/status/2124699718097981531 | ガイド紹介：CSV を Excel で開くと文字化けする原因と直し方 | /guide/csv-mojibake.html | 12083700 |
 | 2026-11-24 12:00 | 予約済み | ガイド紹介：新旧2つの表の比較（COUNTIF・VLOOKUP、空欄と0の落とし穴） | /guide/excel-hyou-hikaku.html | 12094558 |
 | 2026-11-25 12:00 | 予約済み | ガイド紹介：宛名印刷の前に Excel の住所録を整える（郵便番号の式・建物名の分割・出さない人） | /guide/excel-jushoroku-atena-junbi.html | 12116552 |
+| 2026-11-26 12:00 | 予約済み | ガイド紹介：出欠表の出席率・最後に来た日・続けて休んでいる回数（○と〇の混在） | /guide/excel-shusseki-ritsu.html | 12144875 |
