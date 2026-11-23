@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>発表会のプログラムと時刻表 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+button.mv{background:#fff;color:var(--sub);border:1px solid var(--line);padding:0 6px;font-size:12px;border-radius:4px;margin:0 1px}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],input[type=time],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:600px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.brk td{background:#f0fdfa;color:#115e59}.lt tr.hd td{background:#f3f4f6;font-weight:700}.lt tr.itm td{color:#4b5563}
+.tm{font-weight:700;font-variant-numeric:tabular-nums}.call{color:#1d4ed8}.warn{color:#b45309;font-weight:700}.bad{color:#b91c1c;font-weight:700}.ok{color:#047857;font-weight:700}.nr{color:#9ca3af}
+.colgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}
+@media (max-width:560px){.colgrid{grid-template-columns:minmax(0,1fr)}}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:15pt;margin:0 0 1mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:1mm}.pt th,.pt td{border:.25mm solid #666;padding:.8mm 1.6mm;text-align:left;white-space:nowrap}
+  .pt th{background:#eee}.pt td.n{text-align:right}.pt td.w{white-space:normal}.pt tr{break-inside:avoid}.pt tr.brk td{background:#f2f2f2}.pt tr.hd td{background:#e6e6e6;font-weight:700}
+  .prog{max-width:150mm;margin:0 auto}.prog h1{text-align:center;font-size:18pt!important;margin-bottom:2mm!important}.prog .per{text-align:center}
+  .prog table{border-collapse:collapse;width:100%;font-size:11pt}.prog td{padding:1.6mm 2mm;border-bottom:.2mm solid #bbb;vertical-align:top}
+  .prog td.no{width:10mm;text-align:right;color:#333}.prog td.tt{width:16mm;font-variant-numeric:tabular-nums;color:#333}.prog .cp{font-size:9pt;color:#444}.prog tr.brk td,.prog tr.hd td{text-align:center;font-weight:700;border-bottom:.2mm solid #888;padding-top:3mm}
+  .prog tr{break-inside:avoid}
+  .cards{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:66mm;gap:0}
+  .card{border:.3mm dashed #888;padding:3.5mm 4.5mm;overflow:hidden;font-size:9pt;break-inside:avoid}
+  .card .ct{font-size:8pt;color:#444}.card .nm{font-size:13pt;font-weight:700;margin:.5mm 0 1.5mm}
+  .card table{border-collapse:collapse;width:100%;font-size:9pt}.card td,.card th{border-bottom:.2mm solid #bbb;padding:.5mm 1mm;text-align:left;vertical-align:top}
+  .card .big{font-size:12pt;font-weight:700}
+  .card .msg{font-size:8pt;margin-top:1.5mm;white-space:pre-wrap}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>発表会のプログラムと時刻表</h1>
+<p class="lead">出演者・曲名・演奏の時間の<b>一覧</b>から、1組ごとの<b>開始時刻</b>、<b>舞台袖へ入る時刻</b>、<b>控室に集まる時刻</b>を出し、<b>終わる時刻</b>を確かめます。プログラム・進行表・呼び出し表・1人1枚の出番のお知らせを印刷できます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、時刻を計算するのは表の先頭 10 組までです。全部の組を計算するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 出演者の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="順&#9;氏名&#9;曲名&#9;時間&#10;1&#9;青木 さくら&#9;メヌエット&#9;2:30&#10;2&#9;石井 蓮&#9;きらきら星変奏曲&#9;3分"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden>
+    <div id="cols" class="colgrid"></div>
+    <div class="row"><label><input type="checkbox" id="split" checked> 「青木・田中」のように「・」「、」「&amp;」でつないだ名前は1人ずつに分ける（連弾・合奏）</label></div>
+  </div>
+  <p class="note">名前が「休憩」の行や、曲名の欄に「休憩」とある行は休憩として扱います。名前が空で曲名の欄だけある行（「開会のことば」「講評」など）は進行の項目、名前も時間も空で「第2部」とある行は部の見出しです。時間は「3」（分）「3分30秒」「3:30」（分:秒）「210秒」のどれでも読めます。</p>
+</div>
+<div class="box">
+  <h2>2. 進行の決まり</h2>
+  <div class="row"><label>開演 <input type="time" id="start" value="13:00"></label><label>出演と出演のあいだの入れ替え <input type="number" id="change" value="30" min="0" step="5" style="width:70px"> 秒</label><label>時間が空欄の出演は <input type="number" id="defDur" value="3" min="0" step="0.5" style="width:60px"> 分で計算</label></div>
+  <div class="row"><label>舞台袖へ入るのは <input type="number" id="callN" value="10" min="0" style="width:60px"></label><select id="callMode"><option value="min">分前（出番の開始の）</option><option value="acts">組前（前の組の開始のとき）</option></select><label>控室に集まるのは出番の <input type="number" id="gather" value="30" min="0" style="width:60px"> 分前（0 ＝ 出さない）</label></div>
+  <div class="row"><label>終わらせたい時刻（任意） <input type="time" id="endAt"></label><label>同じ人の出番のあいだは <input type="number" id="gapMin" value="2" min="0" style="width:60px"> 組以上あける（足りないと知らせる）</label></div>
+  <p class="note">休憩の前後には入れ替えの時間を足しません。表に「開始時刻」の列があれば、その行はその時刻より前に始めません（第2部を 15:00 から、など）。時刻は分未満を切り捨てて表示します。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="prog">進行表（開始・袖・集合の時刻）</option><option value="calls">呼び出し表（時刻順）</option><option value="per">1人ごとの出番</option><option value="warn">確かめたい所</option></select></label>
+    <label><input type="checkbox" id="sec"> 秒まで表示</label><button class="sub" id="resetOrder" hidden>順番を元に戻す</button></div>
+  <p class="note" id="mvNote">進行表の ▲▼ で順番を入れ替えると、時刻を計算し直します（読み込んだファイルは変わりません）。</p>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="第12回 ピアノ発表会"></label><label>日付・会場など <input type="text" id="sub" size="32" placeholder="2026年12月13日（日）　市民ホール 小ホール"></label></div>
+  <div class="row"><label><input type="checkbox" id="progTime" checked> プログラムに開始時刻を載せる</label><label><input type="checkbox" id="progComp" checked> 作曲者・備考の欄があれば載せる</label></div>
+  <div class="row"><label style="flex:1 1 100%">お知らせに添える文（任意） <textarea id="msg" rows="2" placeholder="当日は進行により時刻が前後します。集合の時刻までに控室へお越しください。"></textarea></label></div>
+  <div class="row"><button id="pProg">プログラムを印刷（お客さま向け）</button><button class="sub" id="pRun">進行表を印刷（係用）</button><button class="sub" id="pCall">呼び出し表を印刷</button><button class="sub" id="pCard">1人1枚の出番のお知らせ（A4 に8枚）</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cRun">進行表を CSV で保存</button><button class="sub" id="cPer">1人ごとを CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。実際の進行は、演奏の長さやあいさつで前後します。余裕を見て決めてください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.HAPPYO_LIMIT=10;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="happyo.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
