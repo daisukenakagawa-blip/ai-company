@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>記録の自己ベストと伸び</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.hl td{background:#ecfdf5}
+.pb{color:#047857;font-weight:700}.fst{color:#2563eb}.tie{color:#0f766e}.aid{color:#b45309}.nr{color:#9ca3af}
+.colgrid,.evgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}
+@media (max-width:560px){.colgrid,.evgrid{grid-template-columns:minmax(0,1fr)}}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 2mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:1mm}.pt th,.pt td{border:.25mm solid #666;padding:.7mm 1.6mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt tr{break-inside:avoid}.pt tr.fl td{background:#f0f0f0}
+  .blk{break-inside:avoid-page}
+  .cards{display:block}
+  .card{border:.3mm dashed #888;padding:3.5mm 4.5mm;margin:0 0 3mm;break-inside:avoid;font-size:9pt}
+  .card .ct{font-size:8pt;color:#444}.card .nm{font-size:13pt;font-weight:700;margin:.5mm 0 1.5mm}.card .gr{font-size:9pt;font-weight:400;margin-left:3mm}
+  .ce{border-collapse:collapse;width:100%;margin:0 0 1.5mm}.ce td{padding:.4mm 1mm;vertical-align:top}
+  .ce .en{font-weight:700;width:28mm;border-bottom:.2mm solid #bbb}.ce .bs{border-bottom:.2mm solid #bbb}.ce .bs b{font-size:11pt}.ce .d{font-size:8pt}
+  .ce .gn{text-align:right;border-bottom:.2mm solid #bbb}.ce .hs{font-size:8pt;color:#333}.ce .h{margin-right:2.5mm;white-space:nowrap}.ce .h.b{font-weight:700;color:#000}
+}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>記録の自己ベストと伸び</h1>
+<p class="lead">記録会・練習の<b>記録の一覧</b>（日付・名前・種目・記録）から、1人ごと・種目ごとの<b>自己ベスト</b>と、<b>初めからの伸び</b>、<b>前回との差</b>、自己ベストを<b>更新した記録の印</b>を出します。1人1枚の記録カードも印刷できます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 記録の表を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="日付&#9;氏名&#9;種目&#9;記録&#10;2026/5/16&#9;青木 一郎&#9;50m&#9;9.4&#10;2026/5/16&#9;青木 一郎&#9;走り幅跳び&#9;3m05"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="shapeBox" hidden>
+    <div class="row"><label>表の形 <select id="shape"><option value="long">1行に1件（日付・名前・種目・記録）</option><option value="wide">1行に1人（種目が横に並ぶ。体力テストの表など）</option></select></label></div>
+    <div id="cols" class="colgrid"></div>
+    <div id="fixedBox" class="row" hidden><label>種目の列がないときの種目名 <input type="text" id="fixedEvent" size="16" placeholder="50m自由形"></label></div>
+    <div id="evColBox" hidden><h3>種目の列</h3><div class="sesl" id="evcl"></div></div>
+    <div class="row"><label class="note">年のない日付（5/16 など）の年 <input type="number" id="year" style="width:80px"></label><label class="note"><input type="checkbox" id="fiscal" checked> 年度の表（1〜3月は次の年）</label></div>
+  </div>
+  <p class="note">記録は「12.34」「12秒34」「1:05.20」「1分05秒20」「1.05.20」「2:10:30」（タイム）、「3m25」「3.25m」「325cm」「120回」（距離・回数）を読みます。「DNS」「欠場」「棄権」「失格」「ファウル」「×」などは記録なしとして数えません。日付のない表は、元の表の順を記録の順にします。</p>
+</div>
+<div class="box">
+  <h2>2. 種目と数え方</h2>
+  <div id="evs" class="evgrid"><span class="note">表を読み込むと、種目ごとに「タイム」か「距離・回数」かを選べます（種目名と記録の書き方から推定します）。</span></div>
+  <div class="row"><label><input type="checkbox" id="windOn" checked> 追い風が</label><label><input type="number" id="windLim" value="2.0" step="0.1" style="width:70px"> m/s を超える記録は「追い風参考」として自己ベストに入れない</label></div>
+  <p class="note">風は「風」の列か、記録のうしろの「(+1.5)」から読みます。風の書かれていない記録はそのまま数えます。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="per">1人ごとの自己ベスト</option><option value="recs">記録の一覧（印つき）</option><option value="days">日ごと（記録会ごと）</option><option value="day">その日に自己ベストを出した人</option><option value="rank">種目ごとの自己ベスト順</option></select></label>
+    <label>種目 <select id="fEv"></select></label><label id="fGrL">組 <select id="fGr"></select></label>
+    <label id="fDayL" hidden>日 <select id="fDay"></select></label><label id="onlyPBL" hidden><input type="checkbox" id="onlyPB"> 自己ベストの記録だけ</label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="28" placeholder="2026年度 陸上クラブ"></label></div>
+  <div class="row"><button id="pCard">1人1枚の記録カードを印刷（A4 縦）</button><button class="sub" id="pPer">1人ごとの自己ベストを印刷（A4 横）</button><button class="sub" id="pDay">選んだ日の更新者を印刷</button><button class="sub" id="pRank">種目ごとの自己ベスト順を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cPer">1人ごとを CSV で保存</button><button class="sub" id="cRecs">記録の一覧を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">印刷と保存は、上で選んだ種目・組で絞り込んだ内容になります。記録カードは、種目ごとの自己ベストと出した日、初めからの伸び、これまでの記録（★＝自己ベスト更新）を1人ずつ切り取り線つきで並べます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="kiroku.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

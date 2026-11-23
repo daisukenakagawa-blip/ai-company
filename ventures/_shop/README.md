@@ -54,3 +54,4 @@
 - `taisen-hyou/index.html`・`demo.html`（お試し）・`tool.html`・`taisen.js`・`app.js` … 総当たりの対戦表づくり（500円）
 - `shusseki-ritsu/index.html`・`demo.html`（お試し）・`tool.html`・`shusseki.js`・`app.js`・`vendor/` … 出欠表の出席率の集計（500円）
 - `kaihi-nounyu/index.html`・`demo.html`（お試し）・`tool.html`・`kaihi.js`・`app.js`・`vendor/` … 会費・月謝の納入状況の一覧（500円）
+- `kiroku-best/index.html`・`demo.html`（お試し）・`tool.html`・`kiroku.js`・`app.js`・`vendor/` … 記録の自己ベストと伸び（500円）
