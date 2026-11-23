@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ケース・バラの数の換算</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:200px}.lt tr.same td{color:#9ca3af}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:1fr}}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}#printArea h2{font-size:12pt;margin:4mm 0 0;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1mm 1.6mm;text-align:left}
+  .pt th{background:#eee;white-space:nowrap}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td.nw{white-space:nowrap}.pt td.nm{min-width:40mm}.pt td.ck{width:10mm}.pt td.sm{font-size:7.5pt}
+  .pt td.big{font-size:11pt;font-weight:700}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .sign{margin-top:5mm;font-size:10pt}.sign span{display:inline-block;border-bottom:.3mm solid #000;min-width:40mm;margin-right:8mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>ケース・バラの数の換算</h1>
+<p class="lead">受注・在庫・発注・入荷の表の「2ケース」「1ケース5個」「3ボール」を、品ごとの入数（ケース入数・ボール入数）で<b>バラの数</b>にそろえ、逆にバラの数を<b>ケース＋ボール＋バラ</b>に分けます。品ごとの合計と、ケース単位に切り上げた発注の数も出し、印刷・保存できます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="two">
+<div class="box">
+  <h2>1. 換算する表（受注・在庫・発注など）</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="品番&#9;品名&#9;数量&#10;A-101&#9;見本の水&#9;1ケース5個"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="cols" class="colgrid" hidden></div>
+  <p class="note">数量の列には「2ケース」「1ケース5個」「1C3B4」「2cs+5」「▲1ケース」（マイナス）のように書けます。単位が別の列にある表（数量「3」・単位「ケース」）なら、単位の列を選んでください。表の中に入数の列があれば、それも使えます（下の入数の表より優先）。</p>
+</div>
+<div class="box">
+  <h2>2. 入数の表（品ごとのケース入数・ボール入数）</h2>
+  <div class="drop" id="drop2">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file2" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <textarea id="paste2" rows="3" placeholder="品番&#9;品名&#9;ケース入数&#9;ボール入数&#10;A-101&#9;見本の水&#9;24&#9;6"></textarea>
+  <div class="row"><button id="pasteGo2">貼り付けた入数の表を読む</button><label><input type="checkbox" id="hasHead2" checked> 1行目は見出し</label></div>
+  <div id="loadMsg2" class="note" style="font-size:13px"></div>
+  <div id="cols2" class="colgrid" hidden></div>
+  <p class="note">品番で引き当て、品番がない・見つからないときは品名で引き当てます。ボールのない品はボール入数を空欄に。換算する表に入数の列があれば、この表はなくてもかまいません。</p>
+</div>
+</div>
+<div class="box">
+  <h2>3. 換算のしかた</h2>
+  <div class="grid">
+    <label for="defLv">単位の書いていない数は</label><select id="defLv"><option value="pc">バラの数</option><option value="cs">ケースの数</option><option value="bl">ボールの数</option></select>
+    <label for="round">合計の切り上げ（発注用）</label><select id="round"><option value="none">しない</option><option value="cs">ケース単位に切り上げ</option><option value="bl">ボール単位に切り上げ</option></select>
+  </div>
+  <h3>単位の呼び方（カンマ区切り。先頭の呼び方を表示に使います）</h3>
+  <div class="grid">
+    <label for="uCs">ケース</label><input type="text" id="uCs" size="48" style="width:100%">
+    <label for="uBl">ボール（中箱）</label><input type="text" id="uBl" size="48" style="width:100%">
+    <label for="uPc">バラ</label><input type="text" id="uPc" size="48" style="width:100%">
+  </div>
+  <div class="row"><button class="sub" id="uReset">呼び方を元に戻す</button><span id="uMsg" class="note"></span></div>
+  <p class="note">「箱」「パック」「ダース」は店によってケースの意味にもボールの意味にもなるため、初めは入れていません。使う場合は、合う段に足してください（ダースなど決まった数の単位は、入数の表で 12 と入れたボールとして扱えます）。大文字・小文字、全角・半角は区別しません。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="rows">行ごとの換算</option><option value="sums">品ごとの合計</option></select></label><label><select id="filter"><option value="all">全部</option><option value="memo">メモのあるものだけ</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="11月25日 発注分"></label></div>
+  <div class="row"><button id="pSum">品ごとの合計を印刷</button><button class="sub" id="pRows">行ごとの換算を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cOrig">元の表＋バラの数を CSV で保存</button><button class="sub" id="cSum">品ごとの合計を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">Excel には「品ごとの合計」「行ごとの換算」「元の表とバラの数」（元の列のすべての後ろにバラの数・ケース・ボール・バラを足した表）の3つのシートが入ります。数は数値、品番は文字のまま保存します。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="irisu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

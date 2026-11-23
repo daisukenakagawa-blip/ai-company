@@ -48,3 +48,4 @@
 - `buhin-keisan/index.html`・`demo.html`（お試し）・`tool.html`・`buhin.js`・`app.js`・`vendor/` … 部品表の必要数と作れる数（500円）
 - `pikkingu/index.html`・`demo.html`（お試し）・`tool.html`・`pikking.js`・`app.js`・`vendor/` … ピッキングリストと仕分け表（500円）
 - `kakaku-kaitei/index.html`・`demo.html`（お試し）・`tool.html`・`kaitei.js`・`app.js`・`vendor/` … 価格改定の一括計算（500円）
+- `irisu-kansan/index.html`・`demo.html`（お試し）・`tool.html`・`irisu.js`・`app.js`・`vendor/` … ケース・バラの数の換算（500円）
