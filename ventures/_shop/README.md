@@ -53,3 +53,4 @@
 - `jikantai-ninzu/index.html`・`demo.html`（お試し）・`tool.html`・`ninzu.js`・`app.js`・`vendor/` … 時間帯ごとの人数と不足チェック（500円）
 - `taisen-hyou/index.html`・`demo.html`（お試し）・`tool.html`・`taisen.js`・`app.js` … 総当たりの対戦表づくり（500円）
 - `shusseki-ritsu/index.html`・`demo.html`（お試し）・`tool.html`・`shusseki.js`・`app.js`・`vendor/` … 出欠表の出席率の集計（500円）
+- `kaihi-nounyu/index.html`・`demo.html`（お試し）・`tool.html`・`kaihi.js`・`app.js`・`vendor/` … 会費・月謝の納入状況の一覧（500円）
