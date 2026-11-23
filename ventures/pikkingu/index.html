@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ピッキングリストと仕分け表｜受注明細から棚番順の集品リストと注文ごとの仕分け表を印刷｜GENHAYL</title>
+<meta name="description" content="ネットショップ・受注ソフトの受注明細 CSV／Excel から、品ごとに数を合計して棚番の順（A-2 → A-10 の番号順）に並べたピッキングリスト、注文ごとの仕分け表、品ごとの配分表を A4 で印刷します。棚番は商品マスタから品番で付けられ、注文を何件ずつかのまとまりに分けられます。Excel・CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>ピッキングリストと仕分け表</h1>
+<p>ネットショップの管理画面や受注ソフトから書き出した<b>受注明細</b>（注文番号・品番・品名・数量）から、出荷の作業に使う3種類の表を作って印刷するツールです。</p>
+<ul>
+<li><b>ピッキングリスト</b>：品ごとに数を合計し、<b>棚番の順</b>に並べた集品用のリスト。棚を1回まわるだけで、まとめて取り出せます</li>
+<li><b>仕分け表</b>：注文ごとに、入れる品と数を棚番の順に並べた表（1注文1ページ、または詰めて印刷）</li>
+<li><b>配分表</b>：品ごとに「どの注文にいくつ」を並べた表。まとめて取り出した品を注文ごとの箱に配るときに使います</li>
+</ul>
+<p>ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/fZu5kEgpi2DxaM46ce1gs0B">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、受注明細と商品マスタはそれぞれ先頭15行までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の受注明細9行と商品マスタ5品から、棚番の順のピッキングリストと注文ごとの配分を出した画面" width="620"></p>
+<p class="note">見本のデータ（架空の雑貨の注文）で作った例。注文・品名・人名は説明用のもので、実在の店・商品・人とは関係ありません。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>注文を1件ずつ見ながら棚を何往復もしていて、同じ品を何度も取りに行っている</li>
+<li>受注明細を Excel で並べ替えると、棚番が「A-1, A-10, A-11, A-2」の順になってしまう</li>
+<li>受注明細には棚番がなく、商品の一覧（マスタ）と見比べて置き場所を書き込んでいる</li>
+<li>注文が多い日は、20件ずつなどに分けて集品したい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>集品の合計</b>：同じ品の数を全部の注文で合計し、何件の注文に入っているかも出します。品番のハイフン・空白の違い（「AB-12」と「AB12」）は同じ品とみなします（切り替え可）。品番のない行は品名でまとめます</li>
+<li><b>棚番の順</b>：「A-2」「A-10」「1-2-3」のような棚番を、番号の大きさの順に並べます（全角・半角の違いも吸収）。棚番のない品は最後にまとめ、「棚番なし」と出します</li>
+<li><b>商品マスタから棚番を付ける</b>：受注明細に棚番の列がないときは、品番と棚番の表を別に入れると、品番で棚番を付けます。同じ品が2か所の棚にあるときや、品名の違う行があるときはメモに出します</li>
+<li><b>まとまりに分ける</b>：注文を「20件ずつ」のように分け、まとまりごとにピッキングリスト・仕分け表・配分表を作ります（印刷はまとまりごとに改ページ）</li>
+<li><b>注文番号が1行目にだけある明細</b>：注文番号・お届け先が空欄の行は、上の行と同じ注文とみなします（切り替え可）</li>
+<li><b>読めない行</b>：数量が空欄・0・数字でない行（「未定」など）は入れずに、行番号つきで一覧にします。「12個」「1,200」「３」のような書き方は数として読みます</li>
+<li><b>印刷と保存</b>：3種類とも A4 で印刷（確認欄、集品者・梱包者の記入欄つき）。Excel ファイル（.xlsx、ピッキングリスト・仕分け・配分の3シート）か CSV で保存できます。品番・注文番号は文字のまま保存し、先頭の0を消しません</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。列は見出し（「注文番号」「受注番号」「商品コード」「SKU」「数量」「棚番」「ロケーション」「お届け先」など）から自動で選び、違っていたら画面で選び直せます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li><b>ネットショップや受注ソフトとはつながりません</b>。管理画面から受注明細を CSV・Excel で書き出して読み込んでください</li>
+<li><b>在庫の引き当て・在庫数の確認はしません</b>。取り出す数を並べるまでです</li>
+<li>倉庫の通路の形に合わせた最短の歩く順は計算しません。棚番の番号の順に並べます</li>
+<li>バーコードの読み取り・印刷、送り状・納品書の作成はしません</li>
+<li>セット商品を中身の品に分ける機能はありません（中身の品を数えるなら <a href="../buhin-keisan/">部品表の必要数と作れる数</a> をお使いください）</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで作るなら</h2>
+<p>品ごとの合計は、Excel の<b>ピボットテーブル</b>で出せます。受注明細を選んで「挿入」→「ピボットテーブル」を選び、「行」に棚番・品番・品名、「値」に数量（合計）を入れます。</p>
+<p>受注明細に棚番がないときは、商品マスタを「マスタ」というシートに置き（A 列に品番、C 列に棚番）、受注明細の品番が C 列なら、空いている列に</p>
+<p><code>=IFERROR(VLOOKUP(C2,マスタ!$A:$C,3,FALSE),"")</code></p>
+<p>と入れて下までコピーすると、棚番の列ができます（マスタにない品は空欄）。</p>
+<p>ただし、棚番は文字なので、Excel で並べ替えると「A-1, A-10, A-11, A-2」の順になります。番号の順にするには、棚番を「A-02」のように桁をそろえるか、並べ替え用の列を作る必要があります。このツールが向いているのは、<b>棚番の番号の順で並べたい</b>、<b>品番の書き方が行によって違う</b>、<b>注文ごとの仕分け表や配分表も一緒に印刷したい</b>、<b>注文を何件かずつに分けたい</b>、といったときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・集計・印刷・保存はすべてお使いのブラウザの中で行います。表題などの一部の設定だけをブラウザに保存し、表の中身は保存しません。</td></tr>
+<tr><th>どのネットショップの CSV に対応していますか？</th><td>特定のサービス専用ではありません。1行に1品（注文番号・品番か品名・数量）の形の明細であれば使えます。列の見出しが違っても、画面で列を選べます。</td></tr>
+<tr><th>注文番号の列がない表でも使えますか？</th><td>使えます。その場合は全部を1件の注文として、品ごとの合計（ピッキングリスト）だけを作ります。</td></tr>
+<tr><th>何行まで使えますか？</th><td>製品版は行数の制限はありません（3万行で1秒以内に計算できることを確かめています）。画面の一覧は500品まで表示し、全部は印刷・保存に入ります。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">届いた品を発注と突き合わせるなら <a href="../nyuka-kenpin/">入荷の検品の照合</a>、在庫から発注する品と数を出すなら <a href="../hacchu-sho/">発注点チェックと発注書</a>、書類に添える送付状は <a href="../soufujou/">送付状の一括作成</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

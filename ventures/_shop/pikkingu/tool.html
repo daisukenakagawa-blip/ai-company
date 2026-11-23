@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ピッキングリストと仕分け表</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+#drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}#drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt td.wrap{white-space:normal;min-width:220px}
+.lt tr.hd td{background:#f1f5f9;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.okc{color:#047857}
+.lt th{position:sticky;top:0;background:#f9fafb}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff;margin:0}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:16pt;margin:0 0 2mm}
+  .per{margin:0 0 2mm;font-size:9pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9.5pt;margin-top:2mm}.pt th,.pt td{border:.3mm solid #555;padding:1.2mm 2mm;text-align:left}
+  .pt th{background:#eee}.pt th.n,.pt td.n{text-align:right;white-space:nowrap}.pt tr{break-inside:avoid}.pt td.nw{white-space:nowrap}.pt td.nm{min-width:45mm}.pt td.ck{width:12mm}
+  .pg{break-after:page}.pg:last-child{break-after:auto}.ob{break-inside:avoid;margin-top:4mm}.ob h2{font-size:11pt;margin:0;border-bottom:.4mm solid #000;padding-bottom:.5mm}.pt td.big{font-size:11pt;font-weight:700}
+  .sign{margin-top:5mm;font-size:10pt}.sign span{display:inline-block;border-bottom:.3mm solid #000;min-width:40mm;margin-right:8mm}
+  .ft{font-size:10pt;margin-top:4mm}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>ピッキングリストと仕分け表</h1>
+<p class="lead">受注明細（注文番号・品番・品名・数量・棚番）の CSV／Excel から、品ごとに数を合計して棚番の順に並べた<b>ピッキングリスト</b>と、注文ごとに入れる品と数を並べた<b>仕分け表</b>、品ごとにどの注文へいくつ配るかの<b>配分表</b>を作り、A4 で印刷します。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる（受注明細と商品マスタ）</button></div>
+<div class="two">
+<div class="box">
+  <h2>1. 受注明細（必須）</h2>
+  <div class="drop" id="dropA">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileA" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteA" rows="4" placeholder="注文番号&#9;品番&#9;品名&#9;数量&#9;棚番&#10;1001&#9;A-101&#9;見本の品&#9;2&#9;A-01"></textarea>
+  <div class="row"><button id="pasteGoA">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadA" checked> 1行目は見出し</label></div>
+  <div id="loadMsgA" class="note" style="font-size:13px"></div>
+  <div id="colsA" class="colgrid" hidden></div>
+  <p class="note">ネットショップの管理画面・受注ソフトから書き出した、1行に1品の明細。数量は必須、注文番号・棚番・お届け先は任意です。</p>
+</div>
+<div class="box">
+  <h2>2. 商品マスタ（任意：明細に棚番がないとき）</h2>
+  <div class="drop" id="dropB">CSV・Excel ファイルをここに置くか、<label><input type="file" id="fileB" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="pasteB" rows="4" placeholder="品番&#9;品名&#9;棚番&#10;A-101&#9;見本の品&#9;A-01"></textarea>
+  <div class="row"><button id="pasteGoB">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHeadB" checked> 1行目は見出し</label><button class="sub" id="clearB">マスタを外す</button></div>
+  <div id="loadMsgB" class="note" style="font-size:13px"></div>
+  <div id="colsB" class="colgrid" hidden></div>
+  <p class="note">品番と棚番（置き場所）の表。明細の棚番が空欄の品に、品番で棚番を付けます。</p>
+</div>
+</div>
+
+<div class="box" id="optBox" hidden>
+  <h2>3. まとめ方</h2>
+  <div class="row"><label>注文を <input type="number" id="batch" min="0" step="1" value="0" style="width:5em"> 件ずつに分けて、まとまりごとにピッキングリストを作る</label><span class="note">（0 は全部の注文で1枚。カートや箱の数に合わせて分けるとき）</span></div>
+  <div class="row"><label><input type="checkbox" id="inherit" checked> 注文番号が空欄の行は、上の行と同じ注文とみなす（注文の1行目にだけ番号がある明細）</label></div>
+  <div class="row"><label><input type="checkbox" id="hyphen" checked> 品番のハイフン・空白・ドットの違いは同じ品とみなす（「AB-12」と「AB12」）</label></div>
+  <p class="note">品番が空欄の行は品名でまとめます（全角・半角、空白、カッコの種類の違いは同じとみなします）。棚番は「A-2」「A-10」のように番号の大きさの順に並べ、棚番のない品は最後に出します。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row" id="bsel" hidden><label>まとまり <select id="bno"></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="26" placeholder="11月23日 午前の出荷"></label><label>メモ（便・担当など） <input type="text" id="memo" size="26"></label></div>
+  <div class="row"><label><input type="checkbox" id="onePage" checked> 仕分け表は1注文を1ページに（オフにすると詰めて印刷）</label></div>
+  <div class="row"><button id="pList">ピッキングリストを印刷</button><button id="pSort">仕分け表を印刷</button><button class="sub" id="pDist">配分表を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cList">ピッキングリストを CSV で保存</button><button class="sub" id="cSort">仕分け表を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">まとまりに分けたときは、全部のまとまりを続けて印刷します（まとまりごとに改ページ）。Excel にはピッキングリスト・仕分け・配分の3つのシートが入ります。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="pikking.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
