@@ -61,3 +61,4 @@
 - `lesson-kaisu/index.html`・`demo.html`（お試し）・`tool.html`・`kaisu.js`・`eigyo.js`・`app.js`・`vendor/` … 月ごとのレッスン日と回数（500円）
 - `lesson-jikanwari/index.html`・`demo.html`（お試し）・`tool.html`・`jikanwari.js`・`app.js`・`vendor/` … レッスンの時間割表と空き枠（500円）
 - `koushu-nittei/index.html`・`demo.html`（お試し）・`tool.html`・`koushu.js`・`app.js`・`vendor/` … 講習会の受講日程表（500円）
+- `shift-tenken/index.html`・`demo.html`（お試し）・`tool.html`・`shift.js`・`app.js`・`vendor/` … シフト表の集計と点検（500円）

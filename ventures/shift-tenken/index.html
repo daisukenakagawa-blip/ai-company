@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>シフト表の集計と点検｜早番・遅番の記号の表から1人ごとの勤務時間と連続勤務・勤務の間隔｜GENHAYL</title>
+<meta name="description" content="名前×日付のマスに「早」「遅」「夜」「休」などの記号を書いたシフト表（Excel・CSV）から、1人ごとの出勤日数・休みの日数・勤務時間・記号ごとの回数と、日ごとの早番・遅番の人数を数えます。続けて働く日が多すぎる所、勤務の終わりから次の始まりまでが短い所、週の時間が多い所、人数が足りない日を一覧に。印刷・Excel/CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>シフト表の集計と点検</h1>
+<p>飲食店・小売店・介護・学童など、シフトを組む人のためのツールです。名前×日付のマスに「早」「遅」「夜」「休」などの記号を書いたいつものシフト表を読み込むだけで、<b>1人ごとの出勤日数・休み・勤務時間</b>を数え、<b>組んだシフトの気になる所</b>を一覧にします。</p>
+<ul>
+<li><b>1人ごとの集計</b>：出勤日数、休みの日数、有休、勤務時間の合計（退勤−出勤−休憩）、早番・遅番などの記号ごとの回数、夜勤の回数</li>
+<li><b>気になる所を知らせる</b>：続けて働く日が決めた日数を超える所、勤務の終わりから次の始まりまでが短い所（遅番の翌日に早番など）、1週の勤務時間が多い所、時間が重なっている勤務</li>
+<li><b>日ごとの人数</b>：日ごとの早番・中番・遅番の人数と合計。「早 2」「土日 計 6」のように必要な人数を書けば、足りない日を出します</li>
+<li><b>1行1件の一覧</b>：「日付・氏名・記号・出勤・退勤・休憩・勤務時間」の表にして Excel・CSV で保存（<a href="../jikantai-ninzu/">時間帯ごとの人数と不足チェック</a> にそのまま読み込めます）</li>
+</ul>
+<p>ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/6oU3cwb4Yce73jCasu1gs0Q">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、計算するのはシフト表の先頭5人までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば、毎月のシフトに何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本のシフト表（架空の8人・12月）から、1人ごとの出勤日数・休み・勤務時間・早番遅番の回数・最長の連続勤務・最短の勤務の間隔・週の最大の時間を出し、気になる所のある人を赤く示した画面" width="620"></p>
+<p><img src="screenshot-flag.png" alt="確かめたい所の一覧。週の勤務時間が40時間を超える週、遅番22時の翌日に早番7時で間が9時間の所、人数が足りない日を日付の順に並べた画面" width="620"></p>
+<p class="note">見本のデータ（架空の名前）で作った例です。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>来月のシフトを組んだあと、1人ずつ出勤日数と時間を数え直している</li>
+<li>遅番の翌日に早番を入れてしまい、あとで気づいて組み直したことがある</li>
+<li>「7日続けて出勤になっていないか」「週の時間が多すぎないか」を、表を目で追って確かめている</li>
+<li>早番・遅番がそれぞれ何人いる日か、日ごとに数えている</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>読めるシフト表</b>：1行に1人、日付を横に並べた表。見出しの日付は「1」「2」…、「1(火)」、「12/1」、「2026/12/1」。見出しのすぐ下の曜日の行、左の「No.」「職種」の列、下の「人数」「合計」の行があってもかまいません。見出しの行と名前の列は自動で見つけ、曜日から月も選びます</li>
+<li><b>締め日の表</b>：「16」〜「31」「1」〜「15」のように途中で日が戻る表は、戻ったところで翌月にします。12/31 から 1/1 への年またぎも読めます</li>
+<li><b>記号の表</b>：「早 7:00-16:00 休憩60」「夜 22:00-翌7:00 休憩120」「休 休み」「有 有休」のように、お店の記号を自由に決められます。マスに「10:00-20:00」と時刻を直接書いた所も読み、休憩の引き方を選べます。「早(研修)」のような括弧のメモはメモとして残します</li>
+<li><b>点検の決まり</b>：続けて働く日数（初め6日まで）、勤務の間（初め11時間以上）、1週の時間（初め40時間まで、日曜／月曜始まり）、1日の時間、期間の合計、休みの日数。すべて変えられ、空欄にすれば見ません</li>
+<li><b>印刷</b>：1人ごとの集計（A4 横）、確かめたい所、日ごとの人数（A4 縦）</li>
+<li><b>保存</b>：Excel ファイル（.xlsx）に「1人ごと」「確かめたい所」「日ごとの人数」「1行1件」の4シート。CSV は1行1件と1人ごと</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。Excel のシフト表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>シフトを自動で組むことはしません。組んだシフトを数えて、気になる所を知らせるだけです</li>
+<li>給与・残業代・深夜の割増の計算はしません。勤務時間は「退勤−出勤−休憩」の単純な合計です</li>
+<li>労働基準法などに合っているかの判断はしません。点検の数字は、お店・職場の決まりに合わせてご自分で決めてください</li>
+<li>1つのマスに2つの勤務（「早/遅」、中抜けの「9-13 17-21」など）は読みません（読めないマスとして一覧にします）</li>
+<li>表の期間の前後の勤務は見えないため、月の初めの連続勤務や週の時間は、表の中の日だけで数えます（その旨を一覧に書きます）</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで数えるなら</h2>
+<p>1人ごとの早番の回数は、B2:AF2 が1人分の日付のマスなら <code>=COUNTIF(B2:AF2,"早")</code>、日ごとの早番の人数は <code>=COUNTIF(B$2:B$20,"早")</code> で数えられます。</p>
+<p>勤務時間は、別の場所に記号と時間の表（L2:L5 に「早」「中」「遅」「夜」、M2:M5 に休憩を引いた時間）を作り、<code>=SUMPRODUCT(COUNTIF(B2:AF2,$L$2:$L$5),$M$2:$M$5)</code> で1人分の合計になります（同じ範囲で <code>=SUMPRODUCT(COUNTIF(B2:AF2,$L$2:$L$5))</code> が出勤日数）。</p>
+<p>手作業で大変なのは、<b>続けて働く日数</b>と<b>遅番の翌日の早番のような勤務の間</b>を確かめるときです（1人ずつ、となりの日のマスと記号の時刻を見比べる必要があります）。このツールは、記号の表をもとに全員分を一度に調べて、日付の順に一覧にします。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・計算・印刷・保存はすべてお使いのブラウザの中で行います。記号の表・点検の決まり・表題などの設定だけをブラウザに保存し、名前やシフトの中身は保存しません。</td></tr>
+<tr><th>空欄のマスは？</th><td>初めは休みの日数に数えます（数えないようにもできます）。勤務にはなりません。</td></tr>
+<tr><th>夜勤の翌日の「明け」は？</th><td>記号の表に「明 休み」と書けば休みとして数えます。夜勤の時間は始まった日の勤務として数え、翌日の勤務との間は夜勤の終わりの時刻から計ります。</td></tr>
+<tr><th>何人まで使えますか？</th><td>製品版は人数の制限はありません（200人×31日の計算を、手元のパソコンで0.1秒かからずに終えることを確かめています）。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>表はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">時間帯ごとの人数（何時に何人いるか）には <a href="../jikantai-ninzu/">時間帯ごとの人数と不足チェック</a>、作業記録の時間の合計には <a href="../jikan-goukei/">作業時間の集計</a>、当番の割り当てには <a href="../touban/">当番表</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

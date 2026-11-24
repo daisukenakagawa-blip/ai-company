@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>シフト表の集計と点検 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input,select{font-size:14px;max-width:100%}input.num{width:4.5em}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap;vertical-align:top}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.w{white-space:normal;min-width:200px}.sun{color:#b91c1c}.sat{color:#1d4ed8}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h1 small{font-size:10pt;font-weight:400}
+  .per{margin:0 0 2mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:8.5pt}.pt th,.pt td{border:.25mm solid #666;padding:.8mm 1.2mm;text-align:left;vertical-align:top}
+  .pt th{background:#eee}.pt td.n,.pt th.n{text-align:right}.pt tr{break-inside:avoid}.pt tr.fl td{background:#eee}.pt thead{display:table-header-group}
+  .sun,.sat{color:#000}
+}
+</style>
+<style id="pageSize">@page{size:A4 landscape;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>シフト表の集計と点検</h1>
+<p class="lead">名前×日付のマスに「早」「遅」「休」などの記号を書いたシフト表から、<b>1人ごとの出勤日数・休み・勤務時間</b>と、<b>日ごとの人数</b>を数え、<b>続けて働く日が多すぎる所・勤務の間が短い所・週の時間が多い所</b>を知らせます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、計算するのはシフト表の先頭 5 人までです。全員を計算するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. シフト表を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel のシフト表をコピーしてここに貼り付け（見出しの日付の行から下を、名前の列ごと）</label>
+  <textarea id="paste" rows="4" placeholder="氏名&#9;1&#9;2&#9;3&#9;4&#10;&#9;火&#9;水&#9;木&#9;金&#10;青木 一郎&#9;早&#9;早&#9;遅&#9;休&#10;石井 花&#9;遅&#9;夜&#9;早&#9;"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="layBox" hidden>
+    <div id="lay" class="note" style="font-size:13px"></div>
+    <div class="row"><label>対象の月（最初の日付の列の月） <input type="month" id="ym"></label><span class="note" id="ymNote"></span></div>
+  </div>
+  <p class="note">1行に1人、日付は横に並べた表（「1」「2」…、「1(火)」、「12/1」、「2026/12/1」）。見出しのすぐ下に曜日の行があってもかまいません。「16」〜「31」「1」〜「15」のような締め日の表は、日が戻ったところで翌月にします。下の「人数」「合計」の行は数えません。</p>
+</div>
+<div class="two">
+<div class="box">
+  <h2>2. 記号の表</h2>
+  <textarea id="codes" class="mono" rows="9"></textarea>
+  <div class="row"><button class="sub" id="resetCodes">初めの表に戻す</button><span id="codesMsg" class="note" style="font-size:13px"></span></div>
+  <p class="note">1行に「<b>記号　出勤〜退勤　休憩の分</b>」（「早 7:00-16:00 休憩60」、夜勤は「夜 22:00-翌7:00 休憩120」）。休みの記号は「休 休み」、有休は「有 有休」（時間に数えるなら「有 有休 8時間」）。表にない「公休」「有給」「×」なども休み・有休として読みます。マスに時刻を直接書いた所（「10:00-20:00」）も読みます。</p>
+  <div class="row"><label>時刻を直接書いたマスの休憩 <select id="directBreak"><option value="0">引かない</option><option value="law">6時間を超えたら45分、8時間を超えたら60分を引く</option><option value="60">6時間を超えたら60分を引く</option></select></label></div>
+  <div class="row"><label><input type="checkbox" id="emptyOff" checked> 空欄のマスを休みの日数に数える</label></div>
+</div>
+<div class="box">
+  <h2>3. 点検の決まり</h2>
+  <div class="row"><label>続けて働く日が <input class="num" type="number" id="streak" min="0" value="6"> 日を超えたら</label></div>
+  <div class="row"><label>勤務の終わりから次の始まりまでが <input class="num" type="number" id="gap" min="0" step="0.5" value="11"> 時間より短かったら</label></div>
+  <div class="row"><label>1週の勤務時間が <input class="num" type="number" id="week" min="0" value="40"> 時間を超えたら</label><label>週の始まり <select id="weekStart"><option value="0">日曜</option><option value="1">月曜</option></select></label></div>
+  <div class="row"><label>1日の勤務時間が <input class="num" type="number" id="day" min="0" step="0.5" placeholder="なし"> 時間を超えたら</label></div>
+  <div class="row"><label>表の期間の合計が <input class="num" type="number" id="month" min="0" placeholder="なし"> 時間を超えたら</label><label>休みが <input class="num" type="number" id="minOff" min="0" placeholder="なし"> 日より少なかったら</label></div>
+  <p class="note">数字はお店・職場の決まりに合わせて変えてください（空欄・0 で見ません）。勤務時間は「退勤−出勤−休憩」で、残業・深夜の割増や法律上の判断はしません。</p>
+  <h2 style="margin-top:14px">日ごとに必要な人数（任意）</h2>
+  <textarea id="need" class="mono" rows="4" placeholder="早 2&#10;遅 2&#10;土日 早 3&#10;計 5&#10;12/31 遅 1"></textarea>
+  <div id="needMsg" class="note" style="font-size:13px"></div>
+  <p class="note">「記号　人数」、出勤の合計は「計　人数」。曜日・日付で変えるときは先頭に「平日」「土日」「月水金」「12/31」。下の行が優先、日付の行は曜日の行より優先します。</p>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="vsel"><option value="person">1人ごとの集計</option><option value="flag">確かめたい所</option><option value="daily">日ごとの人数</option><option value="rec">1行1件の一覧</option></select></label>
+    <label id="gselL" hidden>日ごとの人数を数える人 <select id="gsel"><option value="">全員</option></select></label></div>
+  <div id="view"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="12月 シフト"></label><label>店・職場の名前 <input type="text" id="by" size="18" placeholder="〇〇店"></label></div>
+  <div class="row"><button id="pPerson">1人ごとの集計を印刷</button><button class="sub" id="pFlag">確かめたい所を印刷</button><button class="sub" id="pDaily">日ごとの人数を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cRec">1行1件の一覧を CSV で保存</button><button class="sub" id="cPerson">1人ごとの集計を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">1行1件の CSV は「日付・氏名・記号・出勤・退勤・休憩・勤務時間」の形で、<a href="../jikantai-ninzu/">時間帯ごとの人数と不足チェック</a> にそのまま読み込めます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.SHIFT_LIMIT=5;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="shift.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
