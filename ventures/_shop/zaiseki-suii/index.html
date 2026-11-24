@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>在籍人数の月ごとの推移｜名簿の入会日・退会日から月末の人数・入会・退会・休会を一覧に｜GENHAYL</title>
+<meta name="description" content="教室・スクール・クラブ・少年団の名簿（入会日・退会日・休会の期間・コース、CSV／Excel）から、月ごとの在籍人数・入会・退会・休会中の推移表、コースごとの月末の人数、1人ごとの在籍月数を出します。年度の振り返りや会場・助成の申請に。印刷、Excel・CSV 保存。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>在籍人数の月ごとの推移</h1>
+<p>教室・スクール・スポーツクラブ・少年団などの<b>名簿</b>（入会日・退会日、あれば休会の期間とコース）から、<b>月ごとの在籍人数・入会・退会・休会中</b>の推移表を作ります。</p>
+<ul>
+<li><b>月ごとの推移表</b>：月初の在籍、入会、退会、月末の在籍、うち休会中、通っている人、その月に1日でも在籍した人。「月初＋入会−退会＝月末」で合います</li>
+<li><b>コースごと</b>：コース・クラスごとの月末の人数と、期間の入会・退会の数</li>
+<li><b>1人ごと</b>：通算の在籍月数（「3年2か月」）、期間の中の在籍月数、期間の終わりの状態（在籍・休会中・退会）。在籍月数の長い順にも並べられます</li>
+<li><b>休会</b>：「休会開始・休会終了」の2列か、「2025/6〜2025/8」と書いた1つの列。休会中の人を在籍に数えるか、数えないかを選べます</li>
+<li><b>印刷と保存</b>：推移表（A4 縦、棒グラフつき）・コースごと・1人ごとを印刷。Excel ファイル（月ごと・コースごと・1人ごと・月ごとの入会と退会の名前・確かめたい所）、CSV</li>
+</ul>
+<p>年度の振り返り、総会・保護者会の資料、会場の利用申請や助成金の報告で「月ごとの会員数」を聞かれたときに。ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/00w00ka0U1ztf2k4461gs0R">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、数えるのは名簿の先頭15人までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の名簿（架空の22人）から、2025年4月〜2026年3月の月ごとの月初の在籍・入会・退会・月末の在籍・休会中の人数と棒グラフを一覧にした画面" width="620"></p>
+<p class="note">見本のデータ（架空の名前）で作った例です。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>年度末に「毎月何人いたか」を、名簿の入会日・退会日を見ながら1か月ずつ数え直している</li>
+<li>会場の利用登録や助成の報告で、月ごとの会員数を書く欄がある</li>
+<li>休会中の人を数えるか数えないかで、人数が合わなくなる</li>
+<li>どのコースが増えて、どのコースが減ったかを1枚の表で見たい</li>
+<li>発表会や表彰のために、長く続けている人の在籍の長さを知りたい</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>読める表</b>：1行に1人の名簿（名前・入会日、あれば退会日・コース・休会）。列は見出し（「入会日」「入塾日」「退会日」「休会開始」など）から選び、選び直せます</li>
+<li><b>日付の書き方</b>：「2025/4/1」「2025年4月1日」「2025-04-01」「R7.4.1」「令和7年4月1日」、Excel の日付。<b>月だけ</b>（「2025/4」「2025年4月」）も読めて、入会は1日、退会は月末として数えます</li>
+<li><b>期間</b>：始めの月から6・12・24・36・60か月。「今年度（4月〜3月）」「前年度」「今年」のボタン</li>
+<li><b>数え方</b>：退会日はその日まで在籍。月末に退会する人は、その月の「退会」に入れ、月末の在籍には入れません。月初は前の月の月末と同じ数です</li>
+<li><b>確かめたい所</b>：入会日が空欄・読めない行（数えません）、退会日が入会日より前、読めない休会の期間、在籍の期間の外の休会、同じ名前で在籍の期間が重なる行（同じ人を2回数えているかも）。期間が重ならない同じ名前は「再入会」として扱います</li>
+<li>CSV（UTF-8・Shift_JIS）と Excel ファイル（.xlsx）を読めます。Excel の表をコピーして貼り付けても使えます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>退会の理由の分析や、これからの人数の予測はしません。名簿から数えた結果だけを出します</li>
+<li>月謝・会費の金額は扱いません（<a href="../gessha-seikyu/">月謝の請求額の一覧</a>、<a href="../kaihi-nounyu/">会費・月謝の納入状況の一覧</a> があります）</li>
+<li>入会日がない人は数えられません。入会日が分からない人は、分かる範囲の日付（「2020/4」など）を入れてください</li>
+<li>出席の回数は数えません（<a href="../shusseki-ritsu/">出欠表の出席率の集計</a> があります）</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで数えるなら</h2>
+<p>B 列に入会日、C 列に退会日（在籍中は空欄）が2〜200行目まであり、E2 に数えたい月の末日（2025/4/30 など）を入れたとき、</p>
+<p>月末の在籍：<code>=COUNTIFS($B$2:$B$200,"&lt;="&amp;E2,$C$2:$C$200,"&gt;"&amp;E2)+COUNTIFS($B$2:$B$200,"&lt;="&amp;E2,$C$2:$C$200,"")</code></p>
+<p>その月の入会：<code>=COUNTIFS($B$2:$B$200,"&gt;="&amp;EOMONTH(E2,-1)+1,$B$2:$B$200,"&lt;="&amp;E2)</code>（退会は B を C に変えます）</p>
+<p>で出せます。E 列に各月の末日を並べて下にコピーすれば、推移表になります（表計算ソフトで、6人の見本の4月・5月の月末の在籍3人・入会1人・退会1人を確かめました）。</p>
+<p>注意：入会日・退会日が文字（「2025年4月」「R7.4.1」など）で入っていると数えられません。休会中の人を分ける、コースごとに分ける、1人ごとの在籍月数を出す、同じ人の2重の行を見つける、には式を足していく必要があります。</p>
+<p>このツールが向いているのは、<b>日付の書き方がそろっていない</b>、<b>休会がある</b>、<b>コースごとの表も欲しい</b>、<b>何年分もまとめて出したい</b>、といったときです。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・計算・印刷・保存はすべてお使いのブラウザの中で行います。数え方の設定と団体の名前だけをブラウザに保存し、名簿の名前・日付は保存しません。</td></tr>
+<tr><th>月末に退会した人は、その月の在籍に入りますか？</th><td>月末の在籍には入れず、その月の「退会」に入れます。「月の中で1日でも在籍」の列には入ります。こうすると「月初＋入会−退会＝月末」で合います。</td></tr>
+<tr><th>一度やめて、また入会した人は？</th><td>名簿に2行あれば、それぞれの期間で数えます。同じ名前で期間が重ならなければ「再入会」とメモし、重なれば確かめたい所に出します。</td></tr>
+<tr><th>何人まで使えますか？</th><td>製品版は人数の制限はありません（5,000人・24か月分を、手元のパソコンで約0.05秒で数えられることを確かめています）。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>名簿はお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">名簿の同じ人の重なりには <a href="../meibo-choufuku/">名簿の重複チェック</a>、毎月の回数には <a href="../lesson-kaisu/">月ごとのレッスン日と回数</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

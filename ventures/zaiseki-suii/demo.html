@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>在籍人数の月ごとの推移 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt tr.tot td{background:#f0fdfa;font-weight:700}.lt td.w{white-space:normal;min-width:180px}
+.bar{display:inline-block;height:10px;background:#5eead4;border-radius:2px;vertical-align:middle}
+.colgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}
+.cards{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}.card{border:1px solid var(--line);border-radius:8px;padding:6px 12px;min-width:110px}.card b{display:block;font-size:20px}.card span{font-size:12px;color:var(--sub)}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:.8mm 1.6mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt td.w{white-space:normal}.pt tr{break-inside:avoid}.pt tr.tot td{background:#f3f3f3;font-weight:700}
+  .pt.small{font-size:7.5pt}.pt .bar{background:#888;height:2.6mm}
+}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>在籍人数の月ごとの推移</h1>
+<p class="lead">名簿の<b>入会日・退会日</b>（あれば<b>休会</b>の期間とコース）から、<b>月ごとの在籍人数・入会・退会・休会中</b>の推移表と、コースごとの人数、1人ごとの在籍月数を出します。年度の振り返り、会場・助成の申請、総会の資料づくりに。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、数えるのは名簿の先頭 15 人までです。全員を数えるには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 名簿を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="名前&#9;コース&#9;入会日&#9;退会日&#9;休会&#10;青木 一郎&#9;ピアノ&#9;2023/4/8&#9;&#9;&#10;石井 蓮&#9;英語&#9;2024/9/1&#9;2025/12/31&#9;2025/6〜2025/8"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden><div id="cols" class="colgrid"></div></div>
+  <p class="note">1行に1人の名簿を読みます。日付は「2025/4/1」「2025年4月1日」「R7.4.1」「2025-04-01」のほか、<b>月だけ</b>（「2025/4」「2025年4月」）も読めます（入会は1日、退会は月末として数えます）。休会は「休会開始」「休会終了」の2列か、1つの列に「2025/6〜2025/8」「2025/6/10〜7/31」と書きます（いくつもあるときは「、」で区切る）。「合計」の行は外します。</p>
+</div>
+<div class="box">
+  <h2>2. 期間と数え方</h2>
+  <div class="row"><label>始めの月 <input type="month" id="start"></label>
+    <label>から <select id="mcount"><option value="6">6か月</option><option value="12" selected>12か月（1年分）</option><option value="24">24か月</option><option value="36">36か月</option><option value="60">60か月</option></select></label>
+    <button class="sub" id="fy">今年度（4月〜3月）</button><button class="sub" id="lfy">前年度</button><button class="sub" id="cy">今年（1月〜12月）</button></div>
+  <div class="row"><label><input type="checkbox" id="kyuIn" checked> 休会中の人も在籍人数に数える</label></div>
+  <p class="note">数え方：退会日は<b>その日まで在籍</b>として数えます。<b>月末の在籍</b>は、その月の末日に在籍していて、その月に退会しない人の数です（月末に退会する人は、その月の「退会」に入り、月末の在籍には入りません）。<b>月初</b>は前の月の月末と同じ数で、「月初＋入会−退会＝月末」になります。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="cards" class="cards"></div>
+  <div id="sumMsg" style="font-size:14px;margin:0 0 10px"></div>
+  <div class="row"><label>表示 <select id="view"><option value="month">月ごとの推移</option><option value="group">コースごとの月末の人数</option><option value="people">1人ごとの在籍月数</option></select></label>
+    <label id="sortL">並べ方 <select id="sort"><option value="orig">元の表の順</option><option value="join">入会日の順</option><option value="months">在籍月数の長い順</option><option value="group">コースごと</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="26" placeholder="2025年度 在籍人数の推移"></label><label>団体の名前 <input type="text" id="by" size="18" placeholder="〇〇教室"></label></div>
+  <div class="row"><button id="pMonth">月ごとの推移を印刷</button><button class="sub" id="pGroup">コースごとを印刷</button><button class="sub" id="pPeople">1人ごとの一覧を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cMonth">月ごとの推移を CSV で保存</button><button class="sub" id="cPeople">1人ごとを CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">印刷は A4 縦（コースが多いときは横）。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。Excel ファイルには、月ごとの推移・コースごと・1人ごと・月ごとの入会と退会の名前・確かめたい所のシートが入ります。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.ZAISEKI_LIMIT=15;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="eigyo.js"></script>
+<script src="zaiseki.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
