@@ -1,0 +1,3199 @@
+{
+ "date": "2026-11-24",
+ "window_days": 21,
+ "since": "2026-11-03",
+ "issues_scanned": 1139,
+ "errors": [],
+ "names": [
+  {
+   "name": "RUSTSEC-2024-0436",
+   "kinds": [
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 25,
+   "examples": [
+    {
+     "title": "RUSTSEC-2024-0436: paste - no longer maintained",
+     "url": "https://github.com/Dragent-Term/dragent/issues/68"
+    },
+    {
+     "title": "RUSTSEC-2024-0436: paste - no longer maintained",
+     "url": "https://github.com/smearor/smearor-commons/issues/7"
+    },
+    {
+     "title": "RUSTSEC-2024-0436: paste - no longer maintained",
+     "url": "https://github.com/moshms/worker/issues/17"
+    }
+   ]
+  },
+  {
+   "name": "SIGTERM",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Hearth times out shutting down after SIGTERM",
+     "url": "https://github.com/kiln-site/kiln/issues/986"
+    },
+    {
+     "title": "nova serve is killed by SIGTERM instead of shutting down gracefully",
+     "url": "https://github.com/AutumnsGrove/nova/issues/126"
+    },
+    {
+     "title": "fix(client): the interceptor is killed by SIGTERM instead of shutting down gracefully",
+     "url": "https://github.com/solidDoWant/githubgate/issues/187"
+    }
+   ]
+  },
+  {
+   "name": "Evaluate",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Evaluate Migrating from User PAT to  App Authentication",
+     "url": "https://github.com/XiansAiPlatform/XiansAi.Server/issues/672"
+    },
+    {
+     "title": "Evaluate alternatives to displaced vote circles",
+     "url": "https://github.com/michaeltaras/nov-2026-parsons-workshop/issues/24"
+    },
+    {
+     "title": "Evaluate alternatives to openapi-typescript and openapi-fetch",
+     "url": "https://github.com/MarcelMichau/fake-survey-generator/issues/2861"
+    }
+   ]
+  },
+  {
+   "name": "OpenVue",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/mmz-srf/grafana-alerts-dashboard/issues/2"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/driftkit-ai/driftkit-framework/issues/5"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/Suncuss/BirdNET-PiPy/issues/74"
+    }
+   ]
+  },
+  {
+   "name": "MIT",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/mmz-srf/grafana-alerts-dashboard/issues/2"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/driftkit-ai/driftkit-framework/issues/5"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/Suncuss/BirdNET-PiPy/issues/74"
+    }
+   ]
+  },
+  {
+   "name": "PrimeVue",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/mmz-srf/grafana-alerts-dashboard/issues/2"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/driftkit-ai/driftkit-framework/issues/5"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/Suncuss/BirdNET-PiPy/issues/74"
+    }
+   ]
+  },
+  {
+   "name": "Document",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 6,
+   "examples": [
+    {
+     "title": "Document the supported Core Python API and deprecation policy",
+     "url": "https://github.com/B3Cognition/prosaic/issues/14"
+    },
+    {
+     "title": "Document the migration from SQLite to PostgreSQL",
+     "url": "https://github.com/kvitrvn/raun/issues/97"
+    },
+    {
+     "title": "Document migration from legacy Gleam actions to trellis integrations",
+     "url": "https://github.com/tylerbutler/actions/issues/58"
+    }
+   ]
+  },
+  {
+   "name": "HTTP",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "REST command API answers HTTP 500 (INTERNAL) instead of 503 when the target broker is shutting down (NoRemoteHandler)",
+     "url": "https://github.com/camunda/camunda/issues/69870"
+    },
+    {
+     "title": "[Bug]: Go API shutdown cancels accepted HTTP requests before the drain window",
+     "url": "https://github.com/infiniflow/ragflow/issues/22258"
+    },
+    {
+     "title": "Drain or trace open HTTP requests during rest-api rolling shutdown",
+     "url": "https://github.com/docs-plus/docs.plus/issues/838"
+    }
+   ]
+  },
+  {
+   "name": "Gateway",
+   "kinds": [
+    "API の廃止",
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "[Bug] config hot-reload aborts in-flight cron runs and records a misleading \"Gateway shutting down.\" error",
+     "url": "https://github.com/openclaw/openclaw/issues/197591"
+    },
+    {
+     "title": "[level3][feature] Create a Versioned Public API Gateway with Consumer Quotas and Deprecation",
+     "url": "https://github.com/GoldRay19/Civic-Help-Setu/issues/1236"
+    },
+    {
+     "title": "Gateway startup freezes in shutdown_watchdog loop when collect_unheld_api_images scans large state.db",
+     "url": "https://github.com/NousResearch/hermes-agent/issues/156701"
+    }
+   ]
+  },
+  {
+   "name": "Backend",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "[Backend] Add versioned API deprecation headers to legacy /api/ routes",
+     "url": "https://github.com/katecatherinaa/solarproof/issues/250"
+    },
+    {
+     "title": "[Backend] Add API versioning middleware and deprecation headers",
+     "url": "https://github.com/devoclan/PetChain-MobileApp/issues/246"
+    },
+    {
+     "title": "[Backend] Add API versioning middleware and deprecation headers",
+     "url": "https://github.com/DogStark/PetChain-MobileApp/issues/1360"
+    }
+   ]
+  },
+  {
+   "name": "Google",
+   "kinds": [
+    "API の廃止",
+    "無料プランの終了"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "Google changed its API or its deprecation dates",
+     "url": "https://github.com/jaslam94/Junaid.GoogleGemini.Net/issues/65"
+    },
+    {
+     "title": "Warn when a request targets a Google model on the Gemini API or Vertex AI deprecation schedule",
+     "url": "https://github.com/pydantic/pydantic-ai/issues/14054"
+    },
+    {
+     "title": "Sunset the Fitbit block (Fitbit Web API shut down by Google, November 2, 2026)",
+     "url": "https://github.com/dakboard/DAKboard/issues/2704"
+    }
+   ]
+  },
+  {
+   "name": "Define",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "Define the v3 API stability and deprecation policy",
+     "url": "https://github.com/CloudCompile/remote-desktop/issues/149"
+    },
+    {
+     "title": "Define stable API deprecation metadata and response headers",
+     "url": "https://github.com/onlyonee1/PaymentFlow/issues/506"
+    },
+    {
+     "title": "Define stable module versioning and the public API deprecation window",
+     "url": "https://github.com/JSYoo5B/ceph-testcontainers-go/issues/748"
+    }
+   ]
+  },
+  {
+   "name": "JSON",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "search_engine_google_pse: retire integration before the JSON API shutdown",
+     "url": "https://github.com/LearningCircuit/local-deep-research/issues/8757"
+    },
+    {
+     "title": "Buy Back Reminder: Publish the expected price increases as JSON on the website",
+     "url": "https://github.com/exrelax/star-citizen-hangar-manager/issues/188"
+    },
+    {
+     "title": "Offer XMP sidecars as an alternative to JSON",
+     "url": "https://github.com/NicoPietrusco/HicPicNunc/issues/130"
+    }
+   ]
+  },
+  {
+   "name": "RUSTSEC-2024-0388",
+   "kinds": [
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "RUSTSEC-2024-0388: `derivative` is unmaintained; consider using an alternative",
+     "url": "https://github.com/Dragent-Term/dragent/issues/64"
+    },
+    {
+     "title": "RUSTSEC-2024-0388: `derivative` is unmaintained; consider using an alternative",
+     "url": "https://github.com/billowsand/gongwen/issues/17"
+    },
+    {
+     "title": "RUSTSEC-2024-0388: `derivative` is unmaintained; consider using an alternative",
+     "url": "https://github.com/jsaenz03/camorg/issues/27"
+    }
+   ]
+  },
+  {
+   "name": "Request",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "[Feature Request] - Migrate from chrono to jiff",
+     "url": "https://github.com/veeso/termscp/issues/465"
+    },
+    {
+     "title": "[Feature Request]: Bob skills for automated migration from deprecated prebuilt patterns and components",
+     "url": "https://github.com/carbon-design-system/carbon/issues/24064"
+    },
+    {
+     "title": "[Feature Request] Button-based alternative to Action Wheel",
+     "url": "https://github.com/CptPakundo/FLvibed/issues/66"
+    }
+   ]
+  },
+  {
+   "name": "Injectable",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 5,
+   "examples": [
+    {
+     "title": "Migration from @Injectable to @Service",
+     "url": "https://github.com/Xyna-Factory/xyna-process-modeller/issues/266"
+    },
+    {
+     "title": "Migration from @Injectable to @Service",
+     "url": "https://github.com/Xyna-Factory/xyna-xacm/issues/50"
+    },
+    {
+     "title": "Migration from @Injectable to @Service",
+     "url": "https://github.com/Xyna-Factory/xyna-yggdrasil/issues/29"
+    }
+   ]
+  },
+  {
+   "name": "November",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "Libraries.io API shutting down on November 30th",
+     "url": "https://github.com/badges/shields/issues/12320"
+    },
+    {
+     "title": "Support the Cisco IQ GA APIs before the beta sunset on 30 November 2026",
+     "url": "https://github.com/panoramicdata/Cisco.Iq.Api/issues/26"
+    },
+    {
+     "title": "Sunset the Fitbit block (Fitbit Web API shut down by Google, November 2, 2026)",
+     "url": "https://github.com/dakboard/DAKboard/issues/2704"
+    }
+   ]
+  },
+  {
+   "name": "Platform",
+   "kinds": [
+    "API の廃止",
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "RemoveBackend() detaches an initialized backend without shutting it down, so the next Dispose() aborts the process with \"Forgot to shutdown Platform backend?\"",
+     "url": "https://github.com/ktsu-dev/ImGuiProvider/issues/101"
+    },
+    {
+     "title": "Platform: 1.0 API Freeze & Deprecation Policy",
+     "url": "https://github.com/dhluong90/horus-Agentic-BPM/issues/115"
+    },
+    {
+     "title": "♻️ Migrate CLI from Campaign Management API v5 to Platform API v1 (before 2027-01-26 sunset)",
+     "url": "https://github.com/SamPetherbridge/asa-api-cli/issues/68"
+    }
+   ]
+  },
+  {
+   "name": "Gemini",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "Warn when a request targets a Google model on the Gemini API or Vertex AI deprecation schedule",
+     "url": "https://github.com/pydantic/pydantic-ai/issues/14054"
+    },
+    {
+     "title": "/gemini-api-pricing-2026 says gemini-2.5-pro and gemini-2.5-flash have no Gemini API shutdown date; Google set 2026-12-01 on 2026-11-02",
+     "url": "https://github.com/robhunter/agentdeals/issues/3217"
+    },
+    {
+     "title": "[gap] Effective-dated prices so caps follow Gemini's Dec 1 / Jan 1 increases; price Gemini 4, 3.6 Flash, 3.5 Flash-Lite",
+     "url": "https://github.com/persooninc/costcap/issues/236"
+    }
+   ]
+  },
+  {
+   "name": "Changelog",
+   "kinds": [
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "💲 [Linear] pricing change on Changelog (high)",
+     "url": "https://github.com/shraddhaborah/competitor-listener/issues/7"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/abirismyname/github-changelog-reader/issues/1477"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/renefritze/github-changelog-reader/issues/1081"
+    }
+   ]
+  },
+  {
+   "name": "Alternatives",
+   "kinds": [
+    "移行先さがし",
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "Alternatives to the unmaintained grammars in the tree-sitter GitHub org",
+     "url": "https://github.com/xberg-io/tree-sitter-language-pack/issues/221"
+    },
+    {
+     "title": "Alternatives to Chainflip",
+     "url": "https://github.com/sullystuff/wxmr-frontend/issues/11"
+    },
+    {
+     "title": "Alternatives to Airzone CN105 splitter?",
+     "url": "https://github.com/echavet/MitsubishiCN105ESPHome/issues/782"
+    }
+   ]
+  },
+  {
+   "name": "Tracking",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 4,
+   "examples": [
+    {
+     "title": "Tracking: migration from other tools",
+     "url": "https://github.com/thanoslabs/beacon/issues/58"
+    },
+    {
+     "title": "Tracking: Migration from Python/PyQt6 to Rust/Tauri",
+     "url": "https://github.com/Abdullah-Masood-05/Keepsake/issues/4"
+    },
+    {
+     "title": "Tracking issue: Bitkit on Spark (Breez SDK), migration from LDK and new UX",
+     "url": "https://github.com/synonymdev/bitkit-android/issues/1946"
+    }
+   ]
+  },
+  {
+   "name": "December",
+   "kinds": [
+    "API の廃止",
+    "サービス終了",
+    "無料プランの終了"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "OSSInsight is shutting down on December 4, 2026",
+     "url": "https://github.com/pingcap/ossinsight/issues/3175"
+    },
+    {
+     "title": "Perspective API (used in Coral's toxic comments filter) is being sunsetted after December 31, 2026",
+     "url": "https://github.com/coralproject/talk/issues/4902"
+    },
+    {
+     "title": "Last.FM API no longer free starting December 1st",
+     "url": "https://github.com/public-apis/public-apis/issues/9351"
+    }
+   ]
+  },
+  {
+   "name": "Drain",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Drain queued mail before shutting down the worker",
+     "url": "https://github.com/palmshed/alma/issues/147"
+    },
+    {
+     "title": "Drain pending event writes before shutting down the tracer",
+     "url": "https://github.com/book000/web-session-tracer/issues/267"
+    },
+    {
+     "title": "Drain or trace open HTTP requests during rest-api rolling shutdown",
+     "url": "https://github.com/docs-plus/docs.plus/issues/838"
+    }
+   ]
+  },
+  {
+   "name": "SHUTTING",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Remove the redundant `phase !== 'SHUTTING_DOWN'` comparison in `StartupReadiness.setPhase`",
+     "url": "https://github.com/Fluxora-Org/Fluxora-Backend/issues/1873"
+    },
+    {
+     "title": "Telegram backend: SHUTTING_DOWN latch is process-global and never reset",
+     "url": "https://github.com/avariiiiiiiiii/UniDTK/issues/109"
+    },
+    {
+     "title": "FSM2: node ignores its own SHUTTING_DOWN lifecycle decision (no self-stop)",
+     "url": "https://github.com/pragmaticalabs/pragmatica/issues/3158"
+    }
+   ]
+  },
+  {
+   "name": "DOWN",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Remove the redundant `phase !== 'SHUTTING_DOWN'` comparison in `StartupReadiness.setPhase`",
+     "url": "https://github.com/Fluxora-Org/Fluxora-Backend/issues/1873"
+    },
+    {
+     "title": "Telegram backend: SHUTTING_DOWN latch is process-global and never reset",
+     "url": "https://github.com/avariiiiiiiiii/UniDTK/issues/109"
+    },
+    {
+     "title": "FSM2: node ignores its own SHUTTING_DOWN lifecycle decision (no self-stop)",
+     "url": "https://github.com/pragmaticalabs/pragmatica/issues/3158"
+    }
+   ]
+  },
+  {
+   "name": "Legacy",
+   "kinds": [
+    "API の廃止",
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Legacy `/api/ui/*` deprecation plan",
+     "url": "https://github.com/open-hax/proxx/issues/514"
+    },
+    {
+     "title": "Legacy API (v0) shutdown: the resolving described in D7.4 §3.2 stops working",
+     "url": "https://github.com/dracor-org/dracor-tech-reports/issues/15"
+    },
+    {
+     "title": "Sable(-Legacy) is no longer maintained, consider switching to sable-next",
+     "url": "https://github.com/mother-of-all-self-hosting/ansible-role-sable/issues/27"
+    }
+   ]
+  },
+  {
+   "name": "ADR",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Add ADR 0007 — API versioning and deprecation policy",
+     "url": "https://github.com/shakurJJ/chainsettle-backend/issues/693"
+    },
+    {
+     "title": "feat(db): generated, versioned migrations from a baseline (ADR 0041 task 6)",
+     "url": "https://github.com/GuptaSiddhant/StoryShelf/issues/1230"
+    },
+    {
+     "title": "[M3/P0] ADR — Recipe Engine boundaries, source of truth and migration from ToolAdapter",
+     "url": "https://github.com/KyrboForge/Agenvil/issues/64"
+    }
+   ]
+  },
+  {
+   "name": "Fitbit",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Sunset the Fitbit block (Fitbit Web API shut down by Google, November 2, 2026)",
+     "url": "https://github.com/dakboard/DAKboard/issues/2704"
+    },
+    {
+     "title": "[Bug]: Patients still on Fitbit get no data since the Fitbit Web API shutdown",
+     "url": "https://github.com/ARTORG-GERONTECHNOLOGY/Bearny-RehaAdvisor/issues/715"
+    },
+    {
+     "title": "Refresh the Fitbit export guide after the Fitbit Web API shutdown",
+     "url": "https://github.com/CodyBontecou/health-md/issues/354"
+    }
+   ]
+  },
+  {
+   "name": "Fitbit Web",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Sunset the Fitbit block (Fitbit Web API shut down by Google, November 2, 2026)",
+     "url": "https://github.com/dakboard/DAKboard/issues/2704"
+    },
+    {
+     "title": "[Bug]: Patients still on Fitbit get no data since the Fitbit Web API shutdown",
+     "url": "https://github.com/ARTORG-GERONTECHNOLOGY/Bearny-RehaAdvisor/issues/715"
+    },
+    {
+     "title": "Refresh the Fitbit export guide after the Fitbit Web API shutdown",
+     "url": "https://github.com/CodyBontecou/health-md/issues/354"
+    }
+   ]
+  },
+  {
+   "name": "Keep",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Keep a named-pipe listener's close from hanging the node API shutdown on Windows",
+     "url": "https://github.com/plexsphere/plexd/issues/236"
+    },
+    {
+     "title": "Keep automatic advertising price increases tied to paid market prices",
+     "url": "https://github.com/lakesidegamedev/AHDGame/issues/6988"
+    },
+    {
+     "title": "Keep a history of every pricing change",
+     "url": "https://github.com/r4ph92/Palier/issues/152"
+    }
+   ]
+  },
+  {
+   "name": "File",
+   "kinds": [
+    "無料プランの終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Tests: the fail-point lock can be held by two workers after a stale owner (stat/readFile race), and afterAll frees a lock it no longer owns",
+     "url": "https://github.com/agbossjs/mongodb/issues/101"
+    },
+    {
+     "title": "File format schema 2 with migration from schema 1",
+     "url": "https://github.com/maximcuynat/open-logic/issues/12"
+    },
+    {
+     "title": "File index replacement for ATLAS Ztautau record",
+     "url": "https://github.com/cernopendata/opendata.cern.ch/issues/3813"
+    }
+   ]
+  },
+  {
+   "name": "Publish",
+   "kinds": [
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Buy Back Reminder: Publish the expected price increases as JSON on the website",
+     "url": "https://github.com/exrelax/star-citizen-hangar-manager/issues/188"
+    },
+    {
+     "title": "Publish the new pricing: Free (≤25 students) + Club 29 / School 49 / Academy 79 (£ in the UK, $ elsewhere)",
+     "url": "https://github.com/leavereview/beltmanager.com/issues/36"
+    },
+    {
+     "title": "Publish glen to npm as an alternative to the jsDelivr CDN",
+     "url": "https://github.com/SchmidtDSE/glen/issues/526"
+    }
+   ]
+  },
+  {
+   "name": "Supabase",
+   "kinds": [
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "💲 [Supabase] pricing change on Pricing (high)",
+     "url": "https://github.com/shraddhaborah/competitor-listener/issues/13"
+    },
+    {
+     "title": "🧩 [Supabase] feature change on Pricing (medium)",
+     "url": "https://github.com/shraddhaborah/competitor-listener/issues/6"
+    },
+    {
+     "title": "Migrate from Supabase to Neon (Postgres) + Better Auth",
+     "url": "https://github.com/getmobilehq/skillsworth/issues/8"
+    }
+   ]
+  },
+  {
+   "name": "RUSTSEC-2025-0057",
+   "kinds": [
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "RUSTSEC-2025-0057: fxhash - no longer maintained",
+     "url": "https://github.com/syshin0116/clidex/issues/24"
+    },
+    {
+     "title": "RUSTSEC-2025-0057: fxhash - no longer maintained",
+     "url": "https://github.com/emo-crab/observer_ward/issues/122"
+    },
+    {
+     "title": "RUSTSEC-2025-0057: fxhash - no longer maintained",
+     "url": "https://github.com/github/rust-gems/issues/182"
+    }
+   ]
+  },
+  {
+   "name": "Agent",
+   "kinds": [
+    "移行先さがし",
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Claims end when their Project is archived or the Agent loses Write",
+     "url": "https://github.com/CronkCorp/Cronk/issues/513"
+    },
+    {
+     "title": "Agent assisted migration from Classic to v1",
+     "url": "https://github.com/NVIDIA/NemoClaw/issues/14580"
+    },
+    {
+     "title": "Agent monitor (004): install and verify as replacement for third-party Agent Flow viewer",
+     "url": "https://github.com/donkey-king-kong/tallyhold/issues/44"
+    }
+   ]
+  },
+  {
+   "name": "MkDocs",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Migrate from Material for MkDocs to Zensical",
+     "url": "https://github.com/schote/nexus-console/issues/184"
+    },
+    {
+     "title": "Migrate from Mkdocs to Zensical",
+     "url": "https://github.com/equinor/pyetp/issues/105"
+    },
+    {
+     "title": "Plan migration from Material for MkDocs to Zensical before May 2027 EOL",
+     "url": "https://github.com/lykinsbd/naas/issues/564"
+    }
+   ]
+  },
+  {
+   "name": "Zensical",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Migrate from Material for MkDocs to Zensical",
+     "url": "https://github.com/schote/nexus-console/issues/184"
+    },
+    {
+     "title": "Migrate from Mkdocs to Zensical",
+     "url": "https://github.com/equinor/pyetp/issues/105"
+    },
+    {
+     "title": "Plan migration from Material for MkDocs to Zensical before May 2027 EOL",
+     "url": "https://github.com/lykinsbd/naas/issues/564"
+    }
+   ]
+  },
+  {
+   "name": "Web",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "📘 Web – Migration from Boosted",
+     "url": "https://github.com/Orange-OpenSource/ouds-documentation/issues/250"
+    },
+    {
+     "title": "Web API ergonomics: alternatives to 'no convenience helpers' (A13.1)",
+     "url": "https://github.com/Millillion/lasm/issues/378"
+    },
+    {
+     "title": "Spec: Web surfaces - native replacements for the embedded-IE pages (no browser)",
+     "url": "https://github.com/ar-nim/recomp2jam/issues/750"
+    }
+   ]
+  },
+  {
+   "name": "Track",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Track migrations from other code-quality tools to Adamantite",
+     "url": "https://github.com/adelrodriguez/adamantite/issues/723"
+    },
+    {
+     "title": "Track replacements for broken Reshet 13 and Now 14 legacy sources",
+     "url": "https://github.com/NirDs22/israeli-live-tv-stable/issues/8"
+    },
+    {
+     "title": "Track aws/aws-emulator as a possible replacement for winterbaume in tests",
+     "url": "https://github.com/carina-rs/carina/issues/4379"
+    }
+   ]
+  },
+  {
+   "name": "Enterprise Live Migrations",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/abirismyname/github-changelog-reader/issues/1477"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/renefritze/github-changelog-reader/issues/1081"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/forks-felickz/github-changelog-reader/issues/830"
+    }
+   ]
+  },
+  {
+   "name": "Azure DevOps",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/abirismyname/github-changelog-reader/issues/1477"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/renefritze/github-changelog-reader/issues/1081"
+    },
+    {
+     "title": "GitHub Changelog:Enterprise Live Migrations from Azure DevOps generally available",
+     "url": "https://github.com/forks-felickz/github-changelog-reader/issues/830"
+    }
+   ]
+  },
+  {
+   "name": "Find",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "Find alternative to getbem.com to explain BEM",
+     "url": "https://github.com/alphagov/govuk-design-system/issues/6412"
+    },
+    {
+     "title": "Find replacements for vibeslopped dependencies",
+     "url": "https://github.com/bihealth/sodar-core/issues/2041"
+    },
+    {
+     "title": "Find a replacement for DataGrid on BulkAdd",
+     "url": "https://github.com/FlakyBlueJay/TagHierarchyManager/issues/8"
+    }
+   ]
+  },
+  {
+   "name": "Runner",
+   "kinds": [
+    "買収に伴う変更"
+   ],
+   "distinct_repos": 3,
+   "examples": [
+    {
+     "title": "[ci] unit-tests-macos: \"The job was not acquired by Runner of type hosted even after multiple attempts\"",
+     "url": "https://github.com/Sanne/incus-spawn/issues/2298"
+    },
+    {
+     "title": "CI: both macOS jobs use the scarce macos-15-intel runner, so fork runs fail with \"job was not acquired by Runner\"",
+     "url": "https://github.com/wf-group/wfview/issues/189"
+    },
+    {
+     "title": "CI: both macOS jobs use the scarce macos-15-intel runner, so fork runs fail with \"job was not acquired by Runner\"",
+     "url": "https://github.com/Reid-n0rc/wfview/issues/27"
+    }
+   ]
+  },
+  {
+   "name": "BUG",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[\"BUG\"] Craft positions not updating after shutting down server",
+     "url": "https://github.com/LunaMultiplayer/LunaMultiplayer/issues/750"
+    },
+    {
+     "title": "[BUG] SQS source with acknowledgments does not wait for pending acknowledgments before shutting down",
+     "url": "https://github.com/opensearch-project/data-prepper/issues/7242"
+    }
+   ]
+  },
+  {
+   "name": "Notifications",
+   "kinds": [
+    "サービス終了",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Notifications: drain notification workers before shutting down Prometheus metrics, and never let a metrics error hide a send failure",
+     "url": "https://github.com/metabase/metabase/issues/87808"
+    },
+    {
+     "title": "Notifications bell: Missed and Price increase Recurring payment items",
+     "url": "https://github.com/pierrickmartino/finance-manager/issues/267"
+    }
+   ]
+  },
+  {
+   "name": "REST",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "REST command API answers HTTP 500 (INTERNAL) instead of 503 when the target broker is shutting down (NoRemoteHandler)",
+     "url": "https://github.com/camunda/camunda/issues/69870"
+    },
+    {
+     "title": "Version the REST API and publish a deprecation policy",
+     "url": "https://github.com/syms-dev/panelarr/issues/20"
+    }
+   ]
+  },
+  {
+   "name": "SSH",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Extension error \"SSH tool selection context is stale or shutting down\" after aborting a run with Esc",
+     "url": "https://github.com/javiermolinar/pi-cmux/issues/23"
+    },
+    {
+     "title": "[Bug]: SSH reconnect fails for as long as the old remote server is stuck shutting down",
+     "url": "https://github.com/pingdotgg/t3code/issues/39797"
+    }
+   ]
+  },
+  {
+   "name": "Generate",
+   "kinds": [
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Generate reports when shutting down",
+     "url": "https://github.com/cpp-best-practices/mutant_strain/issues/22"
+    },
+    {
+     "title": "[DATA-014] Generate up and down migrations from model changes",
+     "url": "https://github.com/a11smiles/cade/issues/2538"
+    }
+   ]
+  },
+  {
+   "name": "HA Core",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Husqvarna Automower BLE unhandled exception when HA Core is shutting down.",
+     "url": "https://github.com/home-assistant/core/issues/190857"
+    },
+    {
+     "title": "The deprecated constant CONN_CLASS_LOCAL_PUSH was used from judo_rest_api. It will be removed in HA Core 2027.5.0",
+     "url": "https://github.com/OStrama/judo_rest_api/issues/51"
+    }
+   ]
+  },
+  {
+   "name": "Agents",
+   "kinds": [
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Agents: a stopped turn that is shutting down can still take queued mailbox messages without noting them",
+     "url": "https://github.com/CorbanuCore/CorbanuTerminal/issues/2010"
+    },
+    {
+     "title": "Add EXTREMELY Autonomous Agents as an alternative to Zapier",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/494"
+    }
+   ]
+  },
+  {
+   "name": "Store",
+   "kinds": [
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Store log: \"canceling autovacuum task\" and \"the database system is shutting down\" are filed as unclassified on every service restart",
+     "url": "https://github.com/erikdarlingdata/PerformanceMonitor/issues/8814"
+    },
+    {
+     "title": "Store log: \"canceling autovacuum task\" and \"the database system is shutting down\" are filed as unclassified on every service restart",
+     "url": "https://github.com/erikdarlingdata/PerformanceMonitor/issues/8814"
+    },
+    {
+     "title": "Theme: remove the legacy theme-key migration from appearanceStore (after 2 releases)",
+     "url": "https://github.com/ChipIn-one/chipin-frontend/issues/825"
+    }
+   ]
+  },
+  {
+   "name": "Session",
+   "kinds": [
+    "サービス終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Sign out, restart, shut down, sleep and hibernate from the Session service",
+     "url": "https://github.com/enpaze/winshell/issues/1739"
+    },
+    {
+     "title": "Record a replacement for a bounded region of a Session audio clip",
+     "url": "https://github.com/nota-daw/nota/issues/823"
+    }
+   ]
+  },
+  {
+   "name": "Profile",
+   "kinds": [
+    "API の廃止",
+    "サービス終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Profile README: gh-card.dev repo cards broken (service discontinued)",
+     "url": "https://github.com/datawhalechina/.github/issues/1"
+    },
+    {
+     "title": "Profile API deprecation out of date",
+     "url": "https://github.com/lm15-dev/lm15-python/issues/28"
+    }
+   ]
+  },
+  {
+   "name": "Policy",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "SD-062 Define API Deprecation Policy",
+     "url": "https://github.com/ministryofjustice/integration-hub/issues/375"
+    },
+    {
+     "title": "Platform: 1.0 API Freeze & Deprecation Policy",
+     "url": "https://github.com/dhluong90/horus-Agentic-BPM/issues/115"
+    }
+   ]
+  },
+  {
+   "name": "Kubernetes",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[Feature] Add Kubernetes API Deprecation and Compatibility Detection to MeshSync",
+     "url": "https://github.com/meshery/meshsync/issues/615"
+    },
+    {
+     "title": "fix(api): handle SIGTERM so graceful shutdown runs in Kubernetes",
+     "url": "https://github.com/FerrLabs/FerrFlow/issues/1440"
+    }
+   ]
+  },
+  {
+   "name": "Freeze",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Platform: 1.0 API Freeze & Deprecation Policy",
+     "url": "https://github.com/dhluong90/horus-Agentic-BPM/issues/115"
+    },
+    {
+     "title": "Freeze API v1 and publish a deprecation policy",
+     "url": "https://github.com/Ihor-Meat-Proxy/Vulyk/issues/251"
+    }
+   ]
+  },
+  {
+   "name": "Write",
+   "kinds": [
+    "API の廃止",
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Write the API versioning and deprecation policy",
+     "url": "https://github.com/mohanedmoh/treebind/issues/69"
+    },
+    {
+     "title": "Claims end when their Project is archived or the Agent loses Write",
+     "url": "https://github.com/CronkCorp/Cronk/issues/513"
+    }
+   ]
+  },
+  {
+   "name": "DATE",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "API_SUNSET_DATE for deprecation headers",
+     "url": "https://github.com/TevaLabs/Xelma-Backend/issues/1054"
+    },
+    {
+     "title": "API_SUNSET_DATE for deprecation headers",
+     "url": "https://github.com/TevaLabs/Xelma-Backend/issues/1054"
+    },
+    {
+     "title": "Migrate from Date/Calendar/SimpleDateFormat to java.time",
+     "url": "https://github.com/drftpd-ng/drftpd/issues/598"
+    }
+   ]
+  },
+  {
+   "name": "Public",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Public API stability and deprecation policy; ship `py.typed`",
+     "url": "https://github.com/chhayankjain/agentprobe-toolkit/issues/86"
+    },
+    {
+     "title": "Public API sunset: detect adoption evidence gaps across serving replicas",
+     "url": "https://github.com/AiHub-Ecosystem/aihub-be/issues/2004"
+    }
+   ]
+  },
+  {
+   "name": "Advanced",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[Advanced] Add endpoint-level API deprecation headers and telemetry",
+     "url": "https://github.com/yazeed11011/Xconfess/issues/383"
+    },
+    {
+     "title": "[Advanced] attestation-registry: consolidate overlapping read APIs and publish a deprecation plan",
+     "url": "https://github.com/Lafiya-xyz/Lafiya-contract/issues/668"
+    }
+   ]
+  },
+  {
+   "name": "Enhancement",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[Enhancement]: 76 contracts still use the deprecated `env.events().publish` API and deprecation warnings are globally suppressed",
+     "url": "https://github.com/Soroban-Cookbook/Soroban-Cookbook-/issues/1366"
+    },
+    {
+     "title": "[Enhancement][Backend] Define an explicit API version and deprecation policy",
+     "url": "https://github.com/Chronostar-Protocol/ChronoStar/issues/428"
+    }
+   ]
+  },
+  {
+   "name": "Redis",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[Backend] Add distributed Redis caching and throughput telemetry for API Versioning and Deprecation Header Handler",
+     "url": "https://github.com/emdevelopa/Stellar_Payment_API/issues/1750"
+    },
+    {
+     "title": "Close sharedRedis and pg.Pool during api-gateway shutdown",
+     "url": "https://github.com/Betta-Pay/BettaPay-Backend/issues/1013"
+    }
+   ]
+  },
+  {
+   "name": "OpenAPI",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[studio] OpenAPI 3.1 spec generated from the routes; API versioning and deprecation policy",
+     "url": "https://github.com/buildbase-app/reelforge-studio/issues/124"
+    },
+    {
+     "title": "Include API sunset metadata in generated OpenAPI operations",
+     "url": "https://github.com/AgesEmpire/StellarSwipe-Backends/issues/1549"
+    }
+   ]
+  },
+  {
+   "name": "Vercel",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Investigate Vercel Node 24 DEP0169 deprecation warning across API routes",
+     "url": "https://github.com/kortavyj/ISTe/issues/132"
+    },
+    {
+     "title": "💲 [Vercel] pricing change on Pricing (high)",
+     "url": "https://github.com/shraddhaborah/competitor-listener/issues/11"
+    },
+    {
+     "title": "🧩 [Vercel] feature change on Pricing (medium)",
+     "url": "https://github.com/shraddhaborah/competitor-listener/issues/9"
+    }
+   ]
+  },
+  {
+   "name": "Electron",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Electron safeStorage: the sync API Durbar uses is deprecated (removed in Electron 46); Linux can fall back to plaintext",
+     "url": "https://github.com/three-feathers/agent-durbar/issues/1455"
+    },
+    {
+     "title": "Electron 1.96.0 warns that sync safeStorage APIs will be removed",
+     "url": "https://github.com/UnreliableWitness/Shellie/issues/279"
+    }
+   ]
+  },
+  {
+   "name": "Storage",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Electron safeStorage: the sync API Durbar uses is deprecated (removed in Electron 46); Linux can fall back to plaintext",
+     "url": "https://github.com/three-feathers/agent-durbar/issues/1455"
+    },
+    {
+     "title": "Electron 1.96.0 warns that sync safeStorage APIs will be removed",
+     "url": "https://github.com/UnreliableWitness/Shellie/issues/279"
+    }
+   ]
+  },
+  {
+   "name": "JWT",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "backend: datetime.utcnow() is deprecated in JWT expiry and API timestamps",
+     "url": "https://github.com/mangeshraut712/AssistMe-VirtualAssistant/issues/146"
+    },
+    {
+     "title": "Add JWT authentication as an alternative to username/password",
+     "url": "https://github.com/ClickHouse/clickhouse-tableau-connector-jdbc/issues/113"
+    }
+   ]
+  },
+  {
+   "name": "Campaign Management",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[source-apple-search-ads]: migrate from Campaign Management API v5 to Apple Ads Platform API v1 (v5 sunset Jan 26, 2027)",
+     "url": "https://github.com/airbytehq/airbyte/issues/90972"
+    },
+    {
+     "title": "♻️ Migrate CLI from Campaign Management API v5 to Platform API v1 (before 2027-01-26 sunset)",
+     "url": "https://github.com/SamPetherbridge/asa-api-cli/issues/68"
+    }
+   ]
+  },
+  {
+   "name": "Jan",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "[source-apple-search-ads]: migrate from Campaign Management API v5 to Apple Ads Platform API v1 (v5 sunset Jan 26, 2027)",
+     "url": "https://github.com/airbytehq/airbyte/issues/90972"
+    },
+    {
+     "title": "[gap] Effective-dated prices so caps follow Gemini's Dec 1 / Jan 1 increases; price Gemini 4, 3.6 Flash, 3.5 Flash-Lite",
+     "url": "https://github.com/persooninc/costcap/issues/236"
+    }
+   ]
+  },
+  {
+   "name": "POST",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Any signed-in user can shut down the server (POST /api/system/shutdown)",
+     "url": "https://github.com/cstpeace0191/Movie_Agent/issues/3"
+    },
+    {
+     "title": "Migration from CAAPF to Fleet integration - Post script not completing successfully",
+     "url": "https://github.com/rancher/turtles/issues/3074"
+    }
+   ]
+  },
+  {
+   "name": "Verify",
+   "kinds": [
+    "API の廃止",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Verify and test graceful API shutdown on SIGTERM",
+     "url": "https://github.com/AudioBitsStellar/AudioBlock_Backend/issues/922"
+    },
+    {
+     "title": "Verify migration from a build 38 store on a device (schema V5)",
+     "url": "https://github.com/asherdowd/LIFTR/issues/43"
+    }
+   ]
+  },
+  {
+   "name": "MAX",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "P2-跟进 #1949：关停侧公开 API shutdown/request_shutdown 预算语义 doc 缺失（MAX⇒无界 drain、处置与返回被堵后）（前置于 #1949 收口）",
+     "url": "https://github.com/daqi-dev/pilotdeck-rs/issues/2492"
+    },
+    {
+     "title": "NEXT: new Plus/Pro/Max pricing tiers and Stripe descriptions",
+     "url": "https://github.com/manaflow-ai/cmux/issues/46966"
+    }
+   ]
+  },
+  {
+   "name": "Match",
+   "kinds": [
+    "API の廃止",
+    "大幅な値上げ"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Match uvicorn --timeout-graceful-shutdown to the API drain timeout",
+     "url": "https://github.com/phuchaitt3/book-rag-app/issues/284"
+    },
+    {
+     "title": "Buy Back Reminder: Match hangar and buy back items to expected price increases",
+     "url": "https://github.com/exrelax/star-citizen-hangar-manager/issues/190"
+    }
+   ]
+  },
+  {
+   "name": "Last.FM",
+   "kinds": [
+    "無料プランの終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Last.FM API no longer free starting December 1st",
+     "url": "https://github.com/public-apis/public-apis/issues/9351"
+    },
+    {
+     "title": "[Feature Request] Add ListenBrainz - API (as replacement for Last.FM)",
+     "url": "https://github.com/dannyvfilms/Floppy/issues/2076"
+    }
+   ]
+  },
+  {
+   "name": "Pro",
+   "kinds": [
+    "大幅な値上げ",
+    "無料プランの終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Video Player Block (Free + Pro): Vimeo captions no longer show twice",
+     "url": "https://github.com/Himangsu-Roy/plugin-tasks/issues/136"
+    },
+    {
+     "title": "Video Player Block (Free + Pro): Player no longer stays empty with delayed-JS plugins (WP Rocket, LiteSpeed)",
+     "url": "https://github.com/Himangsu-Roy/plugin-tasks/issues/123"
+    },
+    {
+     "title": "Video Player Block (Free + Pro): YouTube no longer slides while scrolling the editor; plugin zip 5 MB to 3.3 MB",
+     "url": "https://github.com/Himangsu-Roy/plugin-tasks/issues/183"
+    }
+   ]
+  },
+  {
+   "name": "Stop",
+   "kinds": [
+    "無料プランの終了",
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Upstream port: chat never stuck on Working (Stop frees an idle chat, watchdog frees unheld busy chats, sleep no longer kills turns)",
+     "url": "https://github.com/pulsatrixtechnologies/sagax/issues/3300"
+    },
+    {
+     "title": "[docs][Snackbar] Stop recommending the usage of notistack, the library is seemingly no longer (properly) maintained",
+     "url": "https://github.com/DeadantCo/material-ui/issues/1061"
+    }
+   ]
+  },
+  {
+   "name": "OpenRouter",
+   "kinds": [
+    "無料プランの終了",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "models: OpenRouter tencent/hy3:free is still listed and eligible, but OpenRouter no longer serves it",
+     "url": "https://github.com/CorbanuCore/CorbanuTerminal/issues/1658"
+    },
+    {
+     "title": "Add OpenRouter as a free replacement for Pollinations",
+     "url": "https://github.com/cartertemm/AI-content-describer/issues/115"
+    }
+   ]
+  },
+  {
+   "name": "Removing",
+   "kinds": [
+    "無料プランの終了"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Removing a child while its ancestor is display:none can leave freed NodeIds in derived layout lists",
+     "url": "https://github.com/DioxusLabs/blitz/issues/1577"
+    },
+    {
+     "title": "[P2] conveyor/tests/releasemode.test.sh:47 The new tests can pass when ordinary test files take no pool slots. Proof: Removing `slot_take`, `slot_mine`, and `slot_free` from the file scheduler leaves ",
+     "url": "https://github.com/pushprove-max/conveyor-belt/issues/803"
+    }
+   ]
+  },
+  {
+   "name": "Engine",
+   "kinds": [
+    "大幅な値上げ",
+    "移行先さがし"
+   ],
+   "distinct_repos": 2,
+   "examples": [
+    {
+     "title": "Engine: detectors (recurring, price increase, Category spike, upcoming renewal)",
+     "url": "https://github.com/esharif20/finance-agent/issues/148"
+    },
+    {
+     "title": "Engine seam: replacing game actions (a replacement for losing the game; a replacement for planeswalking)",
+     "url": "https://github.com/krakenhavoc/cmd_and_ctrl/issues/6096"
+    }
+   ]
+  }
+ ],
+ "signals": [
+  {
+   "subject": "PrimeVue",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 8,
+   "examples": [
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/mmz-srf/grafana-alerts-dashboard/issues/2",
+     "created": "2026-11-03"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/driftkit-ai/driftkit-framework/issues/5",
+     "created": "2026-11-05"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/Suncuss/BirdNET-PiPy/issues/74",
+     "created": "2026-11-05"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/biznisbox/biznisbox/issues/255",
+     "created": "2026-11-05"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/caido-community/ParamFinder/issues/32",
+     "created": "2026-11-05"
+    },
+    {
+     "title": "Consider OpenVue as an MIT alternative to PrimeVue",
+     "url": "https://github.com/boldsoftware/shelley/issues/343",
+     "created": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "subject": "A client that connects while the daemon",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "A client that connects while the daemon is shutting down fails with \"exited before it served\"",
+     "url": "https://github.com/bRRRITSCOLD/agentdeck/issues/150",
+     "created": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "subject": "A locked member that",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "A locked member that is shutting down after a signal can keep its close commit when main does not move",
+     "url": "https://github.com/daniel1zz/canon/issues/43",
+     "created": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "subject": "A project",
+   "kinds": [
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "A project is archived and unarchived, with its own View \"Archive\"",
+     "url": "https://github.com/Self-Engine/self-engine/issues/304",
+     "created": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "subject": "API",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Workload Identity] How-to, migration from API keys, and security notes",
+     "url": "https://github.com/safedep/docs/issues/132",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "ATLAS Ztautau",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "File index replacement for ATLAS Ztautau record",
+     "url": "https://github.com/cernopendata/opendata.cern.ch/issues/3813",
+     "created": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "subject": "Action Wheel",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Feature Request] Button-based alternative to Action Wheel",
+     "url": "https://github.com/CptPakundo/FLvibed/issues/66",
+     "created": "2026-11-08"
+    }
+   ]
+  },
+  {
+   "subject": "Apalache",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Tracking] Nixie as a drop-in replacement for Apalache",
+     "url": "https://github.com/0kenx/nixie/issues/31",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Armourer",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Potentially find a replacement for Armourer's workshop.",
+     "url": "https://github.com/Sir-Bobbing/Refined-And-Tailored/issues/134",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "Australian",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Roadmap] Tammy as a complete Xero replacement for Australian businesses",
+     "url": "https://github.com/castlemilk/tammy/issues/30",
+     "created": "2026-11-05"
+    }
+   ]
+  },
+  {
+   "subject": "BYOK",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Managed models through Amazon Bedrock (alternative to BYOK)",
+     "url": "https://github.com/karoliang/automate.business/issues/25",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Battlemaster",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Validate a replacement for Battlemaster terrain geometry",
+     "url": "https://github.com/richardsolomou/vs-data/issues/9",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Bavarian SSH",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Open-source alternative to Bavarian SSH Client for NBT Evo?",
+     "url": "https://github.com/inotbarnacle/ID6_apps_prerelease/issues/49",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "Bitwig Studio",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "App request: Hikaru OpenLive - FOSS alternative to Bitwig Studio",
+     "url": "https://github.com/daijro/openplayground/issues/50",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Branch Protections",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Repository-level bulk migration from Branch Protections to Rulesets [GA]",
+     "url": "https://github.com/github/roadmap/issues/1387",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "BugsBunny.exe",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Feature Request] replacement for BugsBunny.exe launcher",
+     "url": "https://github.com/InLineR495/BBLIT-Remaster/issues/10",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Bugsnag",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Implement Flare as a replacement for Bugsnag",
+     "url": "https://github.com/mike-bronner/clean-code/issues/403",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "CDC",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add WHO growth references as a selectable alternative to CDC",
+     "url": "https://github.com/RakTikoo/growthz/issues/2",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "CIRCL-hosted NetBox",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Implement reviewed migration from CIRCL-hosted NetBox to customer-owned NetBox",
+     "url": "https://github.com/rommelfs/bearings/issues/89",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Campaign Management",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[source-apple-search-ads]: migrate from Campaign Management API v5 to Apple Ads Platform API v1 (v5 sunset Jan 26, 2027)",
+     "url": "https://github.com/airbytehq/airbyte/issues/90972",
+     "created": "2026-11-04"
+    }
+   ]
+  },
+  {
+   "subject": "ChatGPT",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Trina AX as an alternative to ChatGPT",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/496",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Claims end when their Project",
+   "kinds": [
+    "開発終了（OSS）"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Claims end when their Project is archived or the Agent loses Write",
+     "url": "https://github.com/CronkCorp/Cronk/issues/513",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Classic",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Agent assisted migration from Classic to v1",
+     "url": "https://github.com/NVIDIA/NemoClaw/issues/14580",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Claude Haiku",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Model upgrade: evaluate a replacement for Claude Haiku 4.5 before it is retired",
+     "url": "https://github.com/kuu/realtime-speech-interpreter/issues/18",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "Cloud TPU",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Docs] Update TPU v7x provisioning to use Compute Engine API (Cloud TPU API is deprecated)",
+     "url": "https://github.com/vllm-project/vllm-torchtpu/issues/3395",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "Cloudflare",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Study Orange's migration from Cloudflare to the River platform, and whether cellb can offer the same",
+     "url": "https://github.com/statewalker/cellb.dev/issues/234",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "CometBFT",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Evaluate Malachite as an alternative to CometBFT",
+     "url": "https://github.com/berachain/beacon-kit/issues/3188",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "Cookiecutter",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "template: migrate from Cookiecutter to Copier",
+     "url": "https://github.com/pywright/template/issues/28",
+     "created": "2026-11-08"
+    }
+   ]
+  },
+  {
+   "subject": "Cosmetic Armour",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Potentially find replacement for Cosmetic Armour Reworked",
+     "url": "https://github.com/Sir-Bobbing/Refined-And-Tailored/issues/138",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "DataGrid",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Find a replacement for DataGrid on BulkAdd",
+     "url": "https://github.com/FlakyBlueJay/TagHierarchyManager/issues/8",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "Docker Compose",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": ".NET Aspire AppHost as an alternative to Docker Compose",
+     "url": "https://github.com/nitin27may/e-commerce-agents/issues/90",
+     "created": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "subject": "Drain pending event writes before",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Drain pending event writes before shutting down the tracer",
+     "url": "https://github.com/book000/web-session-tracer/issues/267",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "Drain queued mail before",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Drain queued mail before shutting down the worker",
+     "url": "https://github.com/palmshed/alma/issues/147",
+     "created": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "subject": "DynamoDB",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "state: Postgres backend as an alternative to DynamoDB",
+     "url": "https://github.com/agent-of-empires/castellan/issues/105",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "Escape",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Ctrl+C as an alternative to Escape",
+     "url": "https://github.com/mitos-editor/mitos/issues/1308",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "Explorer",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Future: portable private visit journal and photo migration from Explorer",
+     "url": "https://github.com/jacobmgoodnight/glowroute/issues/13",
+     "created": "2026-11-08"
+    }
+   ]
+  },
+  {
+   "subject": "Express",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Proposal: migrate from Express to Fastify",
+     "url": "https://github.com/kr4z1w134/meridian-webappp/issues/193",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "Fenced Frame",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "@alpinejs/csp: global scan triggers \"Fenced Frame API is deprecated\" in Chrome / Lighthouse",
+     "url": "https://github.com/alpinejs/alpine/issues/4947",
+     "created": "2026-11-13"
+    }
+   ]
+  },
+  {
+   "subject": "Figma",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add OpenPencil as an alternative to Figma",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/521",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "FreshBooks",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Firmowid as an alternative to FreshBooks",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/514",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "GHLA",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "GHLA is being discontinued.",
+     "url": "https://github.com/gorciu-official/GHLA/issues/1",
+     "created": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "subject": "Generate reports when",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Generate reports when shutting down",
+     "url": "https://github.com/cpp-best-practices/mutant_strain/issues/22",
+     "created": "2026-11-04"
+    }
+   ]
+  },
+  {
+   "subject": "GitHub Pages",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Brainstorm a package-hosting replacement for GitHub Pages (1 GB cap, fixed cache)",
+     "url": "https://github.com/vergil-project/.github/issues/1378",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "Google Sites",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Content migration from Google Sites, Contact page, go-live on lastajemnic.org",
+     "url": "https://github.com/tbuczen/larp_org_web/issues/18",
+     "created": "2026-11-06"
+    }
+   ]
+  },
+  {
+   "subject": "Harbor",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Reference architecture: list zot as an alternative to Harbor",
+     "url": "https://github.com/cdfoundation/Platform-Engineering/issues/15",
+     "created": "2026-11-13"
+    }
+   ]
+  },
+  {
+   "subject": "Harvest",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Firmowid as an alternative to Harvest",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/513",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Hearth times out",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Hearth times out shutting down after SIGTERM",
+     "url": "https://github.com/kiln-site/kiln/issues/986",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Include",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Include API sunset metadata in generated OpenAPI operations",
+     "url": "https://github.com/AgesEmpire/StellarSwipe-Backends/issues/1549",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Ingress",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[helm] Support Gateway API HTTPRoute as an alternative to Ingress",
+     "url": "https://github.com/dagster-io/dagster/issues/34452",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Insignia",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Bundle an open-source Xbox dashboard replacement for Insignia",
+     "url": "https://github.com/portare-ch/hakuX-lr/issues/185",
+     "created": "2026-11-08"
+    }
+   ]
+  },
+  {
+   "subject": "JSON",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Offer XMP sidecars as an alternative to JSON",
+     "url": "https://github.com/NicoPietrusco/HicPicNunc/issues/130",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Jules",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Jules is shutting down: read-only after 2026-11-11, gone 2026-12-31; decide the dispatch replacement",
+     "url": "https://github.com/Ciemaar/campaign_logger/issues/155",
+     "created": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "subject": "LDK",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Tracking issue: Bitkit on Spark (Breez SDK), migration from LDK and new UX",
+     "url": "https://github.com/synonymdev/bitkit-android/issues/1946",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "LanguageServer.jl",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Please support JETLS.jl as alternative to LanguageServer.jl",
+     "url": "https://github.com/rafael-guerra-www/julia-cheatsheet/issues/1",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Last.FM",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[Feature Request] Add ListenBrainz - API (as replacement for Last.FM)",
+     "url": "https://github.com/dannyvfilms/Floppy/issues/2076",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Last.FM API",
+   "kinds": [
+    "無料プランの終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Last.FM API no longer free starting December 1st",
+     "url": "https://github.com/public-apis/public-apis/issues/9351",
+     "created": "2026-11-22"
+    }
+   ]
+  },
+  {
+   "subject": "Libraries.io API",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Libraries.io API shutting down on November 30th",
+     "url": "https://github.com/badges/shields/issues/12320",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "Limine",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Own UEFI bootloader (optional replacement for Limine)",
+     "url": "https://github.com/rohit746/myos/issues/29",
+     "created": "2026-11-10"
+    }
+   ]
+  },
+  {
+   "subject": "Loom",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Vertov as an alternative to Loom",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/519",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "MP4",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Offer True VBR AAC alternatives and explicit plain-stereo replacement for MP4",
+     "url": "https://github.com/MWBMPartners/MeedyaConverter/issues/558",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Makefiles",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Use Python-based alternative to Makefiles for scripting tests",
+     "url": "https://github.com/CLIMADA-project/climada_python/issues/1355",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "ManhwaNex",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "ManhwaNex is shutting down",
+     "url": "https://github.com/keiyoushi/extensions-source/issues/20819",
+     "created": "2026-11-07"
+    }
+   ]
+  },
+  {
+   "subject": "Mason",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Neovim: investigate miser.nvim as a replacement for Mason",
+     "url": "https://github.com/mjyocca/dotfiles/issues/14",
+     "created": "2026-11-10"
+    }
+   ]
+  },
+  {
+   "subject": "Material",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Plan migration from Material for MkDocs to Zensical before May 2027 EOL",
+     "url": "https://github.com/lykinsbd/naas/issues/564",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "Microsoft Authenticator",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Support Microsoft-account TOTP setup and safe migration from Microsoft Authenticator",
+     "url": "https://github.com/odroe/authenticator/issues/241",
+     "created": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "subject": "NGIpkgs",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Irdest: migrate from NGIpkgs to Nixpkgs",
+     "url": "https://github.com/ngi-nix/projects/issues/2447",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Norway East",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Test PostgreSQL Flexible Server migration from Norway East to Sweden Central using existing Terraform code",
+     "url": "https://github.com/Altinn/altinn-platform/issues/4438",
+     "created": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "subject": "Novelcrafter",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Pagekin as an alternative to Novelcrafter",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/529",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "OS-native",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Import/export & migration from OS-native and generic formats",
+     "url": "https://github.com/jusso-dev/palisade/issues/194",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "OSSInsight",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "OSSInsight is shutting down on December 4, 2026",
+     "url": "https://github.com/pingcap/ossinsight/issues/3175",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "OpenLayers",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Maps: migrate from OpenLayers + MapLibre to MapLibre only",
+     "url": "https://github.com/c2corg/c2c_ui/issues/5044",
+     "created": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "subject": "OrderedPair",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Create alternative to OrderedPair for screenspace",
+     "url": "https://github.com/owen-c-parker/cellular-automata/issues/7",
+     "created": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "subject": "Otter.ai",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add EarScribe as an alternative to Otter.ai",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/526",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "PLC",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Investigate a supported replacement for PLC's bundled Kysely",
+     "url": "https://github.com/natewalton/ait-protocol/issues/74",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "Password showing in Sysytemd when",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Password showing in Sysytemd when shutting down",
+     "url": "https://github.com/ublue-os/bluefin/issues/5214",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Patreon",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add open source alternative to Patreon: Hotly",
+     "url": "https://github.com/junaid33/opensource.builders/issues/606",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Pingdom",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add SiteWatcher as an alternative to Pingdom",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/517",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Pipfile",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Missing package name when migration from Pipfile + Pipfile.lock.",
+     "url": "https://github.com/osprey-oss/migrate-to-uv/issues/995",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "Plugin is based on a",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Plugin is based on a deprecated API version",
+     "url": "https://github.com/mshiyaf/todoist.nvim/issues/1",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "Pollinations",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add OpenRouter as a free replacement for Pollinations",
+     "url": "https://github.com/cartertemm/AI-content-describer/issues/115",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Public",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Public API sunset: detect adoption evidence gaps across serving replicas",
+     "url": "https://github.com/AiHub-Ecosystem/aihub-be/issues/2004",
+     "created": "2026-11-21"
+    }
+   ]
+  },
+  {
+   "subject": "RIR",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "RPE as an alternative to RIR",
+     "url": "https://github.com/animusstudio/Alkion/issues/49",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "RSiena",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Make plot.sienaGOF() a full replacement for RSiena's method",
+     "url": "https://github.com/stocnet/autograph/issues/75",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "RTDCustomerTool",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Task: command-line replacement for RTDCustomerTool (all fields as text/JSON)",
+     "url": "https://github.com/awto-au/awto-ddc/issues/13",
+     "created": "2026-11-04"
+    }
+   ]
+  },
+  {
+   "subject": "Retool",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Viberglass as an alternative to Retool",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/511",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "SDA",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Local SSURGO alternative to SDA",
+     "url": "https://github.com/AndrewBrown-USDA/fpac-soil-mcp/issues/104",
+     "created": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "subject": "SMS",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Login code by WhatsApp as an alternative to SMS",
+     "url": "https://github.com/SantiagoSouto/cercania/issues/130",
+     "created": "2026-11-10"
+    }
+   ]
+  },
+  {
+   "subject": "SQLite",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Document the migration from SQLite to PostgreSQL",
+     "url": "https://github.com/kvitrvn/raun/issues/97",
+     "created": "2026-11-11"
+    },
+    {
+     "title": "Epic 14 review: PostgreSQL support and migration from SQLite",
+     "url": "https://github.com/kvitrvn/raun/issues/94",
+     "created": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "subject": "SearchWP",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Build out Meilisearch integration as a possible replacement for SearchWP",
+     "url": "https://github.com/LezWatch/lwtv-underscores/issues/749",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "Silero VAD",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Investigate SAVA (Inworld) as a replacement for Silero VAD + Smart Turn v3",
+     "url": "https://github.com/Teaspoon-AI/teaport/issues/459",
+     "created": "2026-11-22"
+    }
+   ]
+  },
+  {
+   "subject": "Snyk",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add CybeDefend as an alternative to Snyk",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/531",
+     "created": "2026-11-24"
+    },
+    {
+     "title": "Add CybeDefend as an alternative to Snyk",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/525",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "Suspend services for project",
+   "kinds": [
+    "サービス終了"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Suspend services for project sunsetting",
+     "url": "https://github.com/kden/sunlight_sensor_gcp/issues/12",
+     "created": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "subject": "T3 Factory",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "First-launch migration from T3 Factory",
+     "url": "https://github.com/alimek/t3-factory/issues/760",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "TUI",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Explore browser/native app as alternative to TUI",
+     "url": "https://github.com/abu-lina/alfred-cli/issues/77",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "Tailscale",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "feat: add NetBird support (self-hosted alternative to Tailscale)",
+     "url": "https://github.com/autobrr/dashbrr/issues/226",
+     "created": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "subject": "Tauri",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Consider Slint as a lightweight native UI alternative to Tauri",
+     "url": "https://github.com/martinkoutecky/tine/issues/1038",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "TelerikAutoComplete",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add PixataAutoComplete, a replacement for TelerikAutoComplete",
+     "url": "https://github.com/MrYossu/Pixata.Utilities/issues/187",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "TelerikColorPicker",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add PixataColorPicker, a replacement for TelerikColorPicker",
+     "url": "https://github.com/MrYossu/Pixata.Utilities/issues/186",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "TelerikHebrewDatePicker",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "PixataDatePicker: Hebrew dates, shaded Shabbos, Yom Tov and bank holidays, and day tooltips, a replacement for TelerikHebrewDatePicker",
+     "url": "https://github.com/MrYossu/Pixata.Utilities/issues/201",
+     "created": "2026-11-22"
+    }
+   ]
+  },
+  {
+   "subject": "TelerikMediaQuery",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add PixataMediaQuery, a replacement for TelerikMediaQuery",
+     "url": "https://github.com/MrYossu/Pixata.Utilities/issues/183",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "TelerikTimePicker",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add PixataTimePicker, a replacement for TelerikTimePicker",
+     "url": "https://github.com/MrYossu/Pixata.Utilities/issues/185",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Test-lock",
+   "kinds": [
+    "買収に伴う変更"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Test-lock is acquired only by .githooks/pre-push; direct cargo test / nextest invocations bypass it",
+     "url": "https://github.com/F1R3FLY-io/f1r3node-rust/issues/1102",
+     "created": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "subject": "Timetables API being",
+   "kinds": [
+    "API の廃止"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Timetables API being deprecated by DB in favor of new OpenBoards API (shutdown ~mid-2027)",
+     "url": "https://github.com/Tutorialwork/deutsche_bahn_api/issues/18",
+     "created": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "subject": "Toggl Track",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add Clockoli as an alternative to Toggl Track",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/523",
+     "created": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "subject": "ToolAdapter",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "[M3/P0] ADR — Recipe Engine boundaries, source of truth and migration from ToolAdapter",
+     "url": "https://github.com/KyrboForge/Agenvil/issues/64",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Trello",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Target proposal: open-source alternative to Trello",
+     "url": "https://github.com/occupysaas/website/issues/30",
+     "created": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "subject": "X509_PUBKEY_get0_param",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Const-correct replacement for X509_PUBKEY_get0_param",
+     "url": "https://github.com/openssl/openssl/issues/33930",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "YAML",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Evaluate a Tablassert DSL as an alternative to YAML configs",
+     "url": "https://github.com/SkyeAv/Tablassert/issues/275",
+     "created": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "subject": "Zapier",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Add EXTREMELY Autonomous Agents as an alternative to Zapier",
+     "url": "https://github.com/Anil-matcha/awesome-open-source-saas-alternatives/issues/494",
+     "created": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "subject": "Zenodo",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Select backup repository (alternative to Zenodo)",
+     "url": "https://github.com/candeop/tunehub/issues/4",
+     "created": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "subject": "ZooKeeper",
+   "kinds": [
+    "移行先さがし"
+   ],
+   "distinct_repos": 1,
+   "examples": [
+    {
+     "title": "Test the migration from ZooKeeper 3.5 to Kafka 4.x end to end",
+     "url": "https://github.com/brokerium/brokerium/issues/150",
+     "created": "2026-11-20"
+    }
+   ]
+  }
+ ]
+}

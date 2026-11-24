@@ -119,8 +119,10 @@ function newKey() { return crypto.randomUUID().toUpperCase(); }
 
 async function createKey(db, tenant, { activation_limit, expires_at, meta, source = "manual", source_ref = null, key = null }) {
   const k = key || newKey();
+  const metaJson = JSON.stringify(meta || {});
+  if (metaJson.length > 4000) throw new Error("meta too large");
   await db.prepare("INSERT INTO license_keys (tenant_id, key, status, activation_limit, expires_at, created_at, source, source_ref, meta) VALUES (?, ?, 'inactive', ?, ?, ?, ?, ?, ?)")
-    .bind(tenant, k, activation_limit ?? null, expires_at ?? null, now(), source, source_ref, JSON.stringify(meta || {})).run();
+    .bind(tenant, k, activation_limit ?? null, expires_at ?? null, now(), source, source_ref, metaJson).run();
   return findKey(db, tenant, k);
 }
 
@@ -234,11 +236,14 @@ export default {
         return json({
           workspaces: await q("SELECT COUNT(*) AS n FROM tenants"),
           workspaces_with_keys: await q("SELECT COUNT(DISTINCT tenant_id) AS n FROM license_keys"),
+          workspaces_with_lemonsqueezy_import: await q("SELECT COUNT(DISTINCT tenant_id) AS n FROM license_keys WHERE source = 'lemonsqueezy'"),
+          workspaces_with_api_calls_last_7_days: (await db.prepare("SELECT COUNT(DISTINCT tenant_id) AS n FROM usage_daily WHERE day >= ?").bind(since).first()).n,
           keys_total: await q("SELECT COUNT(*) AS n FROM license_keys"),
           keys_imported_from_lemonsqueezy: await q("SELECT COUNT(*) AS n FROM license_keys WHERE source = 'lemonsqueezy'"),
           keys_issued_via_stripe: await q("SELECT COUNT(*) AS n FROM license_keys WHERE source = 'stripe'"),
           activations: await q("SELECT COUNT(*) AS n FROM instances"),
           license_api_calls_last_7_days: (await db.prepare("SELECT COALESCE(SUM(calls),0) AS n FROM usage_daily WHERE day >= ?").bind(since).first()).n,
+          note: "Self-test runs use a temporary workspace that is deleted immediately and are never counted here.",
         });
       }
       // 本番での動作確認：一時的なワークスペースで 有効化→確認→上限→解除→無効化 を通し、最後に消す（1分に1回まで）
@@ -326,6 +331,12 @@ export default {
         if (m && req.method === "POST") {
           const r = await db.prepare("UPDATE license_keys SET status = ? WHERE tenant_id = ? AND key = ?").bind(m[2] === "disable" ? "disabled" : "inactive", t.id, decodeURIComponent(m[1])).run();
           return json({ ok: !!(r.meta && r.meta.changes) });
+        }
+        // 自分のデータをいつでも持ち出せるようにする（乗り換え・障害時の備え）
+        if (rest === "admin/export" && req.method === "GET") {
+          const keys = await db.prepare("SELECT id, key, status, activation_limit, expires_at, created_at, source, source_ref, meta FROM license_keys WHERE tenant_id = ? ORDER BY id").bind(t.id).all();
+          const inst = await db.prepare("SELECT instances.id, instances.key_id, instances.name, instances.created_at FROM instances JOIN license_keys ON instances.key_id = license_keys.id WHERE license_keys.tenant_id = ? ORDER BY instances.created_at").bind(t.id).all();
+          return json({ tenant: t.id, exported_at: now(), license_keys: keys.results, instances: inst.results });
         }
         if (rest === "admin/delete" && req.method === "POST") {
           await db.prepare("DELETE FROM instances WHERE key_id IN (SELECT id FROM license_keys WHERE tenant_id = ?)").bind(t.id).run();

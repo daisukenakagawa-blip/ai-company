@@ -45,6 +45,7 @@ POST /&lt;ws&gt;/admin/settings              stripe_webhook_secret=whsec_... def
 POST /&lt;ws&gt;/admin/keys                  activation_limit=2 expires_at=2027-12-31T00:00:00Z
 POST /&lt;ws&gt;/admin/keys/&lt;key&gt;/disable
 GET  /&lt;ws&gt;/admin/stats
+GET  /&lt;ws&gt;/admin/export               (all your keys and activations as JSON)
 POST /&lt;ws&gt;/admin/delete               (deletes the workspace and all its data)
 POST /&lt;ws&gt;/webhooks/stripe             (Stripe webhook endpoint)
 GET  /&lt;ws&gt;/claim?session_id={CHECKOUT_SESSION_ID}</pre>
