@@ -32,3 +32,7 @@ CREATE TABLE IF NOT EXISTS usage_daily (
   tenant_id TEXT NOT NULL, day TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (tenant_id, day)
 );
+CREATE TABLE IF NOT EXISTS signups (
+  ip_hash TEXT NOT NULL, day TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (ip_hash, day)
+);

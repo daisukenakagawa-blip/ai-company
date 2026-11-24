@@ -6,6 +6,8 @@
 // 既存のキーと有効化（instance）は、販売者の Lemon Squeezy API キーで取り込む（終了日 2027-03-31 より前に）。
 // 新しい販売は、販売者自身の Stripe（Managed Payments など）の Webhook でキーを発行する。お金には触れない。
 
+import { LANDING, TERMS } from "./landing.js";
+
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), {
   status, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
 });
@@ -206,17 +208,37 @@ export default {
     const seg = url.pathname.split("/").filter(Boolean);
     try {
       // 登録（ベータ：無料）
+      if (!seg[0] && req.method === "GET") return new Response(LANDING, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      if (seg[0] === "terms" && req.method === "GET") return new Response(TERMS, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      // 需要の検証用：個人情報を含まない集計だけを公開する
+      if (seg[0] === "stats" && req.method === "GET" && seg.length === 1) {
+        const q = async (sql) => (await db.prepare(sql).first()).n;
+        const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+        return json({
+          workspaces: await q("SELECT COUNT(*) AS n FROM tenants"),
+          workspaces_with_keys: await q("SELECT COUNT(DISTINCT tenant_id) AS n FROM license_keys"),
+          keys_total: await q("SELECT COUNT(*) AS n FROM license_keys"),
+          keys_imported_from_lemonsqueezy: await q("SELECT COUNT(*) AS n FROM license_keys WHERE source = 'lemonsqueezy'"),
+          keys_issued_via_stripe: await q("SELECT COUNT(*) AS n FROM license_keys WHERE source = 'stripe'"),
+          activations: await q("SELECT COUNT(*) AS n FROM instances"),
+          license_api_calls_last_7_days: (await db.prepare("SELECT COALESCE(SUM(calls),0) AS n FROM usage_daily WHERE day >= ?").bind(since).first()).n,
+        });
+      }
       if (seg[0] === "signup" && req.method === "POST") {
+        const ip = req.headers.get("CF-Connecting-IP") || "local";
+        const ih = (await sha256hex("kr-signup:" + ip)).slice(0, 32), day = now().slice(0, 10);
+        const c = await db.prepare("SELECT n FROM signups WHERE ip_hash = ? AND day = ?").bind(ih, day).first();
+        if (c && c.n >= 5) return json({ error: "too many workspaces created today from this network" }, 429);
+        await db.prepare("INSERT INTO signups (ip_hash, day, n) VALUES (?, ?, 1) ON CONFLICT(ip_hash, day) DO UPDATE SET n = n + 1").bind(ih, day).run();
         const p = await readParams(req);
         const id = String(p.id || "").toLowerCase();
-        if (!/^[a-z0-9][a-z0-9-]{2,31}$/.test(id)) return json({ error: "id must be 3-32 chars of a-z, 0-9, -" }, 422);
+        if (!/^[a-z0-9][a-z0-9-]{2,31}$/.test(id) || ["stats", "terms", "signup", "admin", "api", "www"].includes(id)) return json({ error: "id must be 3-32 chars of a-z, 0-9, - (reserved words not allowed)" }, 422);
         if (await tenantOf(db, id)) return json({ error: "id already taken" }, 409);
         const token = "kr_" + crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
         await db.prepare("INSERT INTO tenants (id, name, admin_token_hash, default_activation_limit, created_at) VALUES (?, ?, ?, ?, ?)")
           .bind(id, String(p.name || id).slice(0, 80), await sha256hex(token), Number(p.default_activation_limit) || 1, now()).run();
         return json({ tenant: id, admin_token: token, license_api_base: `${url.origin}/${id}/v1/licenses` }, 201);
       }
-      if (!seg[0]) return json({ service: "KeyRelay", docs: "Lemon Squeezy License API compatible license key server" });
       const t = await tenantOf(db, seg[0]);
       if (!t) return json({ error: "tenant not found" }, 404);
       const rest = seg.slice(1).join("/");
@@ -253,6 +275,13 @@ export default {
         if (m && req.method === "POST") {
           const r = await db.prepare("UPDATE license_keys SET status = ? WHERE tenant_id = ? AND key = ?").bind(m[2] === "disable" ? "disabled" : "inactive", t.id, decodeURIComponent(m[1])).run();
           return json({ ok: !!(r.meta && r.meta.changes) });
+        }
+        if (rest === "admin/delete" && req.method === "POST") {
+          await db.prepare("DELETE FROM instances WHERE key_id IN (SELECT id FROM license_keys WHERE tenant_id = ?)").bind(t.id).run();
+          await db.prepare("DELETE FROM license_keys WHERE tenant_id = ?").bind(t.id).run();
+          await db.prepare("DELETE FROM usage_daily WHERE tenant_id = ?").bind(t.id).run();
+          await db.prepare("DELETE FROM tenants WHERE id = ?").bind(t.id).run();
+          return json({ deleted: true });
         }
         if (rest === "admin/stats" && req.method === "GET") {
           const k = await db.prepare("SELECT COUNT(*) AS n FROM license_keys WHERE tenant_id = ?").bind(t.id).first();
