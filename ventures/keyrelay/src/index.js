@@ -200,10 +200,27 @@ function claimPage(t, row) {
     { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
 }
 
+// 表がなければ作る（初回だけ。デプロイ先のアカウントで手作業の SQL を不要にする）
+const SCHEMA = [
+  "CREATE TABLE IF NOT EXISTS tenants (id TEXT PRIMARY KEY, name TEXT NOT NULL, admin_token_hash TEXT NOT NULL, stripe_webhook_secret TEXT, default_activation_limit INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS license_keys (id INTEGER PRIMARY KEY AUTOINCREMENT, tenant_id TEXT NOT NULL, key TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'inactive', activation_limit INTEGER, expires_at TEXT, created_at TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'manual', source_ref TEXT, meta TEXT NOT NULL DEFAULT '{}', UNIQUE (tenant_id, key))",
+  "CREATE INDEX IF NOT EXISTS idx_keys_ref ON license_keys (tenant_id, source_ref)",
+  "CREATE TABLE IF NOT EXISTS instances (id TEXT PRIMARY KEY, key_id INTEGER NOT NULL, name TEXT NOT NULL, created_at TEXT NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS idx_inst_key ON instances (key_id)",
+  "CREATE TABLE IF NOT EXISTS usage_daily (tenant_id TEXT NOT NULL, day TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (tenant_id, day))",
+  "CREATE TABLE IF NOT EXISTS signups (ip_hash TEXT NOT NULL, day TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (ip_hash, day))",
+];
+let schemaReady = null;
+function ensureSchema(db) {
+  if (!schemaReady) schemaReady = db.batch(SCHEMA.map((q) => db.prepare(q))).catch((e) => { schemaReady = null; throw e; });
+  return schemaReady;
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     const db = env.DB;
+    await ensureSchema(db);
     if (req.method === "OPTIONS") return new Response(null, { headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization", "Access-Control-Allow-Methods": "GET, POST" } });
     const seg = url.pathname.split("/").filter(Boolean);
     try {

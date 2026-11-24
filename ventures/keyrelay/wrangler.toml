@@ -5,4 +5,4 @@ compatibility_date = "2024-09-23"
 [[d1_databases]]
 binding = "DB"
 database_name = "keyrelay"
-database_id = "aa6a81a6-c352-41bf-98b8-c1b3f50feb63"
+# database_id は書かない：デプロイ時に Cloudflare が自動で作成して結び付ける（automatic provisioning）
