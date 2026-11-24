@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>希望休の集計とシフト表の枠｜LINE・フォームで集めた休みの希望から日ごとの人数と重なり、希望休入りのシフト表｜GENHAYL</title>
+<meta name="description" content="LINE やメモで集めた休みの希望（「青木：3, 10, 24日」）、フォームの回答、名前×日付の表を読み込んで、日ごとの希望の人数と名前、休める人数の上限を超えた日、1人ごとの日数、希望が出ていない人を一覧にし、希望休を書き込んだ来月のシフト表の枠（A4 横の印刷、式の入った Excel、CSV）を作ります。データは送信しません。500円・買い切り、お試し版あり。">
+<style>
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:28px 0 8px}
+.price{font-size:22px;font-weight:700;margin:16px 0 4px}
+.buy{display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:16px;margin:4px 0}
+.try{display:inline-block;color:#0f766e;border:1px solid #0f766e;text-decoration:none;padding:11px 18px;border-radius:8px;font-size:16px;margin:4px 0 4px 8px;background:#fff}
+.note{font-size:13px;color:#6b7280}footer{margin-top:40px;font-size:13px}
+img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+code{background:#eef2f1;padding:1px 4px;border-radius:4px;font-size:13px;word-break:break-all}
+pre{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;font-size:13px;white-space:pre-wrap}
+table{border-collapse:collapse;font-size:14px;background:#fff;width:100%}th,td{border:1px solid #e5e7eb;padding:6px 10px;text-align:left;vertical-align:top}
+@media (max-width:480px){table,tbody,tr,th,td{display:block;width:auto}th{border-bottom:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>希望休の集計とシフト表の枠</h1>
+<p>飲食店・小売店・介護・学童など、毎月シフトを組む人のためのツールです。LINE やメモ、フォームで集めた<b>休みの希望</b>を貼り付けるだけで、<b>日ごとにだれが休みたいか</b>、<b>休みが重なりすぎる日</b>を一覧にし、希望休を書き込んだ<b>来月のシフト表の枠</b>を作ります。</p>
+<ul>
+<li><b>いろいろな集め方をそのまま読む</b>：「青木：3, 10, 24日」「石井さん 12/24(木) ◎、12/25」「上田 12/5 午前」のような文、フォームの回答（名前と希望日の列）、名前×日付の表</li>
+<li><b>日ごとの一覧とカレンダー</b>：日ごとの希望の人数と名前、名簿があれば出勤できる人数。カレンダーの形でも見て印刷できます</li>
+<li><b>重なり・偏りを知らせる</b>：1日に休める人数（平日・土日祝で別々）、同じ職種で同じ日に休める人数、1人の希望の日数・土日祝の日数の上限を超えた所。希望が出ていない人も分かります</li>
+<li><b>希望休入りのシフト表の枠</b>：名前×日付の表に「希」「有」を書き込み、土日祝に色。A4 横で印刷、Excel（休みの日数・人数を数える式つき）・CSV で保存</li>
+</ul>
+<p>ソフトのインストールは不要で、いつものブラウザで動きます。</p>
+
+<div class="price">500円（税込・買い切り）</div>
+<p><a class="buy" id="buy" href="https://buy.stripe.com/aFa3cwc926TN07qcAC1gs0S">購入する（Stripe）</a><a class="try" href="demo.html">無料のお試し版</a></p>
+<p class="note">お試し版はすべての機能を使えて、計算するのは先頭5人までです。決済が終わると、そのまま製品版の画面に移動します。ブックマークしておけば、毎月のシフトに何度でも使えます。</p>
+
+<p><img src="screenshot-tool.png" alt="見本の休みの希望（架空の8人・12月）から作った、希望休入りのシフト表の枠。土日に色が付き、休みの希望の人数の行で、上限を超えた12月24日が赤くなっている画面" width="620"></p>
+<p><img src="screenshot-cal.png" alt="休みの希望のカレンダー。日ごとに希望の人数と名前を並べ、上限を超えた12月24日は赤い背景で、◎（必ず）の人から順に並んでいる画面" width="620"></p>
+<p class="note">見本のデータ（架空の名前）で作った例です。</p>
+
+<h2>こんなときに</h2>
+<ul>
+<li>毎月、LINE で届いた休みの希望を見ながら、シフト表のマスに1つずつ書き写している</li>
+<li>「24日に何人休みたいと言っているか」を、トークをさかのぼって数えている</li>
+<li>先月の表をコピーして、日付と曜日、祝日の色を直してから組み始めている</li>
+<li>希望を出していない人に、あとから気づく</li>
+</ul>
+
+<h2>読める書き方の例</h2>
+<pre>青木：3, 10, 24日
+石井さん 12/24(木) ◎、12/25
+上田 12/5 午前・12/12 午後
+江藤 12/28〜30
+小野 有休 12/18
+加藤 12/24 できれば、12/31
+工藤 なし</pre>
+<ul>
+<li>日付は「3」「3日」「12/3」「12月3日(木)」「2026/12/3」。続きの日は「12/28〜30」「3日から5日」</li>
+<li>「午前」「午後」は半日、「有休」は有休の希望、「◎」「必ず」は必ず休みたい日、「△」「できれば」はできれば休みたい日として読みます</li>
+<li>名簿を入れておけば、「青木」だけでも名簿の「青木 一郎」として読みます（読み替えた名前は一覧で知らせます）</li>
+<li>1か月の途中から始まる期間（16日〜翌月15日など）にも合わせられます。書かれた曜日が日付と合わないときや、期間の外の日付も知らせます</li>
+</ul>
+
+<h2>できること</h2>
+<ul>
+<li><b>読み込み</b>：貼り付け、CSV（UTF-8・Shift_JIS）、Excel ファイル（.xlsx）。フォームの回答の CSV（「お名前」「休み希望日」などの列）、名前×日付の表（休みたい日のマスに印。「出勤できる日」の印は外せます）</li>
+<li><b>表示と印刷</b>：シフト表の枠（A4 横）、カレンダー（A4 横）、日ごとの一覧、1人ごとの一覧、確かめたい所</li>
+<li><b>上限を超えた日の並べ方</b>：◎（必ず）→ 印なし → △（できれば）、同じ印なら先に書かれた順。だれの希望を通すかは決めず、話し合いの材料として並べます</li>
+<li><b>保存</b>：Excel ファイルに「シフト表（式つき）」「日ごと」「1人ごと」「確かめたい所」「1行1件」の5シート。CSV はシフト表の枠と1行1件</li>
+<li>シフトを書き入れたあとの表は <a href="../shift-tenken/">シフト表の集計と点検</a> で、出勤日数・勤務時間・連続勤務を数えられます</li>
+</ul>
+
+<h2>できないこと（購入前にご確認ください）</h2>
+<ul>
+<li>シフトを自動で組むことはしません。休みの希望をまとめて、枠を作るところまでです</li>
+<li>希望を集めること（LINE やフォームへの送信・受信）はしません。届いた文や回答を貼り付けてお使いください</li>
+<li>有休の日数の管理や、休みの取り方が法律・就業規則に合っているかの判断はしません</li>
+<li>文の書き方によっては読めないことがあります（読めなかった行は一覧にします）。「来週の月曜」「第2土曜」のような書き方は読みません</li>
+<li>Excel の色（土日祝）は付きません。色は画面と印刷で付きます</li>
+<li>スマートフォンでは操作しにくいため、パソコンでお使いください</li>
+</ul>
+
+<h2>Excel だけで数えるなら</h2>
+<p>名前×日付の表に休みの希望を「希」と書いているなら、日ごとの人数は B2:B20 がその日の列として <code>=COUNTIF(B2:B20,"希*")</code>、1人の日数は <code>=COUNTIF(B2:AF2,"希*")</code> で数えられます（「*」を付けると「希(前)」も数えます）。上限を超えた日に色を付けるには、人数の行を選んで「条件付き書式」→「セルの強調表示ルール」→「指定の値より大きい」で上限の数を入れます。</p>
+<p>手作業で大変なのは、<b>LINE やメモの文から表のマスへ書き写す</b>ところです。このツールは文のまま読み込んで、名前と日付を表に入れます。</p>
+
+<h2>よくある質問</h2>
+<table>
+<tr><th>データはどこかに送られますか？</th><td>送られません。読み込み・計算・印刷・保存はすべてお使いのブラウザの中で行います。上限の数字・表題などの設定だけをブラウザに保存し、名簿や希望の中身は保存しません。</td></tr>
+<tr><th>名簿は必要ですか？</th><td>なくても使えます（書かれた順に並べます）。名簿を入れると、その順でシフト表の枠を作り、出勤できる人数と、希望が出ていない人が分かります。名簿だけを入れて、希望休のない枠を作ることもできます。</td></tr>
+<tr><th>同じ人が2回書いたら？</th><td>1人にまとめ、同じ日は1日として数えます（まとめたことを一覧で知らせます）。</td></tr>
+<tr><th>何人まで使えますか？</th><td>製品版は人数の制限はありません（300人分の文の読み込みと集計を、手元のパソコンで0.1秒かからずに終えることを確かめています）。</td></tr>
+</table>
+
+<h2>安心してお使いいただくために</h2>
+<ul>
+<li>データはお使いのブラウザの中だけで処理し、サーバーには送信しません</li>
+<li>動作環境：最新版の Chrome・Safari・Edge・Firefox（パソコン）</li>
+<li>説明どおりに動かない場合は、ご購入から7日以内にご連絡いただければ返金します</li>
+</ul>
+<p class="note">組んだシフトの点検には <a href="../shift-tenken/">シフト表の集計と点検</a>、時間帯ごとの人数には <a href="../jikantai-ninzu/">時間帯ごとの人数と不足チェック</a>、祝日入りの年間カレンダーには <a href="../eigyo-calendar/">年間営業カレンダー</a> もあります。</p>
+
+<footer><a href="../">ほかの道具</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+</body>
+</html>

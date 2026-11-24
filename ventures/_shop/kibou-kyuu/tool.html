@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>希望休の集計とシフト表の枠</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;min-width:0}
+.box h2{font-size:16px;margin:0 0 10px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input,select{font-size:14px;max-width:100%}input.num{width:4.5em}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap;vertical-align:top}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.w{white-space:normal;min-width:220px}.sun{color:#b91c1c}.sat{color:#1d4ed8}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+.fr{border-collapse:collapse;font-size:12px}.fr th,.fr td{border:1px solid #d1d5db;padding:2px 3px;text-align:center;min-width:2.4em;white-space:nowrap}.fr td:first-child,.fr th:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1}
+.fr .we{background:#f3f4f6}.fr .mk{font-weight:700;color:#0f766e}.fr .ov{background:#fee2e2;color:#b91c1c;font-weight:700}.fr tr.cnt td{background:#f9fafb;font-weight:700}
+.cal{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12px}.cal th,.cal td{border:1px solid #d1d5db;padding:3px 4px;vertical-align:top}.cal td{height:78px}.cal .dn{font-weight:700}.cal .ct{float:right;font-weight:700}.cal .ov{background:#fee2e2}.cal .ot{color:#cbd5e1}.cal .hn{font-size:10px;color:#b91c1c}.cal .nm{font-size:11px;line-height:1.35;word-break:break-all}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h1 small{font-size:10pt;font-weight:400}
+  .per{margin:0 0 2mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt}.pt th,.pt td{border:.25mm solid #666;padding:.8mm 1.2mm;text-align:left;vertical-align:top}
+  .pt th{background:#eee}.pt td.n,.pt th.n{text-align:right}.pt tr{break-inside:avoid}.pt tr.fl td{background:#eee}.pt thead{display:table-header-group}
+  .pf{border-collapse:collapse;width:100%;table-layout:fixed;font-size:8pt}.pf th,.pf td{border:.25mm solid #555;padding:0;text-align:center;height:6.6mm;overflow:hidden;white-space:nowrap}
+  .pf th.nmc,.pf td.nmc{text-align:left;padding-left:1mm;width:26mm}.pf td.gc,.pf th.gc{width:13mm}.pf th.sm,.pf td.sm{width:9mm}.pf .we{background:#e5e5e5}.pf .mk{font-weight:700}.pf .ov{font-weight:700;text-decoration:underline}.pf thead{display:table-header-group}.pf tr{break-inside:avoid}.pf th{font-weight:400;font-size:7.5pt;height:auto;padding:.5mm 0}
+  .cal{font-size:8.5pt}.cal td{height:30mm}.cal th{background:#eee}.cal .ov{background:#e5e5e5}.cal .nm{font-size:8pt}
+  .sun,.sat{color:#000}
+}
+</style>
+<style id="pageSize">@page{size:A4 landscape;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>希望休の集計とシフト表の枠</h1>
+<p class="lead">LINE やメモで集めた<b>休みの希望</b>（「青木：3, 10, 24日」）、フォームの回答、名前×日付の表を読み込んで、<b>日ごとの希望の人数と名前</b>、<b>休みが重なりすぎる日</b>、<b>1人ごとの日数</b>を出し、希望休を書き込んだ<b>来月のシフト表の枠</b>を作ります。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 休みの希望を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、ここに貼り付け（LINE・メールの文、フォームの回答、Excel の表のどれでも）</label>
+  <textarea id="paste" rows="7" placeholder="青木：3, 10, 24日&#10;石井さん 12/24(木) ◎、12/25&#10;上田 12/5 午前・12/6&#10;江口 12/28〜30&#10;小野 なし"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けた希望を読む</button><button class="sub" id="clearIn">消す</button></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div class="row" id="skipRow" hidden><label>マスに書いてあっても希望休にしない記号 <input type="text" id="skipMarks" size="14" placeholder="出 ○"></label><span class="note">（名前×日付の表で「出勤できる日」に印を付けている場合など）</span></div>
+  <p class="note"><b>文</b>：1行に1人。「名前：日付, 日付」「名前 12/5 午前」。日付は「3」「3日」「12/3」「12月3日(木)」「2026/12/3」、続きは「12/24〜26」「3日から5日」。「午前」「午後」「有休」「◎（必ず）」「△（できれば）」も読みます。<b>フォームの回答</b>：「名前」と「希望日」の列（1つのマスに「12月3日, 12月10日」でもかまいません）。<b>表</b>：1行に1人、日付を横に並べ、休みたい日のマスに印。</p>
+</div>
+<div class="two">
+<div class="box">
+  <h2>2. 期間とスタッフ</h2>
+  <div class="row"><label>シフトの月 <input type="month" id="ym"></label><label>始まりの日 <input class="num" type="number" id="start" min="1" max="28" value="1"> 日</label><span class="note" id="ymNote"></span></div>
+  <div class="note" id="perNote"></div>
+  <label class="note" style="display:block;margin-top:8px">スタッフの名簿（任意。1行に1人、「名前」または「名前,職種」。この順でシフト表の枠を作り、希望が出ていない人も分かります）</label>
+  <textarea id="staff" rows="6" placeholder="青木 一郎,ホール&#10;石井 花,ホール&#10;上田 健,キッチン"></textarea>
+  <div id="staffMsg" class="note" style="font-size:13px"></div>
+</div>
+<div class="box">
+  <h2>3. 上限（任意）</h2>
+  <div class="row"><label>1日に休める人数　平日 <input class="num" type="number" id="capW" min="0" placeholder="なし"> 人</label><label>土日祝 <input class="num" type="number" id="capH" min="0" placeholder="なし"> 人</label></div>
+  <div class="row"><label>同じ職種で同じ日に休める人数 <input class="num" type="number" id="capG" min="0" placeholder="なし"> 人</label></div>
+  <div class="row"><label>1人の希望の日数 <input class="num" type="number" id="capP" min="0" placeholder="なし"> 日まで</label><label>うち土日祝 <input class="num" type="number" id="capPH" min="0" placeholder="なし"> 日まで</label></div>
+  <p class="note">上限を超えた日は、名前を「◎（必ず）→ 印なし → △（できれば）」、同じ印なら<b>上の行（先に書かれた順）</b>に並べて知らせます。だれの希望を通すかは決めません。半日の希望も1人に数えます。空欄・0 で見ません。</p>
+  <h2 style="margin-top:14px">シフト表の枠</h2>
+  <div class="row"><label>希望休のマスに書く文字 <select id="mark"><option value="希">希（有休は「有」）</option><option value="休">休（有休は「有」）</option><option value="raw">書かれたとおり</option></select></label></div>
+  <div class="row"><label>下に足す空の行 <input type="text" id="extra" size="26" placeholder="早番の人数, 遅番の人数"></label></div>
+</div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="vsel"><option value="frame">シフト表の枠</option><option value="cal">カレンダー</option><option value="daily">日ごとの一覧</option><option value="person">1人ごとの一覧</option><option value="flag">確かめたい所</option></select></label></div>
+  <div id="view"></div>
+</div>
+<div class="box">
+  <h2>4. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="12月 シフト表"></label><label>店・職場の名前 <input type="text" id="by" size="18" placeholder="〇〇店"></label></div>
+  <div class="row"><button id="pFrame">シフト表の枠を印刷（A4 横）</button><button class="sub" id="pCal">カレンダーを印刷（A4 横）</button><button class="sub" id="pDaily">日ごとの一覧を印刷</button><button class="sub" id="pPerson">1人ごとの一覧を印刷</button><button class="sub" id="pFlag">確かめたい所を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cFrame">シフト表の枠を CSV で保存</button><button class="sub" id="cRec">1行1件の一覧を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">Excel の「シフト表」のシートには、1人ごとの休みの日数と日ごとの休みの人数を数える式（「希」「有」「休」で始まるマス）が入っています。シフトを書き入れたあとの CSV は <a href="../shift-tenken/">シフト表の集計と点検</a> で読み込めます（「希」は休みとして数えます）。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="eigyo.js"></script>
+<script src="kibou.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
