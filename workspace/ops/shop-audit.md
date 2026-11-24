@@ -11,3 +11,4 @@
 | 運用費 | 0円（Cloudflare 無料枠。Functions は1日10万リクエストまで無料で、今の訪問数では十分） |
 | 売上 | 0円（Stripe の支払い0件） |
 | 方針 | 新規開発は停止。追加開発は最低限 |
+- 2026-11-24: オーナーが Stripe 制限付きキー（Checkout Sessions 読み取りのみ）を Cloudflare Pages のシークレット STRIPE_KEY に設定。再デプロイして購入確認を有効化
