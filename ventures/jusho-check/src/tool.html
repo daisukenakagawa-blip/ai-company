@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}｜住所録の郵便番号・住所チェック｜GENHAYL</title>
+<meta name="robots" content="{{ROBOTS}}">
+<style>
+:root{--g:#0f766e}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#f7f7f5;color:#1f2937;line-height:1.7}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 8px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin:16px 0}
+.note{font-size:13px;color:#6b7280}
+.banner{background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:12px 16px;margin:12px 0}
+.banner a{color:#9a3412;font-weight:700}
+button,.btn{font:inherit;border:1px solid var(--g);background:var(--g);color:#fff;border-radius:8px;padding:8px 16px;cursor:pointer}
+button.sub{background:#fff;color:var(--g)}
+button:disabled{opacity:.45;cursor:default}
+textarea{width:100%;box-sizing:border-box;height:110px;font:13px ui-monospace,Menlo,Consolas,monospace;border:1px solid #d1d5db;border-radius:8px;padding:8px}
+#drop{border:2px dashed #cbd5e1;border-radius:10px;padding:18px;text-align:center;background:#fafafa}
+#drop.over{border-color:var(--g);background:#ecfdf5}
+select{font:inherit;padding:4px 6px;border-radius:6px;border:1px solid #d1d5db;max-width:100%}
+.chk{display:inline-block;margin:2px 14px 2px 0;white-space:nowrap}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.row>div{flex:1 1 300px}
+#summary{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.sum{background:#fff;color:#1f2937;border:1px solid #d1d5db;padding:6px 12px}
+.sum.on{outline:2px solid var(--g)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;background:#fff;width:100%}
+th,td{border:1px solid #e5e7eb;padding:5px 8px;text-align:left;vertical-align:top}
+th{background:#f3f4f6;position:sticky;top:0}
+td:nth-child(3),td:nth-child(6){white-space:nowrap}
+tr.lv-ng td{background:#fef2f2}tr.lv-warn td{background:#fffbeb}tr.lv-fill td{background:#eff6ff}
+.lv-ng b{color:#b91c1c}.lv-warn b{color:#b45309}.lv-fill b{color:#1d4ed8}.lv-ok b{color:#047857}
+footer{margin-top:32px;font-size:13px}footer a{color:var(--g)}
+</style>
+</head>
+<body>
+<main>
+<p class="note"><a href="{{TOP}}">GENHAYL の小さな道具</a> ＞ <a href="{{PAGE}}">住所録の郵便番号・住所チェック</a></p>
+<h1>{{TITLE}}</h1>
+{{BANNER}}
+<p class="note" id="dataState">郵便番号データを読み込んでいます…</p>
+<p class="note">住所録はこのブラウザの中だけで点検します。どこにも送信・保存しません。</p>
+
+<div class="card">
+<h2>1. 住所録を読み込む</h2>
+<div class="row">
+<div>
+<div id="drop">CSV・Excel（.xlsx）ファイルをここへドロップ<br><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xls"></div>
+<p class="note">CSV は UTF-8・Shift_JIS のどちらでも読めます。Excel は1枚目のシートを読みます。</p>
+</div>
+<div>
+<textarea id="paste" placeholder="Excel の表をコピーして、ここに貼り付けることもできます（見出しの行ごと）"></textarea>
+<button id="pasteGo" class="sub">貼り付けた表を使う</button> <button id="sample" class="sub">見本で試す</button>
+</div>
+</div>
+</div>
+
+<div class="card" id="step2" hidden>
+<h2>2. 列を確かめる</h2>
+<p class="note" id="tableInfo"></p>
+<label class="chk"><input type="checkbox" id="hasHeader" checked> 1行目は見出し</label>
+<p><b>郵便番号の列</b><br><select id="zipCol"></select></p>
+<p><b>住所の列</b>（都道府県・市区町村・番地・建物名などに分かれていれば、すべてにチェック。左の列から順につなげて読みます）<br><span id="addrCols"></span></p>
+<p><button id="run" disabled>点検する</button></p>
+</div>
+
+<div class="card" id="step3" hidden>
+<h2>3. 結果</h2>
+<p class="note" id="runNote"></p>
+<div id="summary"></div>
+<p class="note" id="filterNote"></p>
+<p><button id="saveX">Excel で保存</button> <button id="saveC" class="sub">CSV で保存</button>
+<span class="note">元の列はそのままに、右に「判定」「説明」「補完した郵便番号」などの列を足したファイルを保存します。元のファイルは書き換えません。</span></p>
+<div class="tw" id="resultTable"></div>
+<p class="note">判定は日本郵便の郵便番号データとの照合です。番地や建物の実在までは確かめません。「補完」「候補」は、元の列に貼り付ける前に目で確かめてください。</p>
+</div>
+
+<footer><a href="{{PAGE}}">商品ページ（使い方・できないこと）</a>　<a href="{{TOP}}tokushoho.html">特定商取引法に基づく表記</a></footer>
+</main>
+<script src="{{VENDOR}}xlsx.full.min.js"></script>
+<script>window.JC_DATA_URL="{{DATA}}";</script>
+<script src="{{CHECK}}"></script>
+<script src="{{APPJS}}"></script>
+</body>
+</html>
