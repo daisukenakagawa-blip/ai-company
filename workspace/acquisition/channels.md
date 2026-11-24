@@ -13,7 +13,7 @@
 | 2 | 拡張機能市場 | Chrome Web Store、VS Code Marketplace | 候補 | | 未調査 |
 | 3 | 正規のプラグイン市場 | WordPress.org、Figma Community | | | 未調査 |
 | 4 | API ディレクトリ | RapidAPI、公開 API 一覧 | | 候補 | 未調査 |
-| 5 | 開発者向けパッケージ市場 | npm、PyPI、Packagist（LS 互換クライアント） | | 候補 | 未調査 |
+| 5 | 開発者向けパッケージ市場 | npm、PyPI、Packagist（LS 互換クライアント） | 不可 | 効果小 | 評価済み 11/25：単独では不可。個人の drop-in fork は本家の0.1%前後の DL（`workspace/day-012/marketing/channel5_package_registry.md`） |
 | 6 | 既存サービスへの連携機能 | LS の移行ドキュメント、Stripe の連携 | | 候補 | 未調査 |
 | 7 | 検索需要が確認できる無料ツール | 店の無料お試し、エラー別の解決ページ | 候補 | 候補 | 未調査 |
 | 8 | 利用者が他の利用者を呼ぶ仕組み | 印刷物・共有ファイルに出所を表示 | 候補 | | 未調査 |
