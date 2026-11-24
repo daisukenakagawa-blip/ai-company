@@ -68,7 +68,7 @@
 - 仕組み：`ventures/_marketing/note/queue/*.md`（先頭に title と tags）を番号順に、`python3 ventures/_marketing/note/post_note.py` で1本ずつ公開。記録は `ventures/_marketing/note_posts.md`、公開済みは `posted/` に移る
 - **公開は7日に1本まで**（スクリプトが判定）。毎朝の手順で1回だけ実行してよい。失敗したら再試行を繰り返さず、日報で報告する
 - 記事は1本ずつ実際に役立つもの：無料の直し方が中心、道具の紹介は最後に1回、価格・返金・特商法表記を明記。体験談・実績・売上の数字は書かない（売上の公開で購入をあおるのは note の規約で利用停止の対象）。店内ガイドの言い換えは出さない
-- 前提（オーナーの設定）：実行環境のネットワーク許可に note.com・editor.note.com を追加、環境変数 NOTE_EMAIL・NOTE_PASSWORD を設定。ログイン情報はリポジトリやメモに絶対に書かない
+- 前提（オーナーの設定）：実行環境のネットワーク許可に note.com・editor.note.com・*.st-note.com を追加（claude.ai の 設定 → 機能 →「許可ウェブサイト」。2026-11-24 に note.com・editor.note.com は追加済み）、環境変数 NOTE_EMAIL・NOTE_PASSWORD を設定。ログイン情報はリポジトリやメモに絶対に書かない
 
 ### 禁止事項
 - 賭け・予想、情報商材・「稼げる」系、医療・法律・投資の助言、アダルト、他社の名前やロゴを使うもの、個人情報を集めるもの

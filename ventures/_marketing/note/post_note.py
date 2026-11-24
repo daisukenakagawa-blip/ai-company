@@ -5,7 +5,7 @@
 #   python3 ventures/_marketing/note/post_note.py             # 条件を満たせば1本だけ公開する
 #
 # 前提（オーナーの作業）:
-#   - 実行環境のネットワーク許可に note.com と editor.note.com を追加
+#   - 実行環境のネットワーク許可に note.com・editor.note.com・*.st-note.com を追加（st-note.com は画面の JS・画像の置き場所。ないとログインボタンが押せない）
 #   - 実行環境の環境変数に NOTE_EMAIL と NOTE_PASSWORD を設定（リポジトリには絶対に書かない）
 #
 # 安全装置:
