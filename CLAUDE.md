@@ -80,7 +80,8 @@
 ## 研究中：KeyRelay（2026-11-24、オーナーの指示書「完全自律型収益システム」に沿って選定）
 - 調査と採点は `workspace/research/2026-11-24b/report.md`。試作は `ventures/keyrelay/`（Cloudflare Workers + D1、手元で確認済み・未公開）
 - 2026-11-24 オーナー承認：Cloudflare（無料枠）で公開し、ソースを GitHub で公開し、無料ベータで2週間（〜2026-12-08）需要を測る。D1 データベース keyrelay（aa6a81a6-…）は作成済み。Worker のデプロイはオーナーが Cloudflare の画面で行う
-- 測る数字は公開の集計 `GET /stats`（ワークスペース数・取り込まれたキー数・確認 API の回数）。毎朝の日報に載せる。架空の数字は書かない
+- 公開URL：https://keyrelay.daisuke-nakagawa.workers.dev/ （2026-11-24 公開。genhayl-shop と同じ Cloudflare アカウント、GitHub 連携で main に push すると自動で再デプロイ。D1 は自動作成）
+- 測る数字は公開の集計 `GET /stats`（curl が止められる場合は WebFetch で読む）（ワークスペース数・取り込まれたキー数・確認 API の回数）。毎朝の日報に載せる。架空の数字は書かない
 - 有料プラン、Stripe App Marketplace への申請、宣伝の投稿は、まだオーナー承認待ち
 
 ### 禁止事項
