@@ -18,6 +18,7 @@
 3. **各社員の作業**（成果物は `workspace/day-NNN/<role>/` に、そのまま使える形で書く。NNN は今日の日数で、前日＋1）
    - cfo：主要指標と純利益（下の「収益性の評価」）を集める。KeyRelay は `https://keyrelay.daisuke-nakagawa.workers.dev/stats`（curl が止められたら WebFetch）。Stripe の売上・決済。費用。**自己テスト・自分の操作は実績に数えない**
    - researcher：Market Gap Engine を回す。`python3 ventures/_gap/scan.py 14` → `workspace/market-gaps/signals-*.md` の上位から、本物の市場変化を見分け、一次資料（公式ブログ・公式 Changelog・公式ドキュメント）で確かめ、`workspace/market-gaps/ledger.md` に評価を追記する（件数の上限は固定しない。収集・重複除去・一次選別はプログラムで行い、Claude は分析・考案・反証・判断に使う。件数のために信頼性を下げない）（評価の項目は下の「市場機会の評価」）
+   - researcher（週1回）：Demand Map `python3 ventures/_gap/demand_map.py`（Apify Store の公開 API、約4分）。利用者数は購入者数ではない。他社サイトのデータ取得の需要は数えるだけで、当社は作らない
    - marketing：Customer Acquisition Engine（`workspace/acquisition/channels.md`）の経路を1つ研究・評価し、使えるものは実装案にする（下の「自動集客の研究」）。外部への公開・投稿は承認依頼にする
    - product：既存事業の保守と、合格条件を満たした機会の最小構成の試作（手元でのテストまで）
    - 毎週1回：別の収益構造（他者の取引に組み込まれる収益インフラ、積み上がるデータ資産、機械どうしの取引、ネットワーク型、繰り返し売れる独自技術、新しい市場）を1つ調べ、`workspace/research/structures.md` に追記する

@@ -9,3 +9,4 @@
 | 2026-11-24 23:59 | （対話）hn.algolia.com 許可の確認 | 成功 | 公式 API で LS 終了の HN 反応を取得し ledger に追記 |
 | 2026-11-25 00:10 | （対話）KeyRelay の到達経路の調査 | 成功 | LS 公式の移行文書・GitHub・npm・HN を確認。最有力は Stripe App Marketplace。12/2 の LS 公式案内を確認予定 |
 | 2026-11-25 | （対話）Ver.2.1 の反映と収益構造の検証 | 成功 | 5構造を検証し全て不合格。KeyRelay の直接競合 Clavem を確認。Demand Map を提案。店の復旧手順と費用対効果 |
+| 2026-11-25 | （対話）api.apify.com 許可後に Demand Map 第1回 | 成功 | 115,501本を取得。需要の中心は他社 SNS 等のデータ取得で当社は参入不可と判断 |
