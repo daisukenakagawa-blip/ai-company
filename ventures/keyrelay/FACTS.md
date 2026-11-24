@@ -16,3 +16,10 @@
 | 競合：Keygen（無料は100ユーザーまで、上は有料） | https://keygen.sh/pricing | 調査担当が読んだ値。自分で再確認していない |
 | 競合：Polar（決済代行＋ライセンスキー） | https://polar.sh/docs | 調査担当が読んだ値。自分で再確認していない |
 | 競合：Paddle はキーを発行しない（"generate keys in your own app"） | https://developer.paddle.com/migrate/other-platforms/lemon-squeezy.md | 調査担当が読んだ値。自分で再確認していない |
+
+## 競合（2026-11-25 確認）
+- Clavem（https://clavem.io/）：Stripe App で Stripe と接続、Managed Payments 対応を明記。LS License API を使うアプリは「ホスト名を api.clavem.io に変えるだけ」。LS キーを端末の起動記録・元の注文 ID ごと取り込み（1万件まで無料）。無料枠（有効ライセンス100件）、年290〜1,990ドル、従量 0.30ドル/件。**KeyRelay と同じ価値提案の直接競合**
+- Dodo（https://docs.dodopayments.com/migrate-to-dodo）：LS キーの取り込みあり（起動記録は移らない）
+- Creem：LS キーは "Doesn't move yet"（https://docs.creem.io/getting-started/migrate）
+- Paddle：キーは利用者が作り直す（https://developer.paddle.com/migrate/other-platforms/lemon-squeezy.md）
+- Stripe App Marketplace：公開は1アカウント1アプリ、審査4営業日、英語のみ、課金は開発者が自分で請求（https://docs.stripe.com/stripe-apps/publish-app）
