@@ -59,3 +59,4 @@
 - `furikae-nokori/index.html`・`demo.html`（お試し）・`tool.html`・`furikae.js`・`app.js`・`vendor/` … 振替レッスンの残り回数（500円）
 - `kiroku-best/index.html`・`demo.html`（お試し）・`tool.html`・`kiroku.js`・`app.js`・`vendor/` … 記録の自己ベストと伸び（500円）
 - `lesson-kaisu/index.html`・`demo.html`（お試し）・`tool.html`・`kaisu.js`・`eigyo.js`・`app.js`・`vendor/` … 月ごとのレッスン日と回数（500円）
+- `koushu-nittei/index.html`・`demo.html`（お試し）・`tool.html`・`koushu.js`・`app.js`・`vendor/` … 講習会の受講日程表（500円）

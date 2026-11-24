@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>講習会の受講日程表</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=month],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap;vertical-align:top}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.w{white-space:normal;min-width:180px}
+.lt.mx td.c,.lt.mx th.c{text-align:center;font-size:12px;border-left:1px solid var(--line);min-width:64px}.lt.mx td.cl{background:#fee2e2;color:#991b1b;font-weight:700}
+.tm{display:block;font-size:11px;color:var(--sub)}.lt tr.tot td{background:#f0fdfa;font-weight:700}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}
+  .per{margin:0 0 2mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:1mm 1.5mm;text-align:right;white-space:nowrap;vertical-align:top}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt td.c,.pt th.c{text-align:center;min-width:11mm}.pt tr{break-inside:avoid}.pt td.memo{min-width:30mm}
+  .pt.small{font-size:7pt}.pt.small td,.pt.small th{padding:.5mm .8mm}.pt td.cl{background:#ddd;font-weight:700}.pt tr.tot td{background:#eee;font-weight:700}
+  .pt .tm{display:inline;font-size:6pt;color:#333;margin-left:1mm}.pt.roster td{height:7mm;vertical-align:middle}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .slips.p2{display:grid;grid-template-rows:138mm 138mm;gap:0}.slips.p1 .slip{min-height:270mm;border:0}
+  .slip{border-bottom:.3mm dashed #888;padding:5mm 6mm;font-size:10pt;overflow:hidden;break-inside:avoid}
+  .slip .t{font-size:11pt;font-weight:700}.slip .nm{font-size:15pt;font-weight:700;margin:1.5mm 0 1mm}.slip .gr{font-size:10pt;font-weight:400;margin-left:3mm}
+  .slip .cs{font-size:9pt;margin-bottom:2mm}
+  .slip table{border-collapse:collapse;width:100%;font-size:9.5pt}.slip th{border-bottom:.3mm solid #000;text-align:left;padding:.6mm 1.5mm;font-size:8.5pt}.slip td{border-bottom:.2mm solid #bbb;padding:.8mm 1.5mm}
+  .slip td.ck{width:8mm;border-left:.2mm solid #bbb}.slip tr.cl td{background:#ddd;font-weight:700}
+  .slip.many table{font-size:8pt}.slip.many td{padding:.2mm 1.5mm}
+  .slip .sum{font-size:10.5pt;font-weight:700;text-align:right;margin-top:1.5mm}.slip .clmsg{font-size:8.5pt}.slip .msg{font-size:9pt;margin-top:1.5mm;white-space:pre-wrap}.slip .by{text-align:right;font-size:9pt;margin-top:1mm}
+}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>講習会の受講日程表</h1>
+<p class="lead">冬期・春期・夏期講習の<b>申込の一覧</b>（生徒×講座の ○、または1行1件）と<b>講座の日程</b>から、<b>生徒ごとの受講日程表</b>（1人1枚）、講座ごとの人数と名簿（出席簿）、生徒×日付の一覧、日ごとの時間割を作り、<b>同じ時間に2つ申し込んだ所</b>を知らせます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 講座の日程を書く</h2>
+  <div class="row"><label>始めの月 <input type="month" id="start"></label><span class="note">年を書かない日付は、この月より前の月なら翌年にします（12月始まりなら 1/5 は翌年の1月5日）</span></div>
+  <textarea id="sch" class="mono" rows="7" placeholder="中3数学 12/25〜12/28 13:00〜14:30 A教室&#10;中3英語 12/25・26・27 15:00〜16:30 B教室 定員12&#10;小6算数 12/26, 1/5 10時〜11時半&#10;理科 12/26〜1/7 日曜除く 9:00 90分"></textarea>
+  <p class="note">1行に「<b>講座名　日付　時刻　場所・講師</b>」。日付は「12/25」「12月25日」「2027/1/5」、続けて「12/25〜12/28」（毎日）、「12/25・26・27」「12/26, 1/5」。「日曜除く」「土日除く」で曜日を外せます。時刻は「13:00〜14:30」「10時〜11時半」「9:00 90分」。「定員12」と書くと、申込が多いときに知らせます。同じ講座で日によって時刻が違うときは、講座名を同じにして行を分けます。Excel の表（講座・日付・時刻・場所の列）をコピーして貼り付けても読めます。</p>
+  <div id="schMsg" class="note" style="font-size:13px"></div>
+</div>
+<div class="box">
+  <h2>2. 申込の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="名前&#9;学年&#9;中3数学&#9;中3英語&#10;青木 一郎&#9;中3&#9;○&#9;○&#10;石井 蓮&#9;中3&#9;○&#9;"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden><div id="cols"></div></div>
+  <p class="note">読める形は2つです。①<b>生徒×講座</b>：1行に1人、講座ごとの列に ○・✓・1 など（空欄・×・0・なし は申込なし）。見出しの講座名を 1. の日程の講座名と合わせます。②<b>1行1件</b>：「名前」と「講座」の列。1つのマスに「中3数学、中3英語」のように並べても読めます。同じ名前（と学年）の行は1人にまとめます。</p>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="st">生徒ごと</option><option value="mx">生徒×日付の一覧</option><option value="co">講座ごとの人数</option><option value="dy">日ごとの時間割</option></select></label>
+    <label>並べ方 <select id="sort"><option value="orig">元の表の順</option><option value="grade">学年・組の順</option><option value="name">名前の順</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="冬期講習 受講日程表"></label><label>教室の名前 <input type="text" id="by" size="18" placeholder="〇〇学習教室"></label>
+    <label>日程表の大きさ <select id="perPage"><option value="2">A4 に2人分（切り取り）</option><option value="1">A4 に1人分</option></select></label></div>
+  <div class="row" style="align-items:flex-start"><label style="flex:1;min-width:260px">日程表に添える文（任意）<textarea id="msg" rows="2" placeholder="例：欠席するときは、前日までにご連絡ください。"></textarea></label></div>
+  <div class="row"><button id="pSlip">生徒ごとの受講日程表を印刷（1人1枚）</button><button class="sub" id="pRoster">講座ごとの名簿（出席簿）を印刷</button><button class="sub" id="pMx">生徒×日付の一覧を印刷</button><button class="sub" id="pDay">日ごとの時間割を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cDetail">受講の明細（1行1コマ）を CSV で保存</button><button class="sub" id="cCo">講座ごとの人数を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">受講日程表は、日付・時刻・講座・場所と出席の ✓ 欄つき。時間が重なる行は網かけにします。講座ごとの名簿は、講座ごとに1ページで、日付ごとの出欠の欄つき。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="koushu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
