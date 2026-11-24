@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>PDF表の変換（作業用）</title>
+<style>
+:root{--bg:#f6f7f5;--card:#fff;--fg:#1f2937;--mute:#6b7280;--line:#e5e7eb;--g:#0f766e;--ok:#047857;--ng:#b91c1c;--warn:#b45309}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0}
+.mute{color:var(--mute);font-size:13px}
+#drop{border:2px dashed #cbd5e1;border-radius:10px;padding:22px;text-align:center}
+#drop.over{border-color:var(--g);background:#ecfdf5}
+button{font:inherit;border:1px solid var(--g);background:var(--g);color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer}
+button.sub{background:#fff;color:var(--g)}
+.tw{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;font-size:12.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:3px 7px;white-space:nowrap;text-align:left}
+th{background:#f3f4f6;position:sticky;top:0}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--ok);font-weight:700}.ng{color:var(--ng);font-weight:700}.warn{color:var(--warn);font-weight:700}
+textarea{width:100%;box-sizing:border-box;height:120px;font:13px/1.6 -apple-system,"Hiragino Sans",sans-serif;border:1px solid var(--line);border-radius:8px;padding:8px}
+label{margin-right:14px}
+</style>
+</head>
+<body>
+<main>
+<h1>PDF表の変換（作業用）</h1>
+<p class="mute">ココナラの注文用の作業ページです（一般には公開していません）。PDF はこのブラウザの中だけで処理し、どこにも送信しません。</p>
+
+<div class="card">
+<h2>1. お客さまの PDF を入れる</h2>
+<div id="drop">PDF をここへドロップ（複数可）<br><input type="file" id="file" accept="application/pdf" multiple></div>
+<p><label><input type="checkbox" id="join" checked> 列の数が同じページは1つの表につなげる</label>
+<label><input type="checkbox" id="dedupe" checked> 2ページ目以降のくり返しの見出しを消す</label>
+<label><input type="checkbox" id="asnum" checked> 数字は数値として保存（先頭が0の番号は文字のまま）</label></p>
+</div>
+
+<div class="card" id="res" hidden>
+<h2>2. 確認する</h2>
+<div id="summary"></div>
+<div id="tables"></div>
+</div>
+
+<div class="card" id="out" hidden>
+<h2>3. 保存して納品する</h2>
+<p><button id="saveX">Excel で保存</button> <button id="saveC" class="sub">CSV で保存</button></p>
+<p class="mute">納品メッセージの下書き（トークルームに貼る前に読み直してください）</p>
+<textarea id="msg"></textarea>
+<p><button id="copy" class="sub">下書きをコピー</button> <span id="copied" class="mute"></span></p>
+</div>
+</main>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="core.js"></script>
+<script type="module">
+import * as pdfjs from "./vendor/pdf.min.mjs";
+pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdf.worker.min.mjs", import.meta.url).toString();
+const CMAP = new URL("./vendor/cmaps/", import.meta.url).toString();
+const $ = s => document.querySelector(s);
+let results = [];   // {name, pages:[{rows, ncol, text:boolean}], tables:[{rows, pages:[...]}]}
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+async function readPdf(file){
+  const doc = await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer()), cMapUrl:CMAP, cMapPacked:true}).promise;
+  const pages=[];
+  for(let p=1;p<=doc.numPages;p++){
+    const pg=await doc.getPage(p);
+    const tc=await pg.getTextContent();
+    const ol=await pg.getOperatorList();
+    const t=P2X.pageToTable(tc.items, ol, pdfjs.OPS);
+    pages.push({no:p, rows:t.rows, ncol:t.ncol, text: tc.items.some(i=>(i.str||"").trim())});
+  }
+  return {name:file.name.replace(/\.pdf$/i,""), pages};
+}
+function sameRow(a,b){return a.length===b.length && a.every((x,i)=>x===b[i]);}
+function buildTables(r){
+  const join=$("#join").checked, dedupe=$("#dedupe").checked;
+  const tables=[];
+  for(const pg of r.pages){
+    if(!pg.text||!pg.rows.length) continue;
+    const last=tables[tables.length-1];
+    if(join && last && last.ncol===pg.ncol){
+      let rows=pg.rows;
+      if(dedupe && last.rows.length && rows.length && sameRow(rows[0], last.header)) rows=rows.slice(1);
+      last.rows=last.rows.concat(rows); last.pages.push(pg.no);
+    } else tables.push({ncol:pg.ncol, rows:pg.rows.slice(), header:pg.rows.find(x=>x.filter(Boolean).length>=2)||pg.rows[0], pages:[pg.no]});
+  }
+  r.tables=tables.map(t=>({...t, checks:P2X.verify(t.rows)}));
+}
+function render(){
+  let html="", sum="";
+  let nPages=0,nNoText=0,nRows=0,nOk=0,nNg=0;
+  for(const r of results){
+    buildTables(r);
+    nPages+=r.pages.length; nNoText+=r.pages.filter(p=>!p.text).length;
+    r.tables.forEach((t,ti)=>{
+      nRows+=t.rows.length; t.checks.forEach(c=>c.ok?nOk++:nNg++);
+      const bad=new Set(t.checks.filter(c=>!c.ok).map(c=>c.row+":"+c.col)), good=new Set(t.checks.filter(c=>c.ok).map(c=>c.row+":"+c.col));
+      html+=`<h3 style="font-size:14px;margin:14px 0 6px">${esc(r.name)}　表${ti+1}（${t.pages.join("・")}ページ、${t.rows.length}行×${t.ncol}列）</h3>`;
+      html+=`<p class="mute">${t.checks.length? t.checks.map(c=>`<span class="${c.ok?"ok":"ng"}">${c.ok?"✓":"✗"} ${c.row+1}行目${c.col+1}列目の合計 ${c.total.toLocaleString()}（上の行の和 ${c.sum.toLocaleString()}）</span>`).join("　") : "合計の行が見つからないため検算なし。目で数か所を照合してください。"}</p>`;
+      html+='<div class="tw"><table><tbody>'+t.rows.map((row,i)=>"<tr><th>"+(i+1)+"</th>"+row.map((v,j)=>{const k=i+":"+j;const n=P2X.toNum(v)!=null;return `<td class="${n?"n":""}" style="${bad.has(k)?"background:#fee2e2":good.has(k)?"background:#dcfce7":""}">${esc(v)}</td>`;}).join("")+"</tr>").join("")+"</tbody></table></div>";
+    });
+    if(r.pages.some(p=>!p.text)) html+=`<p class="warn">${esc(r.name)}：文字情報のないページがあります（${r.pages.filter(p=>!p.text).map(p=>p.no).join("・")}ページ）。スキャン画像のため、このサービスの対象外です。</p>`;
+  }
+  sum=`<p>${results.length} ファイル・${nPages} ページ → ${nRows} 行。検算 <span class="ok">一致 ${nOk}</span>　<span class="${nNg?"ng":"mute"}">不一致 ${nNg}</span>${nNoText?`　<span class="warn">文字なしページ ${nNoText}</span>`:""}</p>`;
+  $("#summary").innerHTML=sum; $("#tables").innerHTML=html;
+  $("#res").hidden=false; $("#out").hidden=false;
+  const lines=[];
+  lines.push("ご依頼の PDF を Excel に変換しました。");
+  results.forEach(r=>lines.push(`・${r.name}：${r.pages.length}ページ → ${r.tables.map(t=>t.rows.length+"行").join("、")}`));
+  if(nOk) lines.push(`合計の行がある表は、各行を足した値と合計が一致することを確かめています（${nOk}か所）。`);
+  if(nNg) lines.push(`【要確認】合計が一致しない箇所が${nNg}か所あります。`);
+  if(nNoText) lines.push(`【対象外】文字情報のないページ（スキャン画像）が${nNoText}ページあり、変換していません。`);
+  lines.push("内容をご確認のうえ、気になる点があればお知らせください。");
+  $("#msg").value=lines.join("\n");
+}
+function cellValue(v){
+  if(!$("#asnum").checked) return v;
+  const s=String(v).trim();
+  if(/^0\d/.test(s.normalize("NFKC"))) return s;
+  const n=P2X.toNum(s); return n==null? s : n;
+}
+function save(kind){
+  for(const r of results){
+    if(kind==="x"){
+      const wb=XLSX.utils.book_new();
+      r.tables.forEach((t,i)=>{
+        const ws=XLSX.utils.aoa_to_sheet(t.rows.map(row=>row.map(cellValue)));
+        ws["!cols"]=Array.from({length:t.ncol},(_,j)=>({wch:Math.min(40,Math.max(6,...t.rows.map(x=>String(x[j]||"").length*1.6)))}));
+        XLSX.utils.book_append_sheet(wb, ws, r.tables.length>1?`表${i+1}`:"表");
+      });
+      XLSX.writeFile(wb, r.name+".xlsx");
+    } else {
+      r.tables.forEach((t,i)=>{
+        const csv="﻿"+t.rows.map(row=>row.map(v=>/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v).join(",")).join("\r\n");
+        const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=r.name+(r.tables.length>1?`_表${i+1}`:"")+".csv";a.click();
+      });
+    }
+  }
+}
+async function handle(files){
+  results=[];
+  for(const f of files){ try{ results.push(await readPdf(f)); }catch(e){ results.push({name:f.name, pages:[], error:String(e)}); } }
+  render();
+}
+$("#file").addEventListener("change",e=>handle([...e.target.files]));
+const drop=$("#drop");
+["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over");}));
+drop.addEventListener("drop",e=>handle([...e.dataTransfer.files].filter(f=>/pdf$/i.test(f.name))));
+["join","dedupe"].forEach(id=>$("#"+id).addEventListener("change",()=>results.length&&render()));
+$("#saveX").onclick=()=>save("x"); $("#saveC").onclick=()=>save("c");
+$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#msg").value);$("#copied").textContent="コピーしました";}catch(e){$("#msg").select();}};
+window.__test={handle};
+</script>
+</body>
+</html>
