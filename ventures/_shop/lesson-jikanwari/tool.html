@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>レッスンの時間割表と空き枠</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=month],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap;vertical-align:top}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.w{white-space:normal;min-width:180px}
+.lt.mx td.c,.lt.mx th.c{text-align:center;font-size:12px;border-left:1px solid var(--line);min-width:64px}.lt.mx td.cl{background:#fee2e2;color:#991b1b;font-weight:700}
+.tm{display:block;font-size:11px;color:var(--sub)}.lt tr.tot td{background:#f0fdfa;font-weight:700}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+.tt{border-collapse:collapse;font-size:12px;table-layout:fixed;width:100%}.tt th,.tt td{border-left:1px solid #d1d5db;border-right:1px solid #d1d5db;border-top:1px dotted #e5e7eb;padding:1px 4px;vertical-align:top;height:16px}.tt tr.h0 td{border-top:1px solid #cbd5e1}.tt td.bk{border:1px solid #6ee7b7}
+.tt th{background:#f9fafb;position:sticky;top:0;z-index:1}.tt th.hh,.tt td.hh{width:52px;color:var(--sub);text-align:right;font-variant-numeric:tabular-nums;background:#f9fafb}
+.tt td.off{background:#f3f4f6}.tt td.bk{background:#ecfdf5}.tt td.bk.ov{background:#fee2e2}
+.tt .it{display:block;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tt .it small{color:var(--sub)}.tt .it.ov,.tt .it.cl{color:#991b1b;font-weight:700}.tt .it.out{color:#b45309}
+.gname{font-size:15px;font-weight:700;margin:14px 0 4px}.gname .note{font-weight:400}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}
+  .per{margin:0 0 2mm;font-size:8.5pt}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .tt{width:100%;font-size:8pt;table-layout:fixed}.tt th,.tt td{border:.25mm solid #777;padding:.3mm 1mm;position:static}
+  .tt th{background:#eee}.tt th.hh,.tt td.hh{width:12mm;background:#fff;color:#333;text-align:right}.tt th,.tt td{border-top:.15mm dotted #bbb;height:auto}.tt tr.h0 td{border-top:.25mm solid #777}.tt td.bk{border:.3mm solid #333}
+  .tt td.off{background:#e5e5e5}.tt td.bk{background:#fff}.tt td.bk.ov{background:#ddd}
+  .tt.dense{font-size:6.5pt}.tt .it{white-space:nowrap;overflow:hidden;text-overflow:clip}.tt .it.ov,.tt .it.cl{font-weight:700}
+  .pt{border-collapse:collapse;width:100%;font-size:9pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:1mm 1.5mm;text-align:left;vertical-align:top}
+  .pt th{background:#eee}.pt td.n,.pt th.n{text-align:right}.pt tr{break-inside:avoid}.pt td.memo{min-width:40mm}
+}
+</style>
+<style id="pageSize">@page{size:A4 landscape;margin:8mm}</style>
+</head>
+<body>
+<main>
+<h1>レッスンの時間割表と空き枠</h1>
+<p class="lead">生徒の一覧（名前・曜日・時刻、あれば講師・部屋・長さ）から、<b>曜日×時刻の時間割表</b>を講師ごと（部屋ごと）に作り、<b>空いている時間の一覧</b>と、<b>同じ時間に入りすぎている所</b>・同じ生徒の重なり・教室の時間の外のレッスンを知らせます。データはこのブラウザの外へ送信しません。</p>
+<!--DEMO-->
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 生徒の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="名前&#9;曜日&#9;時刻&#9;長さ&#9;講師&#10;青木 一郎&#9;月&#9;16:00&#9;30&#9;田中&#10;石井 蓮&#9;月・木&#9;16:30&#9;45分&#9;田中"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden><div id="cols"></div></div>
+  <p class="note">1行に1人（週に2回なら「月・木」、曜日で時刻が違えば「月16:00、木17:30」と1つのマスに。行を分けても同じ人にまとめます）。時刻は「16:00」「16時半」「16:00〜16:45」。終わりの時刻か長さ（「45」「45分」「1時間」）の列があれば使い、なければ下の「長さが書いていないとき」の分数にします。</p>
+</div>
+<div class="box">
+  <h2>2. 教室の時間と決まり</h2>
+  <textarea id="hours" class="mono" rows="5" placeholder="月〜金 15:00〜21:00&#10;土 9:00〜12:00 13:00〜17:00&#10;日 休み&#10;田中 月・水・金 16:00〜20:00"></textarea>
+  <p class="note">1行に「<b>曜日　時刻〜時刻</b>」。昼休みがあれば「9:00〜12:00 13:00〜17:00」と並べます。「日 休み」で閉じます。講師（部屋）ごとに違うときは、先頭に名前を書いた行を足します（「田中 月・水・金 16:00〜20:00」：田中さんはその曜日だけ）。書かなければ空き枠は出さず、時間割表だけを作ります。</p>
+  <div id="hoursMsg" class="note" style="font-size:13px"></div>
+  <div class="row">
+    <label>表を分ける <select id="unit"><option value="teacher">講師ごと</option><option value="room">部屋ごと</option><option value="all">分けない（教室全体）</option></select></label>
+    <label>同じ時間に見られる人数 <select id="cap"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option><option>12</option><option>15</option><option>20</option></select> 人まで</label>
+  </div>
+  <div class="row">
+    <label>長さが書いていないとき <select id="lenDef"><option>20</option><option selected>30</option><option>40</option><option>45</option><option>50</option><option>60</option><option>90</option></select> 分</label>
+    <label>空き枠として出す長さ <select id="minFree"><option value="0">上と同じ長さ以上</option><option>15</option><option>20</option><option>30</option><option>45</option><option>60</option></select></label>
+    <label>時間割表の刻み <select id="step"><option>10</option><option selected>15</option><option>30</option><option>60</option></select> 分</label>
+  </div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="tt">時間割表</option><option value="free">空き枠の一覧</option><option value="st">生徒ごと</option><option value="sum">講師・曜日ごとの集計</option></select></label>
+    <label id="gselL">表 <select id="gsel"></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="2027年度 レッスン時間割"></label><label>教室の名前 <input type="text" id="by" size="18" placeholder="〇〇音楽教室"></label></div>
+  <div class="row"><label><input type="checkbox" id="showCourse" checked> 時間割表にコース・部屋も書く</label><label><input type="checkbox" id="hideSun"> レッスンのない曜日の列を省く</label></div>
+  <div class="row"><button id="pTT">時間割表を印刷（講師ごとに1枚）</button><button class="sub" id="pFree">空き枠の一覧を印刷</button><button class="sub" id="pSt">生徒ごとの一覧を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cList">レッスンの一覧（1行1コマ）を CSV で保存</button><button class="sub" id="cFree">空き枠の一覧を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">時間割表は A4 横。入りすぎの所と同じ生徒の重なりは網かけ・太字にします。空き枠の一覧は、体験レッスン・振替・新しい生徒の案内に使えます（生徒の名前は載りません）。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<!--LIMIT-->
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="jikanwari.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
