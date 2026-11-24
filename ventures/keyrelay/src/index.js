@@ -241,6 +241,40 @@ export default {
           license_api_calls_last_7_days: (await db.prepare("SELECT COALESCE(SUM(calls),0) AS n FROM usage_daily WHERE day >= ?").bind(since).first()).n,
         });
       }
+      // 本番での動作確認：一時的なワークスペースで 有効化→確認→上限→解除→無効化 を通し、最後に消す（1分に1回まで）
+      if (seg[0] === "selftest" && req.method === "GET") {
+        const minute = now().slice(0, 16);
+        const c = await db.prepare("SELECT n FROM signups WHERE ip_hash = 'selftest' AND day = ?").bind(minute).first();
+        if (c) return json({ error: "selftest runs at most once per minute" }, 429);
+        await db.prepare("INSERT INTO signups (ip_hash, day, n) VALUES ('selftest', ?, 1)").bind(minute).run();
+        const tid = "zz-selftest-" + crypto.randomUUID().slice(0, 8);
+        const res = {};
+        try {
+          await db.prepare("INSERT INTO tenants (id, name, admin_token_hash, default_activation_limit, created_at) VALUES (?, 'selftest', 'x', 1, ?)").bind(tid, now()).run();
+          const row = await createKey(db, tid, { activation_limit: 1 });
+          const call = async (fn, p) => { const r = await fn(db, tid, p); return { status: r.status, body: await r.json() }; };
+          const a1 = await call(activate, { license_key: row.key, instance_name: "t1" });
+          res.activate = a1.status === 200 && a1.body.activated === true && a1.body.license_key.status === "active";
+          const a2 = await call(activate, { license_key: row.key, instance_name: "t2" });
+          res.activation_limit = a2.status === 400 && a2.body.activated === false;
+          const v = await call(validate, { license_key: row.key, instance_id: a1.body.instance.id });
+          res.validate = v.status === 200 && v.body.valid === true && v.body.instance.id === a1.body.instance.id;
+          const v404 = await call(validate, { license_key: "NOPE" });
+          res.validate_unknown_key = v404.status === 404 && v404.body.valid === false;
+          const d = await call(deactivate, { license_key: row.key, instance_id: a1.body.instance.id });
+          res.deactivate = d.status === 200 && d.body.deactivated === true && d.body.license_key.activation_usage === 0;
+          await db.prepare("UPDATE license_keys SET status = 'disabled' WHERE id = ?").bind(row.id).run();
+          const vd = await call(validate, { license_key: row.key });
+          res.disabled = vd.body.valid === false && vd.body.license_key.status === "disabled";
+        } finally {
+          await db.prepare("DELETE FROM instances WHERE key_id IN (SELECT id FROM license_keys WHERE tenant_id = ?)").bind(tid).run();
+          await db.prepare("DELETE FROM license_keys WHERE tenant_id = ?").bind(tid).run();
+          await db.prepare("DELETE FROM tenants WHERE id = ?").bind(tid).run();
+        }
+        res.all_passed = Object.values(res).every(Boolean);
+        res.cleaned_up = !(await db.prepare("SELECT id FROM tenants WHERE id = ?").bind(tid).first());
+        return json(res);
+      }
       if (seg[0] === "signup" && req.method === "POST") {
         const ip = req.headers.get("CF-Connecting-IP") || "local";
         const ih = (await sha256hex("kr-signup:" + ip)).slice(0, 32), day = now().slice(0, 10);
@@ -249,7 +283,7 @@ export default {
         await db.prepare("INSERT INTO signups (ip_hash, day, n) VALUES (?, ?, 1) ON CONFLICT(ip_hash, day) DO UPDATE SET n = n + 1").bind(ih, day).run();
         const p = await readParams(req);
         const id = String(p.id || "").toLowerCase();
-        if (!/^[a-z0-9][a-z0-9-]{2,31}$/.test(id) || ["stats", "terms", "signup", "admin", "api", "www"].includes(id)) return json({ error: "id must be 3-32 chars of a-z, 0-9, - (reserved words not allowed)" }, 422);
+        if (!/^[a-z0-9][a-z0-9-]{2,31}$/.test(id) || ["stats", "terms", "signup", "selftest", "admin", "api", "www"].includes(id)) return json({ error: "id must be 3-32 chars of a-z, 0-9, - (reserved words not allowed)" }, 422);
         if (await tenantOf(db, id)) return json({ error: "id already taken" }, 409);
         const token = "kr_" + crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
         await db.prepare("INSERT INTO tenants (id, name, admin_token_hash, default_activation_limit, created_at) VALUES (?, ?, ?, ?, ?)")
