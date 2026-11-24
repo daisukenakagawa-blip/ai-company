@@ -58,3 +58,4 @@
 - `happyokai-program/index.html`・`demo.html`（お試し）・`tool.html`・`happyo.js`・`app.js`・`vendor/` … 発表会のプログラムと時刻表（500円）
 - `furikae-nokori/index.html`・`demo.html`（お試し）・`tool.html`・`furikae.js`・`app.js`・`vendor/` … 振替レッスンの残り回数（500円）
 - `kiroku-best/index.html`・`demo.html`（お試し）・`tool.html`・`kiroku.js`・`app.js`・`vendor/` … 記録の自己ベストと伸び（500円）
+- `lesson-kaisu/index.html`・`demo.html`（お試し）・`tool.html`・`kaisu.js`・`eigyo.js`・`app.js`・`vendor/` … 月ごとのレッスン日と回数（500円）

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>月ごとのレッスン日と回数 お試し版</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--accent:#0f766e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}.lead{color:var(--sub);margin:0 0 16px;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.box h2{font-size:16px;margin:0 0 10px}.box h3{font-size:14px;margin:14px 0 6px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer;margin:2px 0}
+button.sub{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+textarea{width:100%;font-size:13px;font-family:inherit}input[type=text],input[type=number],select{font-size:14px;max-width:100%}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;font-size:14px;margin:8px 0}
+.note{font-size:12px;color:var(--sub)}.wtxt{color:#b45309}.bad{color:#b91c1c;font-weight:700}
+.drop{border:2px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;font-size:14px;margin-bottom:10px}.drop.over{background:#ecfdf5;border-color:var(--accent)}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.lt{border-collapse:collapse;font-size:13px;width:100%}.lt th,.lt td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;white-space:nowrap}
+.lt th{position:sticky;top:0;background:#f9fafb;z-index:1}.lt th.n,.lt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.lt tr.fl td{background:#fef2f2}.lt td.mk{text-align:center;padding:4px 3px;min-width:34px}
+.mk.A{color:#b91c1c;font-weight:700}.mk.H{color:#b45309;font-weight:700}.mk.X,.mk.N{color:#9ca3af}.mk.U{background:#fde68a}
+.bar{display:inline-block;height:9px;background:#99f6e4;border-radius:2px;vertical-align:middle;margin-left:6px}
+.grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:14px;align-items:center}@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.colgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;align-items:center}
+.sesl{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px;max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.maps{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:14px;align-items:center}.maps input{width:100%}
+#sumMsg{font-size:14px;margin:0 0 10px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{display:none}
+  #printArea{display:block;color:#000;font-family:"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",sans-serif}
+  #printArea h1{font-size:14pt;margin:0 0 1mm}#printArea h2{font-size:11pt;margin:5mm 0 1mm;border-bottom:.4mm solid #000}
+  .per{margin:0 0 1mm;font-size:8.5pt}
+  .pt{border-collapse:collapse;width:100%;font-size:8.5pt;margin-top:2mm}.pt th,.pt td{border:.25mm solid #666;padding:.6mm 1.4mm;text-align:right;white-space:nowrap}
+  .pt th{background:#eee}.pt td.l,.pt th.l{text-align:left}.pt td.w{white-space:normal}.pt tr{break-inside:avoid}.pt tr.fl td{background:#f3f3f3;font-weight:700}
+  .pt td.mk{text-align:center;padding:.4mm .5mm}.pt.small{font-size:7pt}
+  .pg{break-after:page}.pg:last-child{break-after:auto}
+  .slips{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:66mm;gap:0}
+  .slip{border:.3mm dashed #888;padding:4mm 5mm;font-size:9pt;overflow:hidden;break-inside:avoid;position:relative}
+  .slip .t{font-size:10pt;font-weight:700;margin-bottom:1.5mm}.slip .nm{font-size:12pt;font-weight:700;margin:1mm 0 2mm}
+  .slip table{border-collapse:collapse;width:100%;font-size:8.5pt}.slip td{border-bottom:.2mm solid #bbb;padding:.5mm 1mm}.slip td.r{text-align:right}
+  .slip .sum{font-size:10.5pt;font-weight:700;text-align:right;margin-top:1.5mm}.slip .msg{font-size:8.5pt;margin-top:1.5mm;white-space:pre-wrap}.slip .by{text-align:right;font-size:8pt;margin-top:1mm}
+}
+.slip.many table{font-size:7.5pt}.slip.many td{padding:.15mm 1mm}.slip.many .msg{margin-top:.8mm}.slip.many .sum{margin-top:.6mm}
+.lt td.w{white-space:normal;min-width:200px}.lt tr.ex td{color:#9ca3af}.fees{font-family:ui-monospace,Menlo,Consolas,monospace}
+.off{color:#9ca3af;text-decoration:line-through}.addd{color:#0f766e;font-weight:700}
+@media print{.slip .dates{font-size:9.5pt;line-height:1.55;margin:1mm 0}.slip .mo{font-weight:700}.slip .offl{font-size:8pt;color:#333}.pt td.off{color:#666}}
+</style>
+<style id="pageSize">@page{size:A4 portrait;margin:10mm}</style>
+</head>
+<body>
+<main>
+<h1>月ごとのレッスン日と回数</h1>
+<p class="lead">生徒の一覧（名前・コース・<b>曜日</b>）と、教室の<b>休講日</b>・祝日の扱いから、生徒ごとの<b>今月のレッスン日と回数</b>を出します。5週ある月、祝日・年末年始の休み、コースだけの休講、振替の追加の日、「第1・3土」、月4回までの決まり、月の途中の入会・退会にも対応。<b>1人1枚のレッスン日のお知らせ</b>を印刷でき、回数の列は <a href="../gessha-seikyu/">月謝の請求額の一覧</a> にそのまま使えます。データはこのブラウザの外へ送信しません。</p>
+<p style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:14px"><b>お試し版</b>：すべての機能を試せますが、計算するのは表の先頭 10 行までです。全員を計算するには <a href="./">製品版（500円・買い切り）</a> をご購入ください。</p>
+<div class="row"><button class="sub" id="sample">見本を入れる</button></div>
+<div class="box">
+  <h2>1. 生徒の一覧を読み込む</h2>
+  <div class="drop" id="drop">CSV・Excel ファイルをここに置くか、<label><input type="file" id="file" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xls"></label></div>
+  <label class="note">または、Excel の表をコピーしてここに貼り付け</label>
+  <textarea id="paste" rows="4" placeholder="名前&#9;コース&#9;曜日&#10;青木 一郎&#9;ピアノ30分&#9;火 16:00&#10;石井 蓮&#9;英語&#9;第1・3土"></textarea>
+  <div class="row"><button id="pasteGo">貼り付けたデータを読む</button><label><input type="checkbox" id="hasHead" checked> 1行目は見出し</label></div>
+  <div id="loadMsg" class="note" style="font-size:13px"></div>
+  <div id="colBox" hidden><div id="cols" class="colgrid"></div></div>
+  <p class="note">1行に1人1コースの表を読みます。曜日の欄は「火」「火曜日」「火・金」「水 17:00」「第1・3土」「Tue」などが読めます（時刻は読み飛ばします）。週に2回の人は「火・金」と書くか、2行に分けます。「合計」の行は外します。</p>
+</div>
+<div class="box">
+  <h2>2. 期間と休み</h2>
+  <div class="grid">
+    <label for="start">始めの月</label><div><input type="month" id="start"> から <select id="mcount"><option value="1">1か月</option><option value="2">2か月</option><option value="3">3か月</option><option value="6">6か月</option><option value="12">12か月（1年分）</option></select></div>
+  </div>
+  <div class="row"><label><input type="checkbox" id="holidays" checked> 祝日は休み（振替休日を含む）</label><label><input type="checkbox" id="nenmatsu" checked> 年末年始（12/29〜1/3）は休み</label><label><input type="checkbox" id="fifth"> 第5週（29日〜31日）は休み</label>
+    <label>1か月の上限 <select id="cap"><option value="0">なし</option><option value="2">2回</option><option value="3">3回</option><option value="4">4回</option><option value="5">5回</option><option value="8">8回</option></select></label></div>
+  <div class="row"><label><input type="checkbox" id="useJoin" checked> 入会日・退会日の列があれば、その間だけ数える</label></div>
+  <h3>休講日 <span class="note">1行に1つ。対象を書くとその人だけ休み</span></h3>
+  <textarea id="off" class="fees" rows="4" placeholder="12/24&#10;12/29〜1/5 冬休み&#10;12/9 リトミック（会場の都合）&#10;12/12 土"></textarea>
+  <p class="note">書き方：「12/24」「12/24〜12/26」「2026/12/24」。日付のあとに<b>コース・組・名前・曜日</b>を書くと、それに当たる人だけ休みにします（例：「12/9 リトミック」）。（ ）の中はメモとしてお知らせに載せます。年を省くと、上の期間の中の日付にします。</p>
+  <h3>追加のレッスン日（振替日など） <span class="note">1行に1つ、日付と対象</span></h3>
+  <textarea id="add" class="fees" rows="3" placeholder="12/26 火（12/29の振替）&#10;12/27 リトミック"></textarea>
+  <p class="note">対象（曜日・コース・組・名前）に当たる人に、その日のレッスンを足します。例：火曜の人は12/29が年末で休みなので「12/26 火」と書くと、火曜の人に12/26を足します。個人の欠席・振替は数えません（<a href="../furikae-nokori/">振替レッスンの残り回数</a> で数えられます）。</p>
+  <div id="dayMsg" class="note"></div>
+</div>
+
+<div id="out" hidden>
+<div class="box">
+  <h2>結果</h2>
+  <div id="sumMsg"></div>
+  <div class="row"><label>表示 <select id="view"><option value="lines">1行1コース</option><option value="per">1人ごと</option><option value="wd">曜日ごとのレッスン日</option><option value="days">日ごとの人数</option></select></label>
+    <label id="monL">月 <select id="mon"></select></label>
+    <label>並べ方 <select id="sort"><option value="orig">元の表の順</option><option value="wd">曜日ごと（元の順）</option><option value="group">組ごと（元の順）</option></select></label></div>
+  <div id="listView"></div>
+  <div id="errView"></div>
+</div>
+<div class="box">
+  <h2>3. 印刷・保存</h2>
+  <div class="row"><label>表題 <input type="text" id="title" size="24" placeholder="12月のレッスン日"></label><label>教室の名前 <input type="text" id="by" size="18" placeholder="〇〇音楽教室"></label></div>
+  <div class="row" style="align-items:flex-start"><label style="flex:1;min-width:260px">お知らせに添える文（任意）<textarea id="msg" rows="2" placeholder="例：お休みの日は、前日までにご連絡ください。"></textarea></label></div>
+  <div class="row"><button id="pSlip">レッスン日のお知らせを印刷（1人1枚・A4 に8枚）</button><button class="sub" id="pList">回数の一覧を印刷</button><button class="sub" id="pWd">曜日ごとのレッスン日を印刷</button></div>
+  <div class="row"><button class="sub" id="xAll">Excel（.xlsx）で保存</button><button class="sub" id="cAdd">元の表に回数の列を足して CSV で保存</button><button class="sub" id="cDates">レッスン日の明細を CSV で保存</button></div>
+  <div id="saveMsg" class="note"></div>
+  <p class="note">お知らせは A4 1枚に8人分（点線で切り取り）。月ごとのレッスン日・回数・お休みの日を載せます。「元の表に回数の列を足す」CSV は、読み込んだ表の右に「12月の回数」の列を足したもので、<a href="../gessha-seikyu/">月謝の請求額の一覧</a> の回数の列にそのまま使えます。PDF にしたいときは、印刷画面の送り先で「PDF に保存」を選んでください。</p>
+</div>
+</div>
+<p class="note"><a href="./">商品ページ</a>　<a href="../tokushoho.html">特定商取引法に基づく表記</a>　<a href="../">ほかの道具</a></p>
+</main>
+<div id="printArea"></div>
+<script>window.KAISU_LIMIT=10;</script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="eigyo.js"></script>
+<script src="kaisu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
