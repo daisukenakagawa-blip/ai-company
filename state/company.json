@@ -199,9 +199,9 @@
       "action": "Stripe（GPT自動）の『設定 → 事業の詳細』で、Web サイトを https://genhayl-shop.pages.dev/ に、明細書表記を AGENTMINT から店の名前（例：GENHAYL）に変える。agentmint でまだこのアカウントを使っているなら『#16 却下 agentmint で使用中』と書く",
       "reason": "登録サイトと販売内容の食い違いは Stripe の審査で問題になりうる。見覚えのない明細名はチャージバックの原因になりやすい",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "rejected",
       "review": "ok: 費用0円。実態に合わせる変更で規約上の安全性が上がる。agentmint 側への影響はオーナーが判断",
-      "owner_note": ""
+      "owner_note": "オーナー（11/24）：Stripe の表記はそのままで大丈夫"
     }
   ],
   "decisions": [

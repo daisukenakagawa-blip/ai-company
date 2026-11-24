@@ -7,3 +7,4 @@
 | 2026-11-24 22:00 | （対話）方針更新の反映 | 成功 | CLAUDE.md 更新、毎日の定期タスクの指示を更新、Market Gap Engine 第1段、店の鍵の仕組み公開（STRIPE_KEY 待ち）、Payment Link 55本の移動先変更 |
 | 2026-11-24 23:00 | （対話）Ver.2.0 経営改善指示 | 一部完了 | 店の鍵を Fail Closed に変更（手元31項目合格、本番は未確認）、CLAUDE.md に Ver.2.0 反映、権限・機能・収益性・集客経路の設計書 |
 | 2026-11-24 23:59 | （対話）hn.algolia.com 許可の確認 | 成功 | 公式 API で LS 終了の HN 反応を取得し ledger に追記 |
+| 2026-11-25 00:10 | （対話）KeyRelay の到達経路の調査 | 成功 | LS 公式の移行文書・GitHub・npm・HN を確認。最有力は Stripe App Marketplace。12/2 の LS 公式案内を確認予定 |
