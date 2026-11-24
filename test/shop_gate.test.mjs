@@ -76,6 +76,11 @@ sessions[SID] = "error"; t("確かめ直し・Stripe 障害：開かない", (aw
 // 正規購入者の復旧（72時間以内なら、同じリンクで別の端末でも開ける）
 sessions[SID] = good();
 t("正規購入者：72時間以内は同じリンクで別端末も開ける", (await un(`p=nafuda&session_id=${SID}`)).status === 302);
+// 決済ID の使い回し（KV あり）：3台まで
+{ const store = new Map(); const KV = { get: async k => store.get(k) ?? null, put: async (k, v) => { store.set(k, v); } };
+  const E = { ...ENV, UNLOCKS: KV }; sessions[SID] = good();
+  const codes = []; for (let i = 0; i < 4; i++) codes.push((await un(`p=nafuda&session_id=${SID}`, E)).status);
+  t("KV あり：同じ決済IDは3台まで、4台目は開かない", codes.join(",") === "302,302,302,403"); }
 // 製品版以外は鍵の対象外
 t("商品ページ・お試しは鍵なしで見られる", (await (await mw("/nafuda/demo.html")).text()) === "TOOL" && (await (await mw("/nafuda/")).text()) === "TOOL");
 console.log(`\n${pass} PASS / ${failN} FAIL`); fs.rmSync(tmp, { recursive: true }); process.exit(failN ? 1 : 0);

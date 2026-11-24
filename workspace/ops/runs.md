@@ -10,3 +10,4 @@
 | 2026-11-25 00:10 | （対話）KeyRelay の到達経路の調査 | 成功 | LS 公式の移行文書・GitHub・npm・HN を確認。最有力は Stripe App Marketplace。12/2 の LS 公式案内を確認予定 |
 | 2026-11-25 | （対話）Ver.2.1 の反映と収益構造の検証 | 成功 | 5構造を検証し全て不合格。KeyRelay の直接競合 Clavem を確認。Demand Map を提案。店の復旧手順と費用対効果 |
 | 2026-11-25 | （対話）api.apify.com 許可後に Demand Map 第1回 | 成功 | 115,501本を取得。需要の中心は他社 SNS 等のデータ取得で当社は参入不可と判断 |
+| 2026-11-25 | （対話）Ver.2.2：発明3件と検証設計、決済ID 対策 | 成功 | 発明1 Continuity Relay(B)・発明2 入札朝刊(B)・発明3 Fresh Facts(C)。決済ID は KV 紐づけ待ち |
