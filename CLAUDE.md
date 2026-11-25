@@ -37,6 +37,8 @@
   - 決済画面への遷移・購入・返金・商品別売上は Stripe（GPT自動・本番）の Checkout Sessions・Charges・Refunds を Payment Link ごとに数え、`lib/shop_links.json` で商品に対応させる。自分の操作（動作確認）は数えない
   - 記録：`workspace/acquisition/metrics.md` に日ごとの表（閲覧・入口・流入元の上位・お試し・購入ボタン・決済開始・購入・売上・返金）を1行ずつ足す
 - 集客経路の調査と承認依頼案：`workspace/acquisition/channels-2026-11-25.md`（順位：Bing＋IndexNow → Search Console → 印刷物の出所表示。見送り：Chrome Web Store〔$5〕・Vector・窓の杜・AppSource・海外販売）。承認された範囲だけを反復実行する
+- **オーナー承認（2026-11-25 チャット）：「とにかく稼げるようにしなさい、こちらでやることはしない」。次の4つは毎回の確認なしで AI の判断で実行してよい**（オーナーの作業を前提にしない）：①IndexNow による店の URL の自動通知（`.github/workflows/shop-growth.yml`・`ventures/_marketing/indexnow.py`。403・422・429 で停止）②店のページの構造化データ・説明文（`ventures/_marketing/add_jsonld.py`、評価・レビューは入れない）・llms.txt ③印刷物の余白の出所表示1行（`credit.js`。お試し版は常に、製品版は選んだときだけ。苦情・返金依頼1件で停止）④X の予約投稿（既存のルールの範囲）。これ以外の外部への登録・投稿・公開は、今までどおり承認が必要。Bing Webmaster Tools・Search Console の操作はオーナーの作業になるため頼まない
+- 計測の保存：GitHub Actions（shop-growth）が毎日 6:40 JST と店の更新のたびに `/api/metrics` を `workspace/acquisition/raw/metrics-latest.json` に保存する（実行環境から店に接続できないため、これを読む）
 - 商品の選別：宣伝する商品は最大5件（実際の検索需要・無料の競合への利点・支払う理由・季節/継続需要・説明で価値が分かる・自動納品・サポート負担が少ない）。検索需要の証拠は Search Console・Bing の表示回数と検索語を使う。該当がなければ選ばない
 - 販売実験：変更内容・期間・訪問者数・購入数を `workspace/acquisition/experiments.md` に記録。訪問者が足りなければ「販売能力は未検証」と判断する
 - 14日後（12/9）の評価：外部訪問者数／商品別の購入率／第三者の売上／純利益／経路別の成果／オーナーの作業時間／再利用できる集客手法／新規事業の候補。売上0円だけで終了しない（訪問が少ない＝集客の問題、訪問が多いのに売れない＝商品・価格の問題）
