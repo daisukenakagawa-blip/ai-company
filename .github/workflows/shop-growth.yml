@@ -1,0 +1,45 @@
+name: Shop growth (IndexNow + metrics snapshot)
+# 店の更新を検索エンジンに知らせ（IndexNow）、店の自社計測（/api/metrics）を毎日リポジトリに保存する。費用0円（GitHub Actions の無料枠）
+on:
+  push:
+    branches: [main]
+    paths: ["ventures/_shop/**"]
+  schedule:
+    - cron: "40 21 * * *"   # 毎日 6:40 JST（朝の定期実行の前）
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: shop-growth
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for Cloudflare Pages deploy (push only)
+        if: github.event_name == 'push'
+        run: sleep 150
+      - name: Check key file is live
+        id: key
+        run: |
+          K=$(ls ventures/_shop/ | grep -E '^[0-9a-f]{32}\.txt$' | head -1)
+          B=$(curl -s -m 20 "https://genhayl-shop.pages.dev/$K" || true)
+          if [ "$B" = "${K%.txt}" ]; then echo "ok=1" >> $GITHUB_OUTPUT; else echo "key file not live yet"; fi
+      - name: IndexNow
+        if: steps.key.outputs.ok == '1'
+        run: python3 ventures/_marketing/indexnow.py
+      - name: Metrics snapshot
+        run: |
+          mkdir -p workspace/acquisition/raw
+          curl -s -m 30 -A "genhayl-metrics-snapshot (bot)" "https://genhayl-shop.pages.dev/api/metrics?days=60" -o /tmp/m.json || true
+          if python3 -c "import json;d=json.load(open('/tmp/m.json'));assert 'days' in d"; then cp /tmp/m.json workspace/acquisition/raw/metrics-latest.json; else echo "metrics not JSON"; head -c 300 /tmp/m.json; echo "{\"error\":\"not json\",\"at\":\"$(date -u +%FT%TZ)\"}" > workspace/acquisition/raw/metrics-latest.json; fi
+      - name: Commit
+        run: |
+          git config user.name "shop-growth-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add ventures/_marketing/indexnow_state.json ventures/_marketing/indexnow_log.md workspace/acquisition/raw 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "shop-growth: IndexNow と計測の保存"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin main && break; sleep 5; done
