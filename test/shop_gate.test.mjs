@@ -6,6 +6,7 @@ fs.mkdirSync(path.join(tmp, "lib")); fs.mkdirSync(path.join(tmp, "functions/api"
 fs.copyFileSync(path.join(root, "lib/shop_links.json"), path.join(tmp, "lib/shop_links.json"));
 const fix = s => s.replace(/from "(.*shop_links\.json)";/, 'from "$1" with { type: "json" };');
 fs.writeFileSync(path.join(tmp, "lib/shop_license.js"), fix(fs.readFileSync(path.join(root, "lib/shop_license.js"), "utf8")));
+fs.copyFileSync(path.join(root, "lib/shop_metrics.js"), path.join(tmp, "lib/shop_metrics.js"));
 fs.copyFileSync(path.join(root, "functions/_middleware.js"), path.join(tmp, "functions/_middleware.js"));
 fs.copyFileSync(path.join(root, "functions/api/unlock.js"), path.join(tmp, "functions/api/unlock.js"));
 const L = await import(path.join(tmp, "lib/shop_license.js"));

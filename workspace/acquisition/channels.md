@@ -21,5 +21,6 @@
 | 10 | 商品そのものが集客経路 | KeyRelay の受け取りページ、出力ファイル | | 候補 | 未調査 |
 
 ## 計測の現状
-- 店：訪問＝Cloudflare Web Analytics（11/24 設定）。決済開始・購入＝Stripe。登録・利用は計測なし（ブラウザ内処理のため）
+- 店：訪問・流入元・お試しの操作・購入ボタン＝自社計測 `/api/stats`（2026-11-25〜、`lib/shop_metrics.js`）。Cloudflare Web Analytics（11/24 設定）は実行環境から読めない。決済開始・購入・返金＝Stripe
+- 経路の調査と承認依頼案（2026-11-25）：`channels-2026-11-25.md`
 - KeyRelay：登録・取り込み・確認 API の回数＝`/stats`。訪問は未計測
