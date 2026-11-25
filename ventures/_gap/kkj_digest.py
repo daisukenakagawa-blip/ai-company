@@ -2,7 +2,7 @@
 # 使い方: python3 ventures/_gap/kkj_digest.py [日数=1]
 # 出力:   workspace/kkj-digest/YYYY-MM-DD.md（業種ごとの新着）と log.csv（日ごとの件数。2週間の検証で使う）
 # 注意:   公式 API だけを使う（サイトの画面は取得しない。robots.txt はサイト全体を拒否）。1件ずつ間を空けて問い合わせる
-#         利用規約（官公需情報ポータルサイト）の商用利用・再配布の可否は未確認。確認できるまで外部に出さない（社内の検証のみ）
+#         利用規約 第3条（出典明記とリンク・過負荷禁止）をオーナーが了承（2026-11-25）。外部への公開・送信は承認を得てから
 import os, sys, time, csv, datetime, urllib.parse, urllib.request, xml.etree.ElementTree as ET
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -28,7 +28,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     today = datetime.date.today()
     since = (today - datetime.timedelta(days=DAYS)).isoformat()
-    lines = [f"# 入札朝刊（社内検証用・{today}、公告日 {since} 以降）", "", "出典：官公需情報ポータルサイト 検索API（https://www.kkj.go.jp/）。社内の検証のみ（利用規約の確認前のため外部に出さない）", ""]
+    lines = [f"# 入札朝刊（社内検証用・{today}、公告日 {since} 以降）", "", "出典：官公需情報ポータルサイト 検索API（https://www.kkj.go.jp/）。社内の検証（規約はオーナー了承 11/25：外部に出すときは出典とリンクを付け、公開・送信は承認を得てから）", ""]
     rows = []
     for seg, words in SEGMENTS.items():
         seen, hits, raw = {}, 0, 0

@@ -9,7 +9,7 @@
 ## 経路の一覧（状態：未調査＝まだ根拠なし）
 | # | 経路 | 例 | 店 | KeyRelay | 状態 |
 |---|---|---|---|---|---|
-| 1 | 既存サービスの公式アプリストア | Stripe App Marketplace、Shopify App Store | | 候補 | 未調査 |
+| 1 | 既存サービスの公式アプリストア | Stripe App Marketplace、Shopify App Store、Google Workspace Marketplace | 見送り（作り直し・オーナー作業） | 候補 | 11/26：宛名印刷の同業が Workspace Marketplace に掲載（`workspace/day-013/marketing/channel_workspace_marketplace.md`） |
 | 2 | 拡張機能市場 | Chrome Web Store、VS Code Marketplace | 候補 | | 未調査 |
 | 3 | 正規のプラグイン市場 | WordPress.org、Figma Community | | | 未調査 |
 | 4 | API ディレクトリ | RapidAPI、公開 API 一覧 | | 候補 | 未調査 |

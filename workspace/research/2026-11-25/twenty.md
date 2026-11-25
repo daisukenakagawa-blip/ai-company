@@ -99,3 +99,7 @@
 - 【事実】`@keep-lts` が同じ形（drop-in fork、overrides 1行）で12件を無料公開済み。週 DL は本家の0.003〜0.12%
 - 【推測】修正 fork の作成は無料で既に行われ、価値の源泉ではない。支払いは「保証・信用」に対して起きており、無名の当社には作れない。承認が必要だった実験（npm 公開）は結果がほぼ見えているため、承認依頼にしない
 - 詳細：`workspace/day-012/researcher/lts_forks.md`
+
+### 追記（2026-11-26）案2 の検証結果
+- 主要20件の公式価格：全公開7・一部公開7・非公開4・未確認2。数量割引の明記は1件
+- マネーフォワード Admina の Vendor プラン（https://admina.moneyforward.com/jp/features/vendor ）が3,000件超の価格データで診断・交渉代行を提供。上の「国内 SaaS 管理ツールは他社比較を未提供」は誤り → **案2 は C、研究停止**（`workspace/day-013/researcher/market_gaps.md`）

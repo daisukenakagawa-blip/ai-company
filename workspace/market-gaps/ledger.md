@@ -13,3 +13,5 @@
 - 解釈（AI の推測）：HN 上の移行需要の表明は今のところ1件。HN 投稿だけでは到達が限られる可能性が高い。競合（LicenseSpring・Keygen など）に対し、KeyRelay の優位は「LS と同じ API で、アプリ側の変更が URL 1か所」である点に絞られる
 | 2026-11-25 | Last.fm API | 12/1 から API キーの持ち主に Pro（有料）が必要。持たないキーは停止（公式投稿 11/18 の転載で確認） | 不採用（C） | `workspace/day-012/researcher/market_gaps.md`。公式 Pro が約月5ユーロ（未確認）で、受け皿の単価が取れない。趣味の用途が中心で「止まると売上が止まる」条件にも当たらない |
 | 2026-11-25 | npm の未修正パッケージ（extract-zip ほか） | 修正版のない脆弱性 | 不採用（C） | `workspace/day-012/researcher/lts_forks.md`。@keep-lts が同型の fork を無料公開済み、DL は本家の0.1%前後 |
+| 2026-11-26 | 国内 SaaS の契約価格（案2 拠出型ベンチマーク） | 大口ほど価格非公開（主要20件中11件が一部・非公開） | 不採用（C） | `workspace/day-013/researcher/market_gaps.md`。マネーフォワード Admina の Vendor プランが3,000件超の価格データで診断・交渉代行を提供済み。当社はデータ・到達の両方で劣る |
+| 2026-11-26 | 年賀状の宛名印刷（Google Workspace Marketplace） | 同業アドオンが 11/20 に掲載更新、Pro 月500円 | 記録のみ（経路の候補） | `workspace/day-013/marketing/channel_workspace_marketplace.md`。作り直しとオーナーの Google アカウント作業が必要なため見送り |
