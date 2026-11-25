@@ -1,0 +1,566 @@
+{
+ "days": [
+  {
+   "date": "2026-09-28",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-09-29",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-09-30",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-01",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-02",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-03",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-04",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-05",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-06",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-07",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-08",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-09",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-10",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-11",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-12",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-13",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-14",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-15",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-16",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-17",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-18",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-19",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-20",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-21",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-22",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-23",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-24",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-25",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-26",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-27",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-28",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-29",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-30",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-10-31",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-01",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-02",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-03",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-04",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-05",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-06",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-07",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-08",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-09",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-10",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-11",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-12",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-13",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-14",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-15",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-16",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-17",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-18",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-19",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-20",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-21",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-22",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-23",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-24",
+   "pv": 0,
+   "entries": 0,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-25",
+   "pv": 2,
+   "entries": 2,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-26",
+   "pv": 1,
+   "entries": 1,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  }
+ ],
+ "total": {
+  "pv": 3,
+  "entries": 3,
+  "buy": 0,
+  "demo_use": 0,
+  "owner": 0
+ },
+ "pages": {
+  "/": 2,
+  "/atena-hagaki/": 1
+ },
+ "sources": {
+  "（直接・不明）": 2,
+  "ref:x": 1
+ },
+ "countries": {
+  "HK": 1,
+  "FR": 1,
+  "US": 1
+ },
+ "events": {},
+ "note": "ボットらしいアクセスとオーナーの閲覧は除外（オーナーは owner に件数だけ）。entries＝外部・直接から来た最初のページ。KV の性質上、同時のアクセスで少なめに数えることがある（最低値として扱う）。1日 800 件で記録を止める（capped）"
+}
