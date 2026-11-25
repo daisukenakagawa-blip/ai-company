@@ -33,7 +33,7 @@
 - 目的：AI が自律的に顧客を獲得し、販売し、収益を生む能力を実証する。既存の店はその実験場。ブラウザツール店の経営が目的ではない。人間の営業・オーナーの日々の SNS 更新・知人への紹介を前提にしない
 - 資源配分：自動集客・販売の実験 60%／新しい収益構造の研究 25%／計測・分析 10%／既存事業の保守 5%（重大な障害・セキュリティは最優先）。新規商品の量産は禁止
 - 計測が最優先：外部訪問者数・流入元・商品別の閲覧・お試しの利用・購入ボタンのクリック・決済画面への遷移・購入完了・商品別の売上・返金。取得できない数字は推測で埋めず「未確認」
-  - 店の自社計測（2026-11-25 実装）：`lib/shop_metrics.js`。閲覧・入口・流入元（Referer のドメイン、`?ref=` の値）・国・購入ボタンのクリック（`buy`）・お試しの操作（`demo_use`）を KV（UNLOCKS）に日ごとの数だけ保存。IP・Cookie による追跡はしない。ボットらしい UA は数えない。オーナーは https://genhayl-shop.pages.dev/?owner=1 を一度開くと別に数える。1日800件で記録を止める（KV 無料枠）。読み出しは https://genhayl-shop.pages.dev/api/stats?days=14 （実行環境から curl できないので web-fetch で読む）。試験 `node test/shop_metrics.test.mjs`
+  - 店の自社計測（2026-11-25 実装）：`lib/shop_metrics.js`。閲覧・入口・流入元（Referer のドメイン、`?ref=` の値）・国・購入ボタンのクリック（`buy`）・お試しの操作（`demo_use`）を KV（UNLOCKS）に日ごとの数だけ保存。IP・Cookie による追跡はしない。ボットらしい UA は数えない。オーナーは https://genhayl-shop.pages.dev/?owner=1 を一度開くと別に数える。1日800件で記録を止める（KV 無料枠）。読み出しは https://genhayl-shop.pages.dev/api/metrics?days=14 （同じ中身の /api/stats もある）（実行環境から curl できないので web-fetch で読む）。試験 `node test/shop_metrics.test.mjs`
   - 決済画面への遷移・購入・返金・商品別売上は Stripe（GPT自動・本番）の Checkout Sessions・Charges・Refunds を Payment Link ごとに数え、`lib/shop_links.json` で商品に対応させる。自分の操作（動作確認）は数えない
   - 記録：`workspace/acquisition/metrics.md` に日ごとの表（閲覧・入口・流入元の上位・お試し・購入ボタン・決済開始・購入・売上・返金）を1行ずつ足す
 - 集客経路の調査と承認依頼案：`workspace/acquisition/channels-2026-11-25.md`（順位：Bing＋IndexNow → Search Console → 印刷物の出所表示。見送り：Chrome Web Store〔$5〕・Vector・窓の杜・AppSource・海外販売）。承認された範囲だけを反復実行する
