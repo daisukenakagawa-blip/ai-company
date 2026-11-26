@@ -1,0 +1,12 @@
+{
+  "_note": "用途別の月の配分（円）。AI が実績に応じて変えてよい。ただし合計は limits.json の monthly_budget_jpy と同じでなければ有料 API を止める",
+  "allocation_jpy": {
+    "research": 800,
+    "planning": 700,
+    "development": 1800,
+    "marketing": 600,
+    "qa": 400,
+    "reporting": 200,
+    "reserve": 500
+  }
+}

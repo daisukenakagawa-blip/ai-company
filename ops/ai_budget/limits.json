@@ -1,0 +1,16 @@
+{
+  "_note": "オーナーが決めた上限（2026-11-27 Ver.2.0）。AI はこのファイルを変更しない。変更したらワークフローがハッシュ不一致で有料 API を止める（オーナーが GitHub の変数 AI_BUDGET_LIMITS_SHA256 を更新するまで）",
+  "monthly_budget_jpy": 5000,
+  "annual_budget_jpy": 60000,
+  "notify_ratio": 0.5,
+  "low_priority_stop_ratio": 0.8,
+  "hard_stop_ratio": 0.9,
+  "max_cost_per_call_jpy": 100,
+  "max_calls_per_run": 40,
+  "max_calls_per_day": 300,
+  "max_output_tokens_cap": 16000,
+  "max_retries": 1,
+  "tax_and_fee_multiplier": 1.13,
+  "fx_fallback_jpy_per_usd": 165,
+  "fx_max_age_hours": 48
+}

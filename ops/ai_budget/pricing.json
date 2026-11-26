@@ -1,0 +1,13 @@
+{
+  "_source": "https://platform.claude.com/docs/en/about-claude/pricing（2026-11-27 確認。USD / 100万トークン。税の扱いはページに記載なし → limits.json の tax_and_fee_multiplier で上乗せして見積もる）",
+  "checked": "2026-11-27",
+  "web_search_usd_per_1000": 10,
+  "models": {
+    "claude-haiku-5-5": {"input": 0.10, "output": 0.50, "cache_write_5m": 0.125, "cache_read": 0.01,
+                          "long_prompt_tokens": 100000,
+                          "long": {"input": 0.50, "output": 2.50, "cache_write_5m": 0.625, "cache_read": 0.05}},
+    "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_write_5m": 2.50, "cache_read": 0.10},
+    "claude-opus-5-5": {"input": 4.0, "output": 20.0, "cache_write_5m": 5.0, "cache_read": 0.20}
+  },
+  "batch_discount": 0.5
+}

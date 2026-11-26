@@ -10,6 +10,11 @@ class BudgetExceeded(Exception):
     pass
 
 
+# 役割 → 予算の用途（ops/ai_budget/allocation.json）
+ROLE_PURPOSE = {"ceo_plan": "planning", "ceo_report": "reporting", "compliance": "qa", "researcher": "research",
+                "marketing": "marketing", "product": "development", "cfo": "reporting"}
+
+
 class LLM:
     def __init__(self, backend: str, model: str, max_cost_usd: float):
         self.backend = backend
@@ -33,24 +38,21 @@ class LLM:
             return _mock_answer(role, prompt)
         if self.backend == "cli":
             return self._ask_cli(system, prompt, use_search)
+        self._role = role
         return self._ask_api(system, prompt, use_search)
 
     def _ask_api(self, system, prompt, use_search):
-        kwargs = dict(model=self.model, max_tokens=8000, system=system,
-                      messages=[{"role": "user", "content": prompt}])
+        """有料 API は必ず ops/ai_budget の予算管理を通す（2026-11-27 Ver.2.0）。止められたら BudgetExceeded"""
+        budget = _budget_module()
+        purpose = ROLE_PURPOSE.get(self._role, "research")
+        kwargs = dict(purpose=purpose, priority="normal", model=self.model or "claude-haiku-5-5", system=system,
+                      messages=[{"role": "user", "content": prompt}], max_tokens=4000, task=self._role)
         if use_search:
-            kwargs["tools"] = [{"type": self.search_tool, "name": "web_search", "max_uses": 5}]
+            kwargs.update(tools=[{"type": self.search_tool, "name": "web_search", "max_uses": 3}], max_searches=3)
         try:
-            resp = self.client.messages.create(**kwargs)
-        except Exception as e:  # 検索ツールが使えない環境ではなしで再試行
-            if use_search:
-                print(f"  ⚠ web検索なしで再試行: {e}")
-                kwargs.pop("tools")
-                resp = self.client.messages.create(**kwargs)
-            else:
-                raise
-        u = resp.usage
-        self.cost_usd += (u.input_tokens * self.price_in + u.output_tokens * self.price_out) / 1_000_000
+            resp = budget.guarded_call(self.client, **kwargs)
+        except budget.BudgetBlocked as e:
+            raise BudgetExceeded(str(e))
         return "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
 
     def _ask_cli(self, system, prompt, use_search):
@@ -69,6 +71,21 @@ class LLM:
             return data.get("result", "")
         except json.JSONDecodeError:
             return out.stdout
+
+
+_BUDGET = None
+
+
+def _budget_module():
+    """ops/ai_budget/budget.py を1回だけ読み込む（1回の実行の呼び出し回数を数えるため、同じものを使い回す）"""
+    global _BUDGET
+    if _BUDGET is None:
+        import importlib.util
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ops", "ai_budget", "budget.py")
+        spec = importlib.util.spec_from_file_location("ai_budget", path)
+        _BUDGET = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_BUDGET)
+    return _BUDGET
 
 
 def extract_json(text: str):
