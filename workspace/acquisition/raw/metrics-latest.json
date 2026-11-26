@@ -533,8 +533,8 @@
   },
   {
    "date": "2026-11-26",
-   "pv": 1,
-   "entries": 1,
+   "pv": 11,
+   "entries": 9,
    "buy": 0,
    "demo_use": 0,
    "owner": 0,
@@ -542,24 +542,35 @@
   }
  ],
  "total": {
-  "pv": 3,
-  "entries": 3,
+  "pv": 13,
+  "entries": 11,
   "buy": 0,
   "demo_use": 0,
   "owner": 0
  },
  "pages": {
-  "/": 2,
-  "/atena-hagaki/": 1
+  "/": 4,
+  "/atena-hagaki/": 1,
+  "/.git/": 1,
+  "/admin/backup/": 1,
+  "/v1/kv/": 1,
+  "/v2/keys/": 1,
+  "/_profiler/": 1,
+  "/wp-content/uploads/": 1,
+  "/config/": 1,
+  "/scoutsuite-report/": 1
  },
  "sources": {
-  "（直接・不明）": 2,
-  "ref:x": 1
+  "（直接・不明）": 9,
+  "ref:x": 1,
+  "www.baidu.com": 1
  },
  "countries": {
+  "NL": 7,
   "HK": 1,
   "FR": 1,
-  "US": 1
+  "US": 1,
+  "CN": 1
  },
  "events": {},
  "note": "ボットらしいアクセスとオーナーの閲覧は除外（オーナーは owner に件数だけ）。entries＝外部・直接から来た最初のページ。KV の性質上、同時のアクセスで少なめに数えることがある（最低値として扱う）。1日 800 件で記録を止める（capped）"
