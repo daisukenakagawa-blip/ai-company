@@ -1,6 +1,9 @@
 name: AgentMint Factory deploy (private)
-# 手動実行のみ。Actor を「非公開」で作成・更新し、ビルドと試験実行をする。Store への公開・料金の設定はしない
+# 手動実行、または ventures/agentmint-factory/deploy-request.txt（1行目に actors/ の下のフォルダ名）の push で動く。Actor を「非公開」で作成・更新し、ビルドと試験実行をする。Store への公開・料金の設定はしない
 on:
+  push:
+    branches: [main]
+    paths: ["ventures/agentmint-factory/deploy-request.txt"]
   workflow_dispatch:
     inputs:
       actor:
@@ -15,15 +18,19 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Which actor
+        run: |
+          A="${{ inputs.actor }}"; [ -z "$A" ] && A=$(head -1 ventures/agentmint-factory/deploy-request.txt | tr -cd 'a-z0-9-')
+          echo "ACTOR=$A" >> $GITHUB_ENV
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Local tests
-        working-directory: ventures/agentmint-factory/actors/${{ inputs.actor }}
+        working-directory: ventures/agentmint-factory/actors/${{ env.ACTOR }}
         run: npm ci --no-audit --no-fund && npm test
       - name: Deploy privately, build, test run
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: |
           test -n "$APIFY_TOKEN" || { echo "APIFY_TOKEN secret is missing"; exit 1; }
-          cd ventures/agentmint-factory && python3 deploy.py actors/${{ inputs.actor }}
+          cd ventures/agentmint-factory && python3 deploy.py actors/${{ env.ACTOR }}
