@@ -1,15 +1,6 @@
 {
  "days": [
   {
-   "date": "2026-09-28",
-   "pv": 0,
-   "entries": 0,
-   "buy": 0,
-   "demo_use": 0,
-   "owner": 0,
-   "capped": false
-  },
-  {
    "date": "2026-09-29",
    "pv": 0,
    "entries": 0,
@@ -533,8 +524,17 @@
   },
   {
    "date": "2026-11-26",
-   "pv": 11,
-   "entries": 9,
+   "pv": 12,
+   "entries": 10,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
+  },
+  {
+   "date": "2026-11-27",
+   "pv": 3,
+   "entries": 3,
    "buy": 0,
    "demo_use": 0,
    "owner": 0,
@@ -542,14 +542,14 @@
   }
  ],
  "total": {
-  "pv": 13,
-  "entries": 11,
+  "pv": 17,
+  "entries": 15,
   "buy": 0,
   "demo_use": 0,
   "owner": 0
  },
  "pages": {
-  "/": 4,
+  "/": 8,
   "/atena-hagaki/": 1,
   "/.git/": 1,
   "/admin/backup/": 1,
@@ -561,17 +561,21 @@
   "/scoutsuite-report/": 1
  },
  "sources": {
-  "（直接・不明）": 9,
+  "（直接・不明）": 13,
   "ref:x": 1,
   "www.baidu.com": 1
  },
  "countries": {
   "NL": 7,
+  "US": 3,
   "HK": 1,
   "FR": 1,
-  "US": 1,
-  "CN": 1
+  "CN": 1,
+  "IN": 1,
+  "FI": 1
  },
  "events": {},
- "note": "ボットらしいアクセスとオーナーの閲覧は除外（オーナーは owner に件数だけ）。entries＝外部・直接から来た最初のページ。KV の性質上、同時のアクセスで少なめに数えることがある（最低値として扱う）。1日 800 件で記録を止める（capped）"
+ "note": "ボットらしいアクセスとオーナーの閲覧は除外（オーナーは owner に件数だけ）。entries＝外部・直接から来た最初のページ。KV の性質上、同時のアクセスで少なめに数えることがある（最低値として扱う）。1日 800 件で記録を止める（capped）",
+ "saved_at": "2026-11-26T23:32:56+00:00",
+ "trigger": "push"
 }
