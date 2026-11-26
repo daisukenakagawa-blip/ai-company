@@ -7,7 +7,8 @@
    "apify-actor-start": 5e-05
   },
   "problems": [],
-  "actual": "未確認（トークンか Actor ID が無い）",
+  "isPublic": false,
+  "actual": "未設定（無料。公開しても誰にも課金されない）",
   "ok": true
  },
  {
@@ -20,7 +21,8 @@
    "apify-actor-start": 5e-05
   },
   "problems": [],
-  "actual": "未確認（トークンか Actor ID が無い）",
+  "isPublic": false,
+  "actual": "未設定（無料。公開しても誰にも課金されない）",
   "ok": true
  },
  {
@@ -33,7 +35,8 @@
    "apify-actor-start": 5e-05
   },
   "problems": [],
-  "actual": "未確認（トークンか Actor ID が無い）",
+  "isPublic": false,
+  "actual": "未設定（無料。公開しても誰にも課金されない）",
   "ok": true
  }
 ]

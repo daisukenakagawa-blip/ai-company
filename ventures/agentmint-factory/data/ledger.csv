@@ -2,3 +2,6 @@ date,slug,status,public,u7,u30,users_all,runs30,own_runs30,external_runs30,exter
 2026-11-26,preponderant_swift/dataset-merge-dedup,private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz),False,0,0,1,0,1,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.00016,0,
 2026-11-26,preponderant_swift/image-convert-compress,private-deployed 2026-11-26 (oNvRYK1HyltyyD2GV),False,0,0,1,0,2,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.0003,0,
 2026-11-26,preponderant_swift/pdf-text-extract,private-deployed 2026-11-26 (dR3cdKEBdJwQukG6r),False,0,0,1,0,1,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.00018,0,
+2026-11-26,preponderant_swift/dataset-merge-dedup,private・公開準備完了 2026-11-27（オーナーの公開待ち）,False,0,0,1,0,3,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.00044,0,
+2026-11-26,preponderant_swift/image-convert-compress,private・開発停止中（2026-11-27 オーナー方針）,False,0,0,1,0,2,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.0003,0,
+2026-11-26,preponderant_swift/pdf-text-extract,private・開発停止中（2026-11-27 オーナー方針）,False,0,0,1,0,1,0,0,,0,未確認,未確認,未確認,未確認,未確認,0.00018,0,
