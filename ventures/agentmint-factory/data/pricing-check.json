@@ -1,0 +1,39 @@
+[
+ {
+  "actor": "dataset-merge-dedup",
+  "code_charges": [],
+  "intended": {
+   "apify-default-dataset-item": 0.0002,
+   "apify-actor-start": 5e-05
+  },
+  "problems": [],
+  "actual": "未確認（トークンか Actor ID が無い）",
+  "ok": true
+ },
+ {
+  "actor": "image-convert-compress",
+  "code_charges": [
+   "image-processed"
+  ],
+  "intended": {
+   "image-processed": 0.001,
+   "apify-actor-start": 5e-05
+  },
+  "problems": [],
+  "actual": "未確認（トークンか Actor ID が無い）",
+  "ok": true
+ },
+ {
+  "actor": "pdf-text-extract",
+  "code_charges": [
+   "pdf-processed"
+  ],
+  "intended": {
+   "pdf-processed": 0.002,
+   "apify-actor-start": 5e-05
+  },
+  "problems": [],
+  "actual": "未確認（トークンか Actor ID が無い）",
+  "ok": true
+ }
+]

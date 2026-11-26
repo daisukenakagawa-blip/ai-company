@@ -1,12 +1,29 @@
 import { Actor, log } from 'apify';
 import { dedupKey, completeness, passesFilters, validateFilters, reshape } from './lib.js';
 
-const EVENT = 'result-item'; // pay-per-event: one charge per item written to the output dataset
+// Pricing: the ONLY paid event is Apify's synthetic `apify-default-dataset-item` (one charge per item written to the
+// default dataset, charged by the platform). No custom event is charged from code, so there is no double charging.
+const ITEM_EVENT = 'apify-default-dataset-item';
+// Used when the Actor is started with no datasets and no items (e.g. Apify's daily automated test, or a first try
+// in Console): a tiny built-in sample shows what the Actor does. It writes 4 items.
+const SAMPLE = [
+    { url: 'https://example.com/product/1?utm_source=newsletter', name: 'Blue Mug', price: 12 },
+    { url: 'https://example.com/product/2', name: 'Red Mug', price: 14 },
+    { url: 'https://www.example.com/product/1/', name: 'Blue Mug (duplicate)', price: 12, email: 'shop@example.com' },
+    { url: 'https://example.com/product/3', name: 'Green Mug', price: 11 },
+    { url: 'https://example.com/product/2#reviews', name: 'Red Mug (duplicate)', price: 14 },
+    { url: 'https://example.com/product/4', name: 'Black Mug', price: 15 },
+];
 const PAGE = 5000;
 
 await Actor.init();
 try {
     const input = (await Actor.getInput()) ?? {};
+    const sampleMode = !(input.datasetIds || []).length && !(input.items || []).length;
+    if (sampleMode) {
+        log.warning('No datasets or items were given, so the Actor runs on a built-in 6-item sample (writes 4 items). Pick your datasets in "Datasets to merge" to process your own data.');
+        Object.assign(input, { items: SAMPLE, dedupFields: input.dedupFields?.length ? input.dedupFields : ['url'], ignoreUrlTracking: true });
+    }
     const {
         datasetIds = [],
         items: inlineItems = [],
@@ -35,13 +52,17 @@ try {
     let buffer = [];
     let stop = false;
 
+    const cm = Actor.getChargingManager();
     const flush = async () => {
         if (!buffer.length) return;
-        const res = await Actor.pushData(buffer, EVENT);
-        // On pay-per-event runs the SDK only writes as many items as the user's budget allows.
-        const written = Actor.getChargingManager().getPricingInfo().isPayPerEvent ? res.chargedCount : buffer.length;
-        stats.outputItems += written;
-        if (written < buffer.length || res.eventChargeLimitReached) { stats.stoppedAtChargeLimit = true; stop = true; }
+        // Respect the user's "maximum cost per run": write only as many items as can be paid for, then stop cleanly.
+        let batch = buffer;
+        if (cm.getPricingInfo().isPayPerEvent) {
+            const allowed = cm.calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
+            if (allowed < batch.length) { batch = batch.slice(0, Math.max(0, allowed)); stats.stoppedAtChargeLimit = true; stop = true; }
+        }
+        if (batch.length) await Actor.pushData(batch);
+        stats.outputItems += batch.length;
         buffer = [];
     };
     const emit = async (item) => {
@@ -100,6 +121,7 @@ try {
     }
     await flush();
     stats.sources = Object.values(perSource);
+    stats.sampleMode = sampleMode;
     await Actor.setValue('OUTPUT', stats);
     log.info(`Done: ${stats.inputItems} read, ${stats.filteredOut} filtered out, ${stats.duplicatesRemoved} duplicates removed, ${stats.outputItems} written.`);
     if (stats.stoppedAtChargeLimit) log.warning('Stopped early: the maximum cost you set for this run was reached. Raise "Maximum cost per run" to process the rest.');

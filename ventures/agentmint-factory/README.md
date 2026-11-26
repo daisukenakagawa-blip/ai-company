@@ -8,6 +8,10 @@
 3. 販売：`deploy.py`（非公開で作成・ビルド・試験実行。公開と料金設定はオーナーの確認後）
 4. 記録：`tracker/track.py`（毎日 GitHub Actions、`data/ledger.csv`・`data/DASHBOARD.md`）。月曜の朝は 1 を自動で再実行
 
+## 現在の方針（2026-11-27）
+- 新しい商品開発は停止。Dataset Merge & Dedup の収益化を優先。公開・料金・KYC はオーナー承認制：`PUBLISH_GUIDE.md`
+- 料金の整合性（二重課金の防止）：`check_pricing.py`。自律性の範囲：`AUTONOMY.md`。集客：`ACQUISITION.md`
+
 ## 費用0円
 - `COST_POLICY.md`（規程と公式文書の確認）、`guard.py`（無料枠の80%・確認不能で開発・試験を自動停止）
 

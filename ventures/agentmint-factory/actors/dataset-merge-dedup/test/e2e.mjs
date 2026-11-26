@@ -49,13 +49,19 @@ assert.equal(r.stats.filteredOut, 1);
 
 // 3. pay-per-event budget: locally the SDK prices every event at $1 , so budget $2.5 -> only 2 items written, run still succeeds
 setup({ datasetIds: ['dsA', 'dsB'], dedupFields: ['url'] }, { dsA: A, dsB: B });
-r = run({ ACTOR_TEST_PAY_PER_EVENT: '1', APIFY_ACTOR_PRICING_INFO: JSON.stringify({ pricingModel: 'PAY_PER_EVENT', pricingPerEvent: { actorChargeEvents: { 'result-item': { eventTitle: 'Result item', eventPriceUsd: 0.001 } } } }), APIFY_CHARGED_ACTOR_EVENT_COUNTS: '{}', ACTOR_MAX_TOTAL_CHARGE_USD: '2.5' });
+r = run({ ACTOR_TEST_PAY_PER_EVENT: '1', APIFY_ACTOR_PRICING_INFO: JSON.stringify({ pricingModel: 'PAY_PER_EVENT', pricingPerEvent: { actorChargeEvents: { 'apify-default-dataset-item': { eventTitle: 'Result item', eventPriceUsd: 1 }, 'apify-actor-start': { eventTitle: 'Start', eventPriceUsd: 0.00005 } } } }), APIFY_CHARGED_ACTOR_EVENT_COUNTS: '{}', ACTOR_MAX_TOTAL_CHARGE_USD: '2.5' });
 assert.ok(r.ok, 'budget run ok');
 assert.equal(r.out.length, 2, `budget: expected 2 got ${r.out.length}`);
 assert.equal(r.stats.stoppedAtChargeLimit, true);
 
-// 4. bad input fails clearly
-setup({ datasetIds: [] }, {});
+// 4. no input = built-in sample (Apify's daily automated test uses the prefill, which has no datasets): succeeds, non-empty
+setup({ dedupFields: ['url'] }, {});
+r = run();
+assert.ok(r.ok, 'sample run ok');
+assert.equal(r.out.length, 4); assert.equal(r.stats.sampleMode, true); assert.equal(r.stats.duplicatesRemoved, 2);
+
+// 4b. bad input fails clearly
+setup({ items: [{ a: 1 }], filters: [{ field: 'a', op: 'like' }] }, {});
 r = run();
 assert.equal(r.ok, false);
 

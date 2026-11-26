@@ -1,0 +1,19 @@
+{
+  "pricingModel": "PAY_PER_EVENT",
+  "events": {
+    "image-processed": {
+      "priceUsd": 0.001,
+      "title": "Image processed",
+      "description": "One image converted successfully. Failed images are free."
+    },
+    "apify-actor-start": {
+      "priceUsd": 5e-05,
+      "title": "Actor start"
+    }
+  },
+  "forbiddenEvents": [
+    "apify-default-dataset-item"
+  ],
+  "payPerEventPlusUsage": false,
+  "note": "結果の行（失敗の行を含む）を既定のデータセットに書くので、apify-default-dataset-item は必ず削除する（残すと二重課金・失敗にも課金）。開発は一時停止中（2026-11-27）"
+}

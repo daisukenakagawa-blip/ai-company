@@ -20,6 +20,10 @@ Items without any value in the dedup fields are never treated as duplicates of e
 - Daily runs: merge yesterday's and today's results and keep the **latest** version of each record
 - Lead lists: keep only rows that have an email, drop internal fields, flatten for a spreadsheet
 
+## Try it in 10 seconds
+
+Click **Start** without choosing any dataset: the Actor runs on a built-in 6-item sample and shows how duplicates (same URL with a tracking parameter, `www.` or a trailing slash) are removed. It writes 4 items. Then pick your own datasets in **Datasets to merge**.
+
 ## Input example
 
 ```json
@@ -57,7 +61,7 @@ It also works as an **integration** after another Actor finishes: pass the finis
 
 ## Pricing
 
-Pay per event: you pay only for **items written to the output**. Removed duplicates and filtered rows are free. The price is shown on the Actor's page.
+Pay per event: you pay only for **items written to the output dataset** (plus Apify's small standard start fee). Removed duplicates and filtered-out rows are free. There is exactly one paid result event, so nothing is charged twice. The current price is shown on the Actor's page.
 
 **Spending limit**: if you set a maximum cost per run, the Actor writes items until that limit is reached, then stops cleanly and says so in the status message and in `OUTPUT.stoppedAtChargeLimit`. Raise the limit to process the rest.
 

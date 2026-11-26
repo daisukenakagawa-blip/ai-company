@@ -35,15 +35,28 @@ def public_stats(slug):
     return {"id": d.get("id"), "u7": s.get("totalUsers7Days", 0), "u30": s.get("totalUsers30Days", 0), "users_all": s.get("totalUsers", 0),
             "runs30": tot, "fail_rate30": round(bad / tot, 3) if tot else "", "bookmarks": s.get("bookmarkCount", 0), "public": d.get("isPublic")}
 
-def own_test_cost(actor_id):
-    """自分のアカウントで動かした今月の実行の費用（無料枠から引かれる分）"""
-    if not TOKEN or not actor_id: return "未確認"
+_ME = None
+def my_user_id():
+    global _ME
+    if _ME is None and TOKEN:
+        try: _ME = get("https://api.apify.com/v2/users/me", auth=True)["id"]
+        except Exception: _ME = ""
+    return _ME
+
+def own_runs(actor_id):
+    """自分（オーナー・AI の試験）が動かした実行。runs の userId が自分のものだけを数える。
+    戻り値：直近30日の実行数・今月の費用（無料枠から引かれる分）"""
+    if not TOKEN or not actor_id or not my_user_id(): return None
     try:
         runs = get(f"https://api.apify.com/v2/acts/{actor_id}/runs?desc=1&limit=1000", auth=True)["items"]
     except Exception:
-        return "未確認"
+        return None
+    me = my_user_id()
+    mine = [r for r in runs if r.get("userId") in (me, None)]  # 一覧に userId が無ければ自分の実行とみなす（外部の数を多く見積もらないため）
+    since = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)).isoformat()
     month = datetime.date.today().strftime("%Y-%m")
-    return round(sum((r.get("usageTotalUsd") or 0) for r in runs if (r.get("startedAt") or "").startswith(month)), 5)
+    return {"runs30": sum(1 for r in mine if (r.get("startedAt") or "") >= since[:19]),
+            "cost_month": round(sum((r.get("usageTotalUsd") or 0) for r in mine if (r.get("startedAt") or "").startswith(month)), 5)}
 
 def revenue(slug):
     name = slug.split("/")[-1]
@@ -72,15 +85,19 @@ def main():
         r, c = rv.get("revenue"), rv.get("platform_cost")
         fee = round(r * FEE, 4) if r is not None else "未確認"
         profit = round(max(0.0, (1 - FEE) * r - (c or 0)), 4) if r is not None and c is not None else "未確認"
+        own = own_runs(st.get("id"))
+        ext_runs = max(0, st["runs30"] - own["runs30"]) if own and isinstance(st.get("runs30"), int) else "未確認"
+        ext_users = max(0, st["u30"] - (1 if own["runs30"] else 0)) if own and isinstance(st.get("u30"), int) else "未確認"
         rows.append({"date": today, "slug": slug, "status": a["status"], **{k: v for k, v in st.items() if k != "id"},
+                     "own_runs30": own["runs30"] if own else "未確認", "external_runs30": ext_runs, "external_users30": ext_users,
                      "paying_users": rv.get("paying_users", "未確認") if rv.get("paying_users") is not None else "未確認",
                      "revenue_usd": r if r is not None else "未確認", "apify_fee_usd": fee,
                      "platform_cost_usd": c if c is not None else "未確認", "net_profit_usd": profit,
-                     "own_test_cost_usd_month": own_test_cost(st.get("id")), "external_payment_jpy": external_payment})
+                     "own_test_cost_usd_month": own["cost_month"] if own else "未確認", "external_payment_jpy": external_payment})
     comp = [{"slug": c, **public_stats(c)} for c in cfg.get("competitors", [])]
     os.makedirs(DATA, exist_ok=True)
     path = os.path.join(DATA, "ledger.csv")
-    fields = ["date", "slug", "status", "public", "u7", "u30", "users_all", "runs30", "fail_rate30", "bookmarks", "paying_users",
+    fields = ["date", "slug", "status", "public", "u7", "u30", "users_all", "runs30", "own_runs30", "external_runs30", "external_users30", "fail_rate30", "bookmarks", "paying_users",
               "revenue_usd", "apify_fee_usd", "platform_cost_usd", "net_profit_usd", "own_test_cost_usd_month", "external_payment_jpy", "error"]
     if os.path.exists(path) and open(path).readline().strip().split(",") != fields:
         os.rename(path, path.replace(".csv", f"-old-{today}.csv"))  # 列が変わったら古い表を残して作り直す
@@ -97,10 +114,19 @@ def main():
           f"- GitHub：公開リポジトリ={budget.get('github', {}).get('private') is False}{'' if budget.get('github', {}).get('ok') else '　停止の理由：' + str(budget.get('github', {}).get('reason'))}",
           f"- 外部への支払い：{external_payment}円", "",
           "## 商品別の損益（売上・手数料・計算費は Console の Analytics の書き出しが無ければ「未確認」）", "",
-          "| 商品 | 状態 | 30日利用者 | 30日実行 | 失敗率 | 有料利用者 | 売上 USD | 手数料 USD | 計算費 USD | 純利益 USD | 自分の試験費 USD（無料枠） |",
-          "|---|---|---|---|---|---|---|---|---|---|---|"]
+          "外部＝公開の統計から自分（オーナー・AI の試験）の実行を引いた数。自分の試験は実績に数えない。", "",
+          "| 商品 | 状態 | 外部の利用者（30日） | 外部の実行（30日） | 自分の実行（30日） | 失敗率 | 有料利用者 | 売上 USD | 手数料 USD | 計算費 USD | 純利益 USD | 自分の試験費 USD（無料枠） |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        md.append(f"| {r['slug']} | {r['status']} | {r.get('u30','—')} | {r.get('runs30','—')} | {r.get('fail_rate30','—')} | {r['paying_users']} | {r['revenue_usd']} | {r['apify_fee_usd']} | {r['platform_cost_usd']} | {r['net_profit_usd']} | {r['own_test_cost_usd_month']} |")
+        md.append(f"| {r['slug']} | {r['status']} | {r.get('external_users30','—')} | {r.get('external_runs30','—')} | {r.get('own_runs30','—')} | {r.get('fail_rate30','—')} | {r['paying_users']} | {r['revenue_usd']} | {r['apify_fee_usd']} | {r['platform_cost_usd']} | {r['net_profit_usd']} | {r['own_test_cost_usd_month']} |")
+    try:
+        pc = json.load(open(os.path.join(DATA, "pricing-check.json")))
+        md += ["", "## 料金設定の確認（二重課金の防止）", "", "| 商品 | Apify 上の設定 | 問題 |", "|---|---|---|"]
+        for r in pc:
+            act = r.get("actual"); act = act if isinstance(act, str) else ", ".join(f"{k} ${v['price']}" for k, v in act["events"].items())
+            md.append(f"| {r['actor']} | {act} | {'; '.join(r['problems']) or 'なし'} |")
+    except Exception:
+        pass
     md += ["", "## 競合（公開 API）", "", "| Actor | 30日利用者 | 30日実行 | 失敗率 |", "|---|---|---|---|"]
     for c in comp:
         md.append(f"| {c['slug']} | {c.get('u30','?')} | {c.get('runs30','?')} | {c.get('fail_rate30','?')} |")

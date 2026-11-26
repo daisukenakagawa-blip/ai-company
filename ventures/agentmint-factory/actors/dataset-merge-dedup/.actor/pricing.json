@@ -1,0 +1,19 @@
+{
+  "pricingModel": "PAY_PER_EVENT",
+  "events": {
+    "apify-default-dataset-item": {
+      "priceUsd": 0.0002,
+      "title": "Result item",
+      "description": "One item written to the output dataset. Removed duplicates and filtered-out rows are free."
+    },
+    "apify-actor-start": {
+      "priceUsd": 5e-05,
+      "title": "Actor start"
+    }
+  },
+  "forbiddenEvents": [
+    "result-item"
+  ],
+  "payPerEventPlusUsage": false,
+  "note": "コードから charge する独自イベントは無い。課金は Apify が既定のデータセットへの書き込みで自動で行う（apify-default-dataset-item）。独自イベントを足すと二重課金になる"
+}

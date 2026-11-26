@@ -45,32 +45,40 @@ def main(root):
     me = call("GET", "/users/me")
     name = meta["name"]
     version = {"versionNumber": meta["version"], "sourceType": "SOURCE_FILES", "buildTag": "latest", "sourceFiles": files(root)}
+    extra = {}
+    sp = os.path.join(root, ".actor", "store.json")
+    if os.path.exists(sp):  # Store の表示情報（SEO・カテゴリ・権限）。非公開のまま設定するだけで、公開はしない
+        extra = {k: v for k, v in json.load(open(sp)).items() if k in ("seoTitle", "seoDescription", "categories", "actorPermissionLevel")}
     existing = {a["name"]: a for a in (call("GET", "/acts?my=1&limit=1000") or {}).get("items", [])}
     if name in existing:
-        act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"]})
+        act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"], **extra})
         print("updated", act["id"])
     else:
-        act = call("POST", "/acts", {"name": name, "title": meta["title"], "description": meta["description"], "isPublic": False, "versions": [version]})
+        act = call("POST", "/acts", {"name": name, "title": meta["title"], "description": meta["description"], "isPublic": False, "versions": [version], **extra})
         print("created", act["id"])
     b = call("POST", f"/acts/{act['id']}/builds?version={meta['version']}&tag=latest&waitForFinish=60")
     while b["status"] in ("READY", "RUNNING"):
         time.sleep(5); b = call("GET", f"/actor-builds/{b['id']}")
     print("build", b["status"])
     if b["status"] != "SUCCEEDED": raise SystemExit("build failed")
-    smoke = json.load(open(os.path.join(root, ".actor", "smoke.json")))
-    run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=60&memory={smoke.get('memory', 256)}&timeout=180", smoke["input"])
-    while run["status"] in ("READY", "RUNNING"):
-        time.sleep(5); run = call("GET", f"/actor-runs/{run['id']}")
-    print("test run", run["status"], run["id"], "usage USD", run.get("usageTotalUsd"))
-    items = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/datasets/{run['defaultDatasetId']}/items", headers={"Authorization": f"Bearer {TOKEN}"})))
-    got = [i.get(smoke["expect"]["field"]) for i in items]
-    if run["status"] != "SUCCEEDED" or got != smoke["expect"]["values"]:
-        try:
-            req = urllib.request.Request(f"{API}/actor-runs/{run['id']}/log", headers={"Authorization": f"Bearer {TOKEN}"})
-            print("---- run log (last 40 lines) ----\n" + "\n".join(urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace").splitlines()[-40:]))
-        except Exception as e:
-            print("log unavailable", e)
-        raise SystemExit(f"smoke test failed: status={run['status']} got={got}")
+    smokes = json.load(open(os.path.join(root, ".actor", "smoke.json")))
+    for smoke in (smokes if isinstance(smokes, list) else [smokes]):
+        run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=60&memory={smoke.get('memory', 256)}&timeout=180", smoke["input"])
+        while run["status"] in ("READY", "RUNNING"):
+            time.sleep(5); run = call("GET", f"/actor-runs/{run['id']}")
+        print("test run", smoke.get("name", ""), run["status"], run["id"], "usage USD", run.get("usageTotalUsd"))
+        items = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/datasets/{run['defaultDatasetId']}/items", headers={"Authorization": f"Bearer {TOKEN}"})))
+        got = [i.get(smoke["expect"]["field"]) for i in items]
+        if run["status"] != "SUCCEEDED" or got != smoke["expect"]["values"]:
+            try:
+                req = urllib.request.Request(f"{API}/actor-runs/{run['id']}/log", headers={"Authorization": f"Bearer {TOKEN}"})
+                print("---- run log (last 40 lines) ----\n" + "\n".join(urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace").splitlines()[-40:]))
+            except Exception as e:
+                print("log unavailable", e)
+            raise SystemExit(f"smoke test failed: status={run['status']} got={got}")
+    a = call("GET", f"/acts/{act['id']}")
+    print("isPublic", a.get("isPublic"), "| permission", a.get("actorPermissionLevel"), "| categories", a.get("categories"), "| seoTitle", a.get("seoTitle"))
+    if a.get("isPublic"): raise SystemExit("想定外：Actor が公開になっている")
     print(f"OK: https://console.apify.com/actors/{act['id']}  (private, user {me['username']})")
 
 if __name__ == "__main__":

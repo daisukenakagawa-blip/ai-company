@@ -6,7 +6,7 @@ on:
     - cron: "17 22 * * *"   # 毎日 7:17 JST（22:17 UTC の日曜＝JST の月曜は Store 全件も再集計）
   push:
     branches: [main]
-    paths: ["ventures/agentmint-factory/guard.py", "ventures/agentmint-factory/tracker/**"]
+    paths: ["ventures/agentmint-factory/guard.py", "ventures/agentmint-factory/check_pricing.py", "ventures/agentmint-factory/tracker/**"]
   workflow_dispatch:
 permissions:
   contents: write
@@ -27,6 +27,13 @@ jobs:
         run: |
           set +e; python3 ventures/agentmint-factory/guard.py; c=$?; set -e
           echo "code=$c" >> $GITHUB_OUTPUT
+      - name: Pricing consistency (double-charge check)
+        id: pricing
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          set +e; python3 ventures/agentmint-factory/check_pricing.py > /dev/null; c=$?; set -e
+          echo "code=$c" >> $GITHUB_OUTPUT
       - name: Daily tracker
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
@@ -45,10 +52,19 @@ jobs:
           B=$(python3 -c "import json;d=json.load(open('ventures/agentmint-factory/data/budget-status.json'));print('判定: '+d['decision']+'\nApify: '+str(d['apify'].get('reason','OK'))+'\nGitHub: '+str(d['github'].get('reason','OK'))+'\n\n開発・試験（Apify でのビルド・実行）は自動で止めています。')")
           N=$(gh issue list --state open --search "$T in:title" --json number -q '.[0].number')
           if [ -n "$N" ]; then gh issue comment "$N" --body "$B"; else gh issue create --title "$T" --body "$B"; fi
+      - name: Notify owner on pricing problem (GitHub Issue)
+        if: steps.pricing.outputs.code != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          T="AgentMint Factory：料金設定に問題（二重課金の恐れなど）"
+          B=$(python3 -c "import json;print('\n'.join(r['actor']+': '+'; '.join(r['problems']) for r in json.load(open('ventures/agentmint-factory/data/pricing-check.json')) if r['problems']))")
+          N=$(gh issue list --state open --search "$T in:title" --json number -q '.[0].number')
+          if [ -n "$N" ]; then gh issue comment "$N" --body "$B"; else gh issue create --title "$T" --body "$B"; fi
       - name: Commit
         run: |
           git config user.name "agentmint-factory-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add ventures/agentmint-factory/data/ledger*.csv ventures/agentmint-factory/data/DASHBOARD.md ventures/agentmint-factory/data/budget-status.json ventures/agentmint-factory/data/*-clusters.json 2>/dev/null || true
+          git add ventures/agentmint-factory/data/ledger*.csv ventures/agentmint-factory/data/DASHBOARD.md ventures/agentmint-factory/data/budget-status.json ventures/agentmint-factory/data/pricing-check.json ventures/agentmint-factory/data/*-clusters.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "AgentMint Factory: 見張りと損益の記録 $(date -u +%F)"
           git pull --rebase -q && git push || true

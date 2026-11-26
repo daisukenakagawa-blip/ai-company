@@ -1,1 +1,2 @@
-pdf-text-extract
+dataset-merge-dedup
+# 2026-11-27 公開準備：課金を標準イベント1つに統一、入力なしの見本モード、出力スキーマ、SEO・カテゴリ・権限

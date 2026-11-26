@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "dataset-merge-dedup",
   "title": "Dataset Merge & Dedup — Combine, Deduplicate, Filter Datasets",
-  "description": "Merge any number of Apify datasets into one, remove duplicates by the fields you choose (case/whitespace-insensitive, ignores UTM tracking), filter rows and reshape fields. Streams large datasets. Pay only per output item.",
+  "description": "Merge Apify datasets into one, remove duplicates by the fields you choose (ignores case, spaces and URL tracking parameters), keep the first, last or most complete copy, filter rows and reshape fields. Pay only per output item.",
   "version": "0.1",
   "buildTag": "latest",
   "minMemoryMbytes": 256,
@@ -18,9 +18,12 @@
         "overview": {
           "title": "Items",
           "transformation": {},
-          "display": { "component": "table" }
+          "display": {
+            "component": "table"
+          }
         }
       }
     }
-  }
+  },
+  "output": "./output_schema.json"
 }
