@@ -4,3 +4,6 @@ date,slug,status,public,u7,u30,users_all,runs30,fail_rate30,bookmarks,paying_use
 2026-11-26,preponderant_swift/dataset-merge-dedup,private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz),False,0,0,1,0,,0,未確認,未確認,未確認,未確認,未確認,0.00016,0,
 2026-11-26,preponderant_swift/dataset-merge-dedup,private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz),False,0,0,1,0,,0,未確認,未確認,未確認,未確認,未確認,0.00016,0,
 2026-11-26,preponderant_swift/image-convert-compress,private-deploy requested 2026-11-26,,,,,,,,未確認,未確認,未確認,未確認,未確認,未確認,0,HTTP Error 404: Not Found
+2026-11-26,preponderant_swift/dataset-merge-dedup,private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz),False,0,0,1,0,,0,未確認,未確認,未確認,未確認,未確認,0.00016,0,
+2026-11-26,preponderant_swift/image-convert-compress,private-deployed 2026-11-26 (oNvRYK1HyltyyD2GV),False,0,0,1,0,,0,未確認,未確認,未確認,未確認,未確認,0.0003,0,
+2026-11-26,preponderant_swift/pdf-text-extract,private-deploy requested 2026-11-26,,,,,,,,未確認,未確認,未確認,未確認,未確認,未確認,0,HTTP Error 404: Not Found
