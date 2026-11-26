@@ -7,8 +7,20 @@
    "apify-actor-start": 5e-05
   },
   "problems": [],
-  "isPublic": false,
-  "actual": "未設定（無料。公開しても誰にも課金されない）",
+  "isPublic": true,
+  "actual": {
+   "model": "PAY_PER_EVENT",
+   "events": {
+    "apify-actor-start": {
+     "price": 5e-05
+    },
+    "apify-default-dataset-item": {
+     "price": 0.0002
+    }
+   },
+   "startedAt": "2026-11-26T23:13:14.733Z",
+   "plusUsage": false
+  },
   "ok": true
  },
  {
