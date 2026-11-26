@@ -2,8 +2,9 @@
 使い方: APIFY_TOKEN=... python3 deploy.py actors/dataset-merge-dedup
 - 公開（Store 掲載）・料金の設定はしない（オーナーの確認後に Console で行う）
 - 既存の Actor（AgentMint など）には触れない：同じ名前の Actor だけを更新する
+- 始める前に guard.py（費用0円の見張り）を通す。STOP なら何もしない
 """
-import json, os, sys, time, urllib.request, urllib.error
+import json, os, subprocess, sys, time, urllib.request, urllib.error
 TOKEN = os.environ["APIFY_TOKEN"]
 API = "https://api.apify.com/v2"
 SKIP = {"node_modules", "storage", "storage-e2e", ".git"}
@@ -27,7 +28,15 @@ def files(root):
             out.append({"name": os.path.relpath(p, root), "format": "TEXT", "content": open(p, encoding="utf-8").read()})
     return out
 
+def guard():
+    """費用0円の見張り。STOP（無料枠の80%以上・確認不能・有料プラン等）なら何もしないで終わる"""
+    r = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "guard.py")], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(r.stdout[-1500:])
+        raise SystemExit("Budget guard: STOP（デプロイ・試験を行わない）")
+
 def main(root):
+    guard()
     meta = json.load(open(os.path.join(root, ".actor", "actor.json")))
     me = call("GET", "/users/me")
     name = meta["name"]
@@ -46,7 +55,7 @@ def main(root):
     if b["status"] != "SUCCEEDED": raise SystemExit("build failed")
     test = {"items": [{"url": "https://ex.com/1?utm_source=a", "n": 1}, {"url": "https://ex.com/1", "n": 2}, {"url": "https://ex.com/2", "n": 3}],
             "dedupFields": ["url"], "ignoreUrlTracking": True}
-    run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=120&memory=256", test)
+    run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=120&memory=256&timeout=120", test)
     print("test run", run["status"], run["id"])
     items = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/datasets/{run['defaultDatasetId']}/items", headers={"Authorization": f"Bearer {TOKEN}"})))
     assert [i["n"] for i in items] == [1, 3], items

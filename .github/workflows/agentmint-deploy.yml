@@ -25,12 +25,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Local tests
+      - name: Local tests (GitHub の無料枠のみ・Apify は使わない)
         working-directory: ventures/agentmint-factory/actors/${{ env.ACTOR }}
         run: npm ci --no-audit --no-fund && npm test
+      - name: Budget guard (STOP なら以降を行わない)
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 ventures/agentmint-factory/guard.py
       - name: Deploy privately, build, test run
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           test -n "$APIFY_TOKEN" || { echo "APIFY_TOKEN secret is missing"; exit 1; }
           cd ventures/agentmint-factory && python3 deploy.py actors/${{ env.ACTOR }}
