@@ -5,7 +5,7 @@
 ## 経路（Apify の中で、利用者がすでに探している場所）
 | 経路 | 仕組み | 当社の対応 | 根拠 |
 |---|---|---|---|
-| Store の検索・カテゴリ | 利用者が「dedup」「merge datasets」等で探す。順位は品質スコアに近い指標で決まる（保証なし） | 題名・説明・SEO 題名・カテゴリを競合が使う語に合わせた。権限を絞った実行（品質スコアの項目） | docs …/quality-score.md |
+| Store の検索・カテゴリ | 利用者が「dedup」「merge datasets」等で探す。順位は品質スコアに近い指標で決まる（保証なし） | 題名・説明・SEO 題名・カテゴリ（上限3つ：Developer tools／Transform and process data／Clean, validate and deduplicate）を競合が使う語に合わせた。権限を絞った実行（品質スコアの項目） | docs …/quality-score.md |
 | 自動試験に合格し続ける | 不合格が続くと「Under maintenance」で順位が下がる | 入力なしでも成功する見本モード。毎日の試験条件で本番試験済み | docs …/publishing/test.md |
 | 競合の品質の穴 | 最大手（無料）は30日で587人が使い、失敗率63.8% | 高い成功率を保つ（失敗率を毎日記録） | Store API（2026-11-26） |
 | 価格 | 有料の競合は1件 $0.00025〜$0.002 | $0.0002 / 件 | 同上 |
