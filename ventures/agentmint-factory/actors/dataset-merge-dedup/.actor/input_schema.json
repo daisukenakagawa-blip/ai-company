@@ -1,0 +1,96 @@
+{
+  "title": "Dataset Merge & Dedup",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "datasetIds": {
+      "title": "Datasets to merge",
+      "type": "array",
+      "description": "Pick one or more datasets (for example the outputs of several scraper runs). They are read in this order.",
+      "resourceType": "dataset",
+      "sectionCaption": "Input"
+    },
+    "items": {
+      "title": "Items (JSON, optional)",
+      "type": "array",
+      "description": "Instead of (or in addition to) datasets, pass items directly. Useful when calling the Actor through the API.",
+      "editor": "json",
+      "prefill": []
+    },
+    "dedupFields": {
+      "title": "Deduplicate by fields",
+      "type": "array",
+      "description": "Two items are duplicates when all of these fields are equal, e.g. [\"url\"] or [\"name\", \"address.city\"]. Dotted paths reach nested fields. Leave empty to compare whole items.",
+      "editor": "stringList",
+      "prefill": ["url"],
+      "sectionCaption": "Deduplication"
+    },
+    "keep": {
+      "title": "Which duplicate to keep",
+      "type": "string",
+      "description": "first = keep the earliest (fastest, lowest memory). last = keep the newest. mostComplete = keep the copy with the most non-empty fields.",
+      "editor": "select",
+      "enum": ["first", "last", "mostComplete"],
+      "enumTitles": ["First seen", "Last seen", "Most complete"],
+      "default": "first"
+    },
+    "normalizeKeys": {
+      "title": "Ignore case and extra spaces when comparing",
+      "type": "boolean",
+      "description": "\"ACME Inc \" and \"acme inc\" count as the same value. Output values are not changed.",
+      "default": true
+    },
+    "ignoreUrlTracking": {
+      "title": "Treat URLs that differ only by tracking parameters as equal",
+      "type": "boolean",
+      "description": "Ignores utm_*, fbclid, gclid, #fragments, trailing slash and leading www. when comparing.",
+      "default": false
+    },
+    "filters": {
+      "title": "Keep only rows matching (all conditions)",
+      "type": "array",
+      "description": "List of {\"field\", \"op\", \"value\"}. op: eq, neq, contains, notContains, exists, notExists, gt, gte, lt, lte, regex. Example: [{\"field\":\"price\",\"op\":\"lt\",\"value\":100},{\"field\":\"email\",\"op\":\"exists\"}]",
+      "editor": "json",
+      "prefill": [],
+      "sectionCaption": "Filter and reshape"
+    },
+    "fieldsToKeep": {
+      "title": "Output only these fields",
+      "type": "array",
+      "description": "Leave empty to keep all fields.",
+      "editor": "stringList"
+    },
+    "fieldsToOmit": {
+      "title": "Remove these fields",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Fields to drop from every item."
+    },
+    "renameFields": {
+      "title": "Rename fields",
+      "type": "object",
+      "editor": "json",
+      "description": "Map of old name to new name, e.g. {\"title\": \"name\"}.",
+      "prefill": {}
+    },
+    "flattenNested": {
+      "title": "Flatten nested objects (CSV/Excel friendly)",
+      "type": "boolean",
+      "description": "{\"address\":{\"city\":\"Paris\"}} becomes {\"address.city\":\"Paris\"}. Arrays of values are joined with \"; \".",
+      "default": false
+    },
+    "addSourceField": {
+      "title": "Add source dataset ID to each item",
+      "type": "boolean",
+      "description": "Adds a _sourceDatasetId field.",
+      "default": false
+    },
+    "maxItems": {
+      "title": "Maximum output items",
+      "type": "integer",
+      "description": "0 = no limit.",
+      "minimum": 0,
+      "default": 0
+    }
+  }
+}

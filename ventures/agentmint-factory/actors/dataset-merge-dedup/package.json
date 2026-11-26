@@ -1,0 +1,10 @@
+{
+  "name": "dataset-merge-dedup",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Merge, deduplicate, filter and reshape Apify datasets. Fast, streaming, pay per output item.",
+  "main": "src/main.js",
+  "scripts": { "start": "node src/main.js", "test": "node --test test/*.test.js && node test/e2e.mjs" },
+  "dependencies": { "apify": "3.8.0" }
+}

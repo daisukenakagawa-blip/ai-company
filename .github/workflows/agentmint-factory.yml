@@ -1,0 +1,32 @@
+name: AgentMint Factory (tracker + weekly market scan)
+# 毎日：当社 Actor と競合の公開指標を記録（tracker/track.py）。毎週月曜：Apify Store 全件の再集計。費用0円（GitHub Actions の無料枠・Apify の公開 API）
+on:
+  schedule:
+    - cron: "17 22 * * *"   # 毎日 7:17 JST（月曜の朝は Store 全件も再集計。22:17 UTC の日曜＝JST の月曜）
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: agentmint-factory
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Daily tracker
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: python3 ventures/agentmint-factory/tracker/track.py
+      - name: Weekly market scan (Monday)
+        run: |
+          if [ "$(date -u +%u)" = "7" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            cd ventures/agentmint-factory && python3 research/collect_store.py && python3 research/analyze.py data/store-$(date +%F).jsonl > /dev/null
+          fi
+      - name: Commit
+        run: |
+          git config user.name "agentmint-factory-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add ventures/agentmint-factory/data/ledger.csv ventures/agentmint-factory/data/DASHBOARD.md ventures/agentmint-factory/data/*-clusters.json || true
+          git diff --cached --quiet || git commit -m "AgentMint Factory: 指標の記録 $(date -u +%F)"
+          git pull --rebase -q && git push || true

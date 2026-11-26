@@ -1,0 +1,2092 @@
+[
+ {
+  "cluster": "hash/encode/utils",
+  "actors": 2756,
+  "active_u30ge5": 616,
+  "u30_total": 232740,
+  "top1": "apify/instagram-scraper",
+  "top1_u30": 72454,
+  "top1_share": 0.31,
+  "top3_share": 0.6,
+  "u30_per_active": 378,
+  "median_primary_price_usd_top15": 0.0027,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "apify/instagram-scraper",
+    72454,
+    607,
+    4.7,
+    "PAY_PER_EVENT",
+    0.0027
+   ],
+   [
+    "clockworks/tiktok-scraper",
+    37644,
+    370,
+    4.8,
+    "PAY_PER_EVENT",
+    0.0037
+   ],
+   [
+    "apify/instagram-reel-scraper",
+    30119,
+    102,
+    4.4,
+    "PAY_PER_EVENT",
+    0.0026
+   ],
+   [
+    "apify/instagram-hashtag-scraper",
+    24557,
+    91,
+    3.5,
+    "PAY_PER_EVENT",
+    0.0026
+   ],
+   [
+    "apify/instagram-search-scraper",
+    9595,
+    32,
+    4.8,
+    "PAY_PER_EVENT",
+    0.0027
+   ],
+   [
+    "clockworks/tiktok-comments-scraper",
+    7148,
+    96,
+    4.7,
+    "PAY_PER_EVENT",
+    0.00125
+   ],
+   [
+    "clockworks/free-tiktok-scraper",
+    3483,
+    74,
+    4.8,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "apidojo/tiktok-scraper",
+    2676,
+    30,
+    4.4,
+    "PAY_PER_EVENT",
+    0.0003
+   ],
+   [
+    "clockworks/tiktok-hashtag-scraper",
+    2281,
+    30,
+    4.9,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "futurizerush/meta-threads-scraper",
+    2242,
+    19,
+    4.2,
+    "PAY_PER_EVENT",
+    0.0025
+   ]
+  ]
+ },
+ {
+  "cluster": "rss/feed",
+  "actors": 1315,
+  "active_u30ge5": 48,
+  "u30_total": 10423,
+  "top1": "harshmaur/reddit-scraper",
+  "top1_u30": 6463,
+  "top1_share": 0.62,
+  "top3_share": 0.74,
+  "u30_per_active": 217,
+  "median_primary_price_usd_top15": 0.0023,
+  "free_in_top10": 2,
+  "top10": [
+   [
+    "harshmaur/reddit-scraper",
+    6463,
+    42,
+    4.7,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "apify/instagram-api-scraper",
+    886,
+    34,
+    3.0,
+    "PAY_PER_EVENT",
+    0.0023
+   ],
+   [
+    "memo23/video-audio-transcriber",
+    344,
+    2,
+    5.0,
+    "PAY_PER_EVENT",
+    0.0008
+   ],
+   [
+    "tidytools/audio-transcriber",
+    314,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.006
+   ],
+   [
+    "radeance/similarweb-scraper",
+    227,
+    10,
+    3.4,
+    "PAY_PER_EVENT",
+    0.008
+   ],
+   [
+    "lukaskrivka/article-extractor-smart",
+    146,
+    10,
+    4.8,
+    "FREE",
+    null
+   ],
+   [
+    "curious_coder/bing-search-scraper",
+    68,
+    0,
+    0,
+    "FREE",
+    null
+   ],
+   [
+    "tidydata/audio-video-transcription",
+    66,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "santamaria-automations/rss-feed-reader",
+    65,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "spokentext/spotify-podcast-transcript",
+    55,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ]
+  ]
+ },
+ {
+  "cluster": "text-utils(lang detect/sentiment/keywords offline)",
+  "actors": 1537,
+  "active_u30ge5": 164,
+  "u30_total": 9288,
+  "top1": "fatihtahta/reddit-scraper-search-fast",
+  "top1_u30": 3582,
+  "top1_share": 0.39,
+  "top3_share": 0.47,
+  "u30_per_active": 57,
+  "median_primary_price_usd_top15": 0.0015,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "fatihtahta/reddit-scraper-search-fast",
+    3582,
+    25,
+    4.1,
+    "PAY_PER_EVENT",
+    0.00149
+   ],
+   [
+    "practicaltools/apify-reddit-api",
+    459,
+    5,
+    5,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "scraper_one/x-post-replies-scraper",
+    281,
+    9,
+    3.3,
+    "PAY_PER_EVENT",
+    0.00025
+   ],
+   [
+    "harshmaur/reddit-comments-scraper",
+    248,
+    5,
+    5,
+    "PAY_PER_EVENT",
+    0.0015
+   ],
+   [
+    "zen-studio/g2-reviews-scraper",
+    195,
+    4,
+    2.7,
+    "PAY_PER_EVENT",
+    0.00649
+   ],
+   [
+    "apidojo/twitter-replies-scraper",
+    154,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0004
+   ],
+   [
+    "memo23/expedia-scraper",
+    149,
+    9,
+    5.0,
+    "PAY_PER_EVENT",
+    0.0025
+   ],
+   [
+    "code-node-tools/google-play-reviews-scraper",
+    128,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0005
+   ],
+   [
+    "johnvc/apple-app-store-reviews-api",
+    127,
+    6,
+    5,
+    "PAY_PER_EVENT",
+    0.0009
+   ],
+   [
+    "clappi/instagram-comments-scraper",
+    108,
+    8,
+    4.8,
+    "PAY_PER_EVENT",
+    0.002
+   ]
+  ]
+ },
+ {
+  "cluster": "email-verify(MX/SMTP)",
+  "actors": 476,
+  "active_u30ge5": 75,
+  "u30_total": 7961,
+  "top1": "bounceverify/bounceverify-email-verifier",
+  "top1_u30": 3179,
+  "top1_share": 0.4,
+  "top3_share": 0.5,
+  "u30_per_active": 106,
+  "median_primary_price_usd_top15": 0.003,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "bounceverify/bounceverify-email-verifier",
+    3179,
+    5,
+    4.8,
+    "PAY_PER_EVENT",
+    0.00089
+   ],
+   [
+    "michael.g/email-verifier-validator",
+    476,
+    37,
+    4.7,
+    "PAY_PER_EVENT",
+    0.1
+   ],
+   [
+    "curious_coder/similarweb-scraper",
+    328,
+    6,
+    4.5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "data-slayer/instagram-user-info-scraper-cookieless",
+    317,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0045
+   ],
+   [
+    "devil_port369-owner/instagram-email-phone-scraper-pay-per-result",
+    271,
+    17,
+    4.0,
+    "PAY_PER_EVENT",
+    0.05
+   ],
+   [
+    "blessiticus/email-verifier-pro",
+    264,
+    25,
+    5,
+    "PAY_PER_EVENT",
+    0.00085
+   ],
+   [
+    "automation-lab/website-contact-finder",
+    246,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0009
+   ],
+   [
+    "memo23/similarweb-scraper",
+    243,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00149
+   ],
+   [
+    "radeance/similarweb-scraper",
+    227,
+    10,
+    3.4,
+    "PAY_PER_EVENT",
+    0.008
+   ],
+   [
+    "pnda/email-verifier",
+    170,
+    5,
+    4.5,
+    "PAY_PER_EVENT",
+    0.00095
+   ]
+  ]
+ },
+ {
+  "cluster": "data-validation(iban/vat/json schema)",
+  "actors": 1167,
+  "active_u30ge5": 56,
+  "u30_total": 7152,
+  "top1": "bounceverify/bounceverify-email-verifier",
+  "top1_u30": 3179,
+  "top1_share": 0.44,
+  "top3_share": 0.58,
+  "u30_per_active": 128,
+  "median_primary_price_usd_top15": 0.0025,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "bounceverify/bounceverify-email-verifier",
+    3179,
+    5,
+    4.8,
+    "PAY_PER_EVENT",
+    0.00089
+   ],
+   [
+    "devscrapper/whatsapp-number-validator",
+    480,
+    6,
+    5,
+    "PAY_PER_EVENT",
+    0.007
+   ],
+   [
+    "michael.g/email-verifier-validator",
+    476,
+    37,
+    4.7,
+    "PAY_PER_EVENT",
+    0.1
+   ],
+   [
+    "blessiticus/email-verifier-pro",
+    264,
+    25,
+    5,
+    "PAY_PER_EVENT",
+    0.00085
+   ],
+   [
+    "apivault_labs/whatsapp-number-validator",
+    239,
+    3,
+    1.5,
+    "PAY_PER_EVENT",
+    0.008
+   ],
+   [
+    "checkthatphone/phone-validator",
+    168,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "cold_email_master/bulk-email-verifier-validator",
+    133,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0007
+   ],
+   [
+    "xmiso_scrapers/easy-bulk-email-validator---verify-emails-from-1-7-1000-rows",
+    101,
+    14,
+    3.0,
+    "PAY_PER_EVENT",
+    0.0025
+   ],
+   [
+    "clearpath/whatsapp-phone-number-validator-api",
+    95,
+    2,
+    3.5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "vero-api/whatsapp-number-checker",
+    76,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ]
+  ]
+ },
+ {
+  "cluster": "dataset-merge/dedup/transform",
+  "actors": 1624,
+  "active_u30ge5": 136,
+  "u30_total": 5989,
+  "top1": "lukaskrivka/dedup-datasets-limited-permissions",
+  "top1_u30": 587,
+  "top1_share": 0.1,
+  "top3_share": 0.18,
+  "u30_per_active": 44,
+  "median_primary_price_usd_top15": 0.00173,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "lukaskrivka/dedup-datasets-limited-permissions",
+    587,
+    0,
+    0,
+    "FREE",
+    null
+   ],
+   [
+    "b2bsearch/company-employees",
+    243,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.00225
+   ],
+   [
+    "memo23/idealista-scraper",
+    233,
+    10,
+    5,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "memo23/remote-jobs-aggregator",
+    202,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.00199
+   ],
+   [
+    "memo23/instagram-hashtag-scraper",
+    187,
+    1,
+    4,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "memo23/wellfound-jobs-scraper",
+    177,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.00099
+   ],
+   [
+    "memo23/linkedin-jobs-scraper",
+    132,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00069
+   ],
+   [
+    "get_anything/gcc-jobs-aggregator",
+    112,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.0015
+   ],
+   [
+    "humble-echidna/dataset-transform",
+    101,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "jobspipe/jobspipe-job-search",
+    87,
+    2,
+    4.4,
+    "PAY_PER_EVENT",
+    0.00196
+   ]
+  ]
+ },
+ {
+  "cluster": "screenshot",
+  "actors": 837,
+  "active_u30ge5": 46,
+  "u30_total": 4616,
+  "top1": "apify/screenshot-url",
+  "top1_u30": 2042,
+  "top1_share": 0.44,
+  "top3_share": 0.56,
+  "u30_per_active": 100,
+  "median_primary_price_usd_top15": 0.0039900000000000005,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "apify/screenshot-url",
+    2042,
+    20,
+    3.9,
+    "FREE",
+    null
+   ],
+   [
+    "cheapapi/website-screenshot-api",
+    332,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00089
+   ],
+   [
+    "solidcode/google-play-apps-scraper",
+    198,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0006
+   ],
+   [
+    "steadydata/image-ocr-text",
+    197,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "moonweil/url-screenshot-api",
+    163,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "zenomastro/image-ocr-text-extractor",
+    127,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "get_anything/web-unblocker",
+    105,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "getascraper/google-lens-ocr",
+    75,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00398
+   ],
+   [
+    "epctex/google-play-scraper",
+    67,
+    11,
+    5.0,
+    "PAY_PER_EVENT",
+    0.0001
+   ],
+   [
+    "i-scraper/website-screenshot",
+    64,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.006
+   ]
+  ]
+ },
+ {
+  "cluster": "ocr(local)",
+  "actors": 691,
+  "active_u30ge5": 40,
+  "u30_total": 3713,
+  "top1": "apify/facebook-photos-scraper",
+  "top1_u30": 715,
+  "top1_share": 0.19,
+  "top3_share": 0.45,
+  "u30_per_active": 93,
+  "median_primary_price_usd_top15": 0.005,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "apify/facebook-photos-scraper",
+    715,
+    10,
+    4.7,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "afanasenko/instagram-reel-script-extractor",
+    694,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.075
+   ],
+   [
+    "borderline/google-lens",
+    274,
+    4,
+    3.9,
+    "PAY_PER_EVENT",
+    0.0065
+   ],
+   [
+    "steadydata/image-ocr-text",
+    197,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "memo23/pdf-text-extractor",
+    177,
+    2,
+    5.0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "zenomastro/image-ocr-text-extractor",
+    127,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "domestic_buffalograss/google-ads-transparency-scraper",
+    104,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "apify/facebook-hashtag-scraper",
+    92,
+    6,
+    4.2,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "getascraper/google-lens-ocr",
+    75,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00398
+   ],
+   [
+    "zen-studio/google-lens-ocr",
+    61,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00499
+   ]
+  ]
+ },
+ {
+  "cluster": "tech-stack detect",
+  "actors": 1355,
+  "active_u30ge5": 64,
+  "u30_total": 2913,
+  "top1": "trakk/similarweb-scraper",
+  "top1_u30": 345,
+  "top1_share": 0.12,
+  "top3_share": 0.21,
+  "u30_per_active": 46,
+  "median_primary_price_usd_top15": 0.00215,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "trakk/similarweb-scraper",
+    345,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0005
+   ],
+   [
+    "builtwith/builtwith-official-technology-scraper",
+    143,
+    5,
+    5,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "omkar-cloud/crunchbase-scraper",
+    116,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "insanedev/shopify-store-list",
+    114,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0055
+   ],
+   [
+    "scrapemint/website-tech-stack-detector",
+    71,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "parsebird/hiring-cafe-scraper",
+    62,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "magicfingers/techstack-detector",
+    53,
+    2,
+    4.3,
+    "FREE",
+    null
+   ],
+   [
+    "atomus/linkedin-company-scraper",
+    45,
+    3,
+    5.0,
+    "PAY_PER_EVENT",
+    0.0035
+   ],
+   [
+    "zaver.api/shopify-store-finder",
+    42,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00099
+   ],
+   [
+    "motivational_nickel/website-technology-detector",
+    37,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0015
+   ]
+  ]
+ },
+ {
+  "cluster": "url-utils(redirect/broken links/status)",
+  "actors": 923,
+  "active_u30ge5": 42,
+  "u30_total": 2560,
+  "top1": "trakk/ahrefs-seo-scraper",
+  "top1_u30": 376,
+  "top1_share": 0.15,
+  "top3_share": 0.33,
+  "u30_per_active": 61,
+  "median_primary_price_usd_top15": 0.0036,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "trakk/ahrefs-seo-scraper",
+    376,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0036
+   ],
+   [
+    "pnda/semrush-keyword",
+    372,
+    8,
+    4.8,
+    "PAY_PER_EVENT",
+    0.006
+   ],
+   [
+    "santhej/backlink-checker",
+    88,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "smart-digital/complete-seo-audit-tool",
+    87,
+    4,
+    5,
+    "PAY_PER_EVENT",
+    0.04
+   ],
+   [
+    "s-r/backlinks-checker",
+    78,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "meridianlabs/backlink-checker",
+    73,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.03
+   ],
+   [
+    "automation-lab/bulk-url-status-checker",
+    73,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    7.9816e-05
+   ],
+   [
+    "memo23/ahrefs-scraper",
+    60,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "rixin/fast-html-fetcher",
+    55,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    1e-05
+   ],
+   [
+    "khadinakbar/broken-link-checker",
+    44,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ]
+  ]
+ },
+ {
+  "cluster": "qr/barcode",
+  "actors": 611,
+  "active_u30ge5": 50,
+  "u30_total": 2248,
+  "top1": "silentflow/jd-products-scraper",
+  "top1_u30": 296,
+  "top1_share": 0.13,
+  "top3_share": 0.32,
+  "u30_per_active": 45,
+  "median_primary_price_usd_top15": 0.00234,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "silentflow/jd-products-scraper",
+    296,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00219
+   ],
+   [
+    "clearpath/coles-scraper",
+    212,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00149
+   ],
+   [
+    "dromb/woolworths-au-product-search-catalog-unofficial",
+    209,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0006
+   ],
+   [
+    "autofacts/shopify",
+    167,
+    7,
+    4.2,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "trovevault/shopify-products-scraper",
+    150,
+    8,
+    5,
+    "PAY_PER_EVENT",
+    0.0009
+   ],
+   [
+    "piotrv1001/jd-shop-products-scraper",
+    63,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "memo23/amazon-search",
+    56,
+    1,
+    5.0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "memo23/google-shopping-scraper",
+    50,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.0025
+   ],
+   [
+    "maged120/whatsapp-number-checker",
+    46,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "cocomoon/oliveyoung-scraper",
+    40,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ]
+  ]
+ },
+ {
+  "cluster": "sitemap/robots",
+  "actors": 1855,
+  "active_u30ge5": 29,
+  "u30_total": 2171,
+  "top1": "apify/sitemap-extractor",
+  "top1_u30": 56,
+  "top1_share": 0.03,
+  "top3_share": 0.07,
+  "u30_per_active": 75,
+  "median_primary_price_usd_top15": 0.0015812682385,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "apify/sitemap-extractor",
+    56,
+    8,
+    3.2,
+    "PAY_PER_EVENT",
+    0.0005
+   ],
+   [
+    "betterdevsscrape/contact-details-extractor",
+    53,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "khadinakbar/broken-link-checker",
+    44,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "boxbox10/sitemap-extractor",
+    35,
+    0,
+    0,
+    "FREE",
+    null
+   ],
+   [
+    "rod_analytics/lighthouse-audit",
+    32,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0015
+   ],
+   [
+    "memo23/pitchbook-scraper",
+    28,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.012
+   ],
+   [
+    "topapi/website-content-crawler",
+    26,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0012
+   ],
+   [
+    "zhorex/domain-authority-checker",
+    14,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "maged120/get-urls-pro",
+    13,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.013
+   ],
+   [
+    "onescales/sitemap-url-extractor",
+    13,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.03
+   ]
+  ]
+ },
+ {
+  "cluster": "domain-availability/whois/rdap/dns",
+  "actors": 1027,
+  "active_u30ge5": 31,
+  "u30_total": 1804,
+  "top1": "vortex_data/similarweb-scraper",
+  "top1_u30": 166,
+  "top1_share": 0.09,
+  "top3_share": 0.19,
+  "u30_per_active": 58,
+  "median_primary_price_usd_top15": 0.0025,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "vortex_data/similarweb-scraper",
+    166,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "ryanclinton/bulk-email-verifier",
+    101,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "automation-lab/domain-availability-checker",
+    80,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0023
+   ],
+   [
+    "sourabhbgp/similarweb-scraper",
+    50,
+    1,
+    5.0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "bridgeworks/domain-checker",
+    49,
+    1,
+    1,
+    "FREE",
+    null
+   ],
+   [
+    "santamaria-automations/domain-whois-dns",
+    37,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "onescales/domain-availability-checker",
+    30,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.1
+   ],
+   [
+    "ntriqpro/osint-recon-suite",
+    28,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.2
+   ],
+   [
+    "datascoutapi/DomainDaddy",
+    27,
+    4,
+    5,
+    "PAY_PER_EVENT",
+    0.00049
+   ],
+   [
+    "gazidev/bulk-dns-lookup",
+    24,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ]
+  ]
+ },
+ {
+  "cluster": "image-convert/compress/resize",
+  "actors": 701,
+  "active_u30ge5": 36,
+  "u30_total": 1796,
+  "top1": "cheapapi/website-screenshot-api",
+  "top1_u30": 332,
+  "top1_share": 0.18,
+  "top3_share": 0.38,
+  "u30_per_active": 50,
+  "median_primary_price_usd_top15": 0.0015,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "cheapapi/website-screenshot-api",
+    332,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00089
+   ],
+   [
+    "dev00/bing-mobile-Friendliness-checker",
+    180,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "moonweil/url-screenshot-api",
+    163,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "marielise.dev/image-converter",
+    103,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "getascraper/bulk-image-downloader",
+    34,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00089
+   ],
+   [
+    "andok/wayback-machine-scraper",
+    32,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "gazidev/base64-file-converter",
+    30,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0008
+   ],
+   [
+    "gochujang/image-ocr-extractor",
+    29,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "gazidev/video-frame-extractor",
+    21,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "shahidirfan/Image-resizer-API",
+    19,
+    1,
+    5.0,
+    "FREE",
+    null
+   ]
+  ]
+ },
+ {
+  "cluster": "accessibility/lighthouse audit",
+  "actors": 938,
+  "active_u30ge5": 31,
+  "u30_total": 1766,
+  "top1": "josh99smith/pagespeed-insights-audit",
+  "top1_u30": 135,
+  "top1_share": 0.08,
+  "top3_share": 0.17,
+  "u30_per_active": 57,
+  "median_primary_price_usd_top15": 0.008,
+  "free_in_top10": 2,
+  "top10": [
+   [
+    "josh99smith/pagespeed-insights-audit",
+    135,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "smart-digital/complete-seo-audit-tool",
+    87,
+    4,
+    5,
+    "PAY_PER_EVENT",
+    0.04
+   ],
+   [
+    "s-r/backlinks-checker",
+    78,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "constant_quadruped/lighthouse-auditor",
+    67,
+    0,
+    0,
+    "FREE",
+    null
+   ],
+   [
+    "neverempty/pagespeed-lighthouse-audit",
+    64,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.03
+   ],
+   [
+    "nerolabs/bulk-pagespeed-checker",
+    47,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "logiover/website-seo-audit-crawler",
+    41,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "boxbox10/sitemap-extractor",
+    35,
+    0,
+    0,
+    "FREE",
+    null
+   ],
+   [
+    "seemuapps/google-pagespeed-insights",
+    34,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.008
+   ],
+   [
+    "seemuapps/image-captioner",
+    33,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.012
+   ]
+  ]
+ },
+ {
+  "cluster": "favicon/meta/og tags",
+  "actors": 540,
+  "active_u30ge5": 18,
+  "u30_total": 1213,
+  "top1": "moonweil/url-screenshot-api",
+  "top1_u30": 163,
+  "top1_share": 0.13,
+  "top3_share": 0.3,
+  "u30_per_active": 67,
+  "median_primary_price_usd_top15": 0.003,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "moonweil/url-screenshot-api",
+    163,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "premiumscraper/facebook-pages-profile-scraper",
+    113,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "smart-digital/complete-seo-audit-tool",
+    87,
+    4,
+    5,
+    "PAY_PER_EVENT",
+    0.04
+   ],
+   [
+    "s-r/free-google-search-results-serp---only-0-25-per-1-000-results",
+    65,
+    4,
+    4.5,
+    "PAY_PER_EVENT",
+    0.00035
+   ],
+   [
+    "benthepythondev/favicon-extractor",
+    50,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "haketa/bulk-company-domain",
+    49,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.0009
+   ],
+   [
+    "autofacts/metadata-scraper",
+    32,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "eiv/website-brand-extractor-pay-per-event",
+    26,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "parseforge/website-content-crawler",
+    25,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.025
+   ],
+   [
+    "santhej/website-seo-audit",
+    19,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.005
+   ]
+  ]
+ },
+ {
+  "cluster": "html-to-markdown/text",
+  "actors": 655,
+  "active_u30ge5": 15,
+  "u30_total": 841,
+  "top1": "fastcrawler/x-twitter-article-to-markdown",
+  "top1_u30": 55,
+  "top1_share": 0.07,
+  "top3_share": 0.15,
+  "u30_per_active": 56,
+  "median_primary_price_usd_top15": 0.0032500000000000003,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "fastcrawler/x-twitter-article-to-markdown",
+    55,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "shelvick/smart-page-fetcher",
+    40,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0005
+   ],
+   [
+    "gochujang/pdf-text-extractor",
+    30,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "lergassy/document-text-extractor",
+    19,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0035
+   ],
+   [
+    "epctex/web-fetch",
+    13,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0004
+   ],
+   [
+    "parsebird/x-twitter-article-markdown",
+    11,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00599
+   ],
+   [
+    "seemuapps/x-article-to-markdown-scraper",
+    10,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.02
+   ],
+   [
+    "epctex/web-fetch-api",
+    10,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0004
+   ],
+   [
+    "apify/url-to-markdown",
+    9,
+    6,
+    5,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "macheta/justhtml-link-to-markdown",
+    8,
+    1,
+    5,
+    "FREE",
+    null
+   ]
+  ]
+ },
+ {
+  "cluster": "phone-validate(offline)",
+  "actors": 255,
+  "active_u30ge5": 24,
+  "u30_total": 818,
+  "top1": "checkthatphone/phone-validator",
+  "top1_u30": 168,
+  "top1_share": 0.21,
+  "top3_share": 0.38,
+  "u30_per_active": 34,
+  "median_primary_price_usd_top15": 0.004,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "checkthatphone/phone-validator",
+    168,
+    3,
+    5,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "memo23/phone-enrichment",
+    75,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "solidscrape/contact-details-scraper",
+    69,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00125
+   ],
+   [
+    "logical_vivacity/phone-number-enrichment",
+    62,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.06
+   ],
+   [
+    "clearpath/telegram-phone-number-validator",
+    29,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.00499
+   ],
+   [
+    "enrich-crm/whatsapp-number-checker",
+    21,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0072
+   ],
+   [
+    "scrapersdelight/phone-number-validator-scraper",
+    16,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "lergassy/email-phone-verifier",
+    15,
+    5,
+    5,
+    "PAY_PER_EVENT",
+    0.0007
+   ],
+   [
+    "unrivaled_fortress/phone-lookup",
+    12,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "parsebird/linkedin-b2b-phone-number-scraper",
+    11,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00999
+   ]
+  ]
+ },
+ {
+  "cluster": "pdf-tools(merge/split/convert)",
+  "actors": 537,
+  "active_u30ge5": 11,
+  "u30_total": 766,
+  "top1": "automation-lab/pdf-text-extractor",
+  "top1_u30": 128,
+  "top1_share": 0.17,
+  "top3_share": 0.25,
+  "u30_per_active": 70,
+  "median_primary_price_usd_top15": 0.005,
+  "free_in_top10": 1,
+  "top10": [
+   [
+    "automation-lab/pdf-text-extractor",
+    128,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00345
+   ],
+   [
+    "gochujang/pdf-text-extractor",
+    30,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "gazidev/base64-file-converter",
+    30,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0008
+   ],
+   [
+    "lergassy/pdf-text-extractor",
+    17,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "marielise.dev/pdf-to-mp3",
+    15,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.04
+   ],
+   [
+    "automation-lab/html-to-pdf-converter",
+    13,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.00575
+   ],
+   [
+    "nerolabs/bulk-ocr-image-pdf-to-text",
+    11,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "apify/html-to-pdf-converter",
+    8,
+    3,
+    4.3,
+    "FREE",
+    null
+   ],
+   [
+    "power_on/screenshot-url-pdf",
+    6,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "autofacts/universal-web-printer",
+    6,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.004
+   ]
+  ]
+ },
+ {
+  "cluster": "file/format convert(xlsx/xml/yaml)",
+  "actors": 322,
+  "active_u30ge5": 15,
+  "u30_total": 632,
+  "top1": "humble-echidna/dataset-transform",
+  "top1_u30": 101,
+  "top1_share": 0.16,
+  "top3_share": 0.33,
+  "u30_per_active": 42,
+  "median_primary_price_usd_top15": 0.002,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "humble-echidna/dataset-transform",
+    101,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "igolaizola/x-twitter-scraper-ppe",
+    84,
+    6,
+    5,
+    "PAY_PER_EVENT",
+    0.0003
+   ],
+   [
+    "gazidev/dataset-filter-transform",
+    26,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0002
+   ],
+   [
+    "eliai/excel-to-json",
+    22,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.03
+   ],
+   [
+    "lergassy/document-text-extractor",
+    19,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0035
+   ],
+   [
+    "radeance/kununu-reviews-scraper",
+    16,
+    3,
+    5.0,
+    "PAY_PER_EVENT",
+    0.018
+   ],
+   [
+    "igolaizola/x-twitter-scraper",
+    13,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0003
+   ],
+   [
+    "gochujang/excel-extractor",
+    11,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0001
+   ],
+   [
+    "glistening_film/spreadsheet-to-json",
+    11,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.01
+   ],
+   [
+    "gochujang/docx-text-extractor",
+    8,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ]
+  ]
+ },
+ {
+  "cluster": "ssl/security-headers check",
+  "actors": 429,
+  "active_u30ge5": 2,
+  "u30_total": 438,
+  "top1": "lergassy/domain-intelligence-scraper",
+  "top1_u30": 9,
+  "top1_share": 0.02,
+  "top3_share": 0.04,
+  "u30_per_active": 219,
+  "median_primary_price_usd_top15": 0.004,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "lergassy/domain-intelligence-scraper",
+    9,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "power_on/tech-stack-audit",
+    6,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.05
+   ],
+   [
+    "smart-digital/website-security-vulnerability-audit",
+    4,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.02
+   ],
+   [
+    "automation-lab/website-health-report",
+    4,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00345
+   ],
+   [
+    "onescales/website-intelligence-analyzer-osint",
+    4,
+    3,
+    5.0,
+    "PAY_PER_EVENT",
+    0.1
+   ],
+   [
+    "visita/domain-inspector",
+    3,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.004
+   ],
+   [
+    "santamaria-automations/ssl-certificate-inspector",
+    3,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "ninhothedev/security-headers-checker",
+    3,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "inexhaustible_glass/domain-health-audit",
+    2,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.03
+   ],
+   [
+    "chrisp1211/certificate-search-scraper-max",
+    2,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ]
+  ]
+ },
+ {
+  "cluster": "address-parse/normalize",
+  "actors": 213,
+  "active_u30ge5": 9,
+  "u30_total": 323,
+  "top1": "api-ninja/email-address-validator",
+  "top1_u30": 43,
+  "top1_share": 0.13,
+  "top3_share": 0.27,
+  "u30_per_active": 36,
+  "median_primary_price_usd_top15": 0.001,
+  "free_in_top10": 0,
+  "top10": [
+   [
+    "api-ninja/email-address-validator",
+    43,
+    2,
+    5,
+    "PAY_PER_EVENT",
+    0.015
+   ],
+   [
+    "kaix/google-geocoding-scraper",
+    32,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.0001
+   ],
+   [
+    "topapi/google-geocoding-scraper",
+    13,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    9.5e-05
+   ],
+   [
+    "davidar/openstreetmap-directions-api",
+    9,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.003
+   ],
+   [
+    "ryanclinton/nominatim-geocoder",
+    8,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.001
+   ],
+   [
+    "datascoutapi/email-address-validator",
+    7,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.00049
+   ],
+   [
+    "perryay/image-metadata-analyzer",
+    7,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.005
+   ],
+   [
+    "bgfc97/geocoding",
+    5,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.0008
+   ],
+   [
+    "yadroo/osm-geocode",
+    5,
+    0,
+    0,
+    "PAY_PER_EVENT",
+    0.002
+   ],
+   [
+    "sian.agency/exif-gps-metadata-extractor",
+    4,
+    1,
+    5,
+    "PAY_PER_EVENT",
+    0.001
+   ]
+  ]
+ }
+]

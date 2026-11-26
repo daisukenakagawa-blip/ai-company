@@ -1,0 +1,26 @@
+{
+  "actorSpecification": 1,
+  "name": "dataset-merge-dedup",
+  "title": "Dataset Merge & Dedup — Combine, Deduplicate, Filter Datasets",
+  "description": "Merge any number of Apify datasets into one, remove duplicates by the fields you choose (case/whitespace-insensitive, ignores UTM tracking), filter rows and reshape fields. Streams large datasets. Pay only per output item.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 4096,
+  "input": "./input_schema.json",
+  "dockerfile": "./Dockerfile",
+  "readme": "../README.md",
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "title": "Merged and deduplicated items",
+      "views": {
+        "overview": {
+          "title": "Items",
+          "transformation": {},
+          "display": { "component": "table" }
+        }
+      }
+    }
+  }
+}

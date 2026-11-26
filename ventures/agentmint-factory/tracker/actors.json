@@ -1,0 +1,9 @@
+{
+  "actors": [
+    { "slug": "OWNER_USERNAME/dataset-merge-dedup", "event": "result-item", "price_usd": 0.0002, "status": "local-tested" }
+  ],
+  "competitors": [
+    "lukaskrivka/dedup-datasets-limited-permissions", "humble-echidna/dataset-transform", "rl1987/jq-helper",
+    "nerolabs/dataset-filter-transform", "saliga/dataset-merge-dedupe", "tidydata/merge-dedupe-datasets"
+  ]
+}

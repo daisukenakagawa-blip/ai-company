@@ -1,0 +1,2 @@
+date,slug,status,public,u7,u30,users_all,runs30,fail_rate30,bookmarks,paying_users,revenue_usd,platform_cost_usd,net_profit_usd,own_account_usage_usd_month,error,note
+2026-11-26,OWNER_USERNAME/dataset-merge-dedup,local-tested,,,,,,,,,,,,,,未公開（Apify にまだ作成していない）
