@@ -2,8 +2,8 @@
 
 ## 費用0円の見張り
 
-- 判定：**OK**（2026-11-26T23:15:02+00:00）
-- Apify：プラン FREE、今月の利用 $0.01789018475787363 / 上限 $5（0.0036）
+- 判定：**OK**（2026-11-26T23:30:21+00:00）
+- Apify：プラン FREE、今月の利用 $0.017956830946371172 / 上限 $5（0.0036）
 - GitHub：公開リポジトリ=True
 - 外部への支払い：0円
 
@@ -29,13 +29,13 @@
 
 | Actor | 30日利用者 | 30日実行 | 失敗率 |
 |---|---|---|---|
-| lukaskrivka/dedup-datasets-limited-permissions | 587 | 1913 | 0.642 |
+| lukaskrivka/dedup-datasets-limited-permissions | 588 | 1913 | 0.642 |
 | humble-echidna/dataset-transform | 106 | 1017 | 0.01 |
 | rl1987/jq-helper | 70 | 142 | 0.007 |
 | nerolabs/dataset-filter-transform | 61 | 1001 | 0.081 |
 | saliga/dataset-merge-dedupe | 56 | 362 | 0.014 |
 | tidydata/merge-dedupe-datasets | 55 | 499 | 0.006 |
-| marielise.dev/image-converter | 103 | 909 | 0.132 |
+| marielise.dev/image-converter | 104 | 909 | 0.132 |
 | gazidev/base64-file-converter | 30 | 127 | 0.0 |
 | memo23/pdf-text-extractor | 177 | 21592 | 0.001 |
 | automation-lab/pdf-text-extractor | 128 | 1074 | 0.006 |
