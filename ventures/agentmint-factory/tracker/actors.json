@@ -2,21 +2,24 @@
   "actors": [
     {
       "slug": "preponderant_swift/dataset-merge-dedup",
-      "event": "result-item",
+      "event": "apify-default-dataset-item",
       "price_usd": 0.0002,
-      "status": "private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz)"
+      "status": "private・公開準備完了 2026-11-27（オーナーの公開待ち）",
+      "id": "W9KGGw1Z6grJa8bdz"
     },
     {
       "slug": "preponderant_swift/image-convert-compress",
       "event": "image-processed",
       "price_usd": 0.001,
-      "status": "private-deployed 2026-11-26 (oNvRYK1HyltyyD2GV)"
+      "status": "private・開発停止中（2026-11-27 オーナー方針）",
+      "id": "oNvRYK1HyltyyD2GV"
     },
     {
       "slug": "preponderant_swift/pdf-text-extract",
       "event": "pdf-processed",
       "price_usd": 0.002,
-      "status": "private-deployed 2026-11-26 (dR3cdKEBdJwQukG6r)"
+      "status": "private・開発停止中（2026-11-27 オーナー方針）",
+      "id": "dR3cdKEBdJwQukG6r"
     }
   ],
   "competitors": [
