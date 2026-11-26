@@ -1,0 +1,2 @@
+{ "input": {"pdfUrls": ["https://raw.githubusercontent.com/daisukenakagawa-blip/ai-company/main/ventures/agentmint-factory/actors/pdf-text-extract/test/fixture.pdf"]},
+  "memory": 512, "expect": {"field": "status", "values": ["ok"]} }

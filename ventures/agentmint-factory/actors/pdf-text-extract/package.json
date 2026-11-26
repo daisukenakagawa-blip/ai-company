@@ -1,0 +1,11 @@
+{
+  "name": "pdf-text-extract",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Extract text, page by page, and metadata from PDF files in bulk. Pay only for PDFs processed successfully.",
+  "main": "src/main.js",
+  "scripts": { "start": "node src/main.js", "test": "node --test test/*.test.js && node test/e2e.mjs" },
+  "dependencies": { "apify": "3.8.0", "pdfjs-dist": "6.4.299" },
+  "devDependencies": { "pdf-lib": "1.17.1" }
+}

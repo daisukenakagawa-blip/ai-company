@@ -1,2 +1,1 @@
-image-convert-compress
-# 2026-11-26 再試行：sharp の Linux(musl) 用バイナリを入れるため --no-optional を外した
+pdf-text-extract

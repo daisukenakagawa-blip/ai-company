@@ -1,0 +1,78 @@
+{
+  "title": "PDF Text Extractor",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "pdfUrls": {
+      "title": "PDF URLs",
+      "type": "array",
+      "description": "Direct links to PDF files. Duplicate URLs are processed once.",
+      "editor": "stringList",
+      "prefill": ["https://raw.githubusercontent.com/daisukenakagawa-blip/ai-company/main/ventures/agentmint-factory/actors/pdf-text-extract/test/fixture.pdf"],
+      "sectionCaption": "PDFs"
+    },
+    "datasetId": {
+      "title": "Or take PDF URLs from a dataset",
+      "type": "string",
+      "description": "For example the output of a scraper run. Use together with \"URL field\".",
+      "resourceType": "dataset"
+    },
+    "urlField": {
+      "title": "URL field in that dataset",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Field holding the PDF URL or an array of URLs. Dotted paths work, e.g. \"documents.pdf\".",
+      "default": "pdfUrl"
+    },
+    "pages": {
+      "title": "Pages",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Which pages to extract, e.g. \"1-3,7,10-\". Empty = all pages.",
+      "sectionCaption": "Options"
+    },
+    "maxPagesPerPdf": {
+      "title": "Maximum pages per PDF",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000,
+      "default": 500,
+      "description": "Longer documents are cut and marked with truncated: true."
+    },
+    "includeFullText": {
+      "title": "Include full text",
+      "type": "boolean",
+      "default": true,
+      "description": "All selected pages joined in one \"text\" field."
+    },
+    "includePages": {
+      "title": "Include text per page",
+      "type": "boolean",
+      "default": true,
+      "description": "A \"pages\" array with { page, text } for each page."
+    },
+    "password": {
+      "title": "Password (for protected PDFs)",
+      "type": "string",
+      "editor": "textfield",
+      "isSecret": true,
+      "description": "Used for every PDF in this run."
+    },
+    "maxPdfs": {
+      "title": "Maximum PDFs",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "0 = no limit.",
+      "sectionCaption": "Limits"
+    },
+    "concurrency": {
+      "title": "Parallel downloads",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6,
+      "default": 3,
+      "description": "How many PDFs to download and read at the same time."
+    }
+  }
+}

@@ -10,6 +10,12 @@
       "slug": "preponderant_swift/image-convert-compress",
       "event": "image-processed",
       "price_usd": 0.001,
+      "status": "private-deployed 2026-11-26 (oNvRYK1HyltyyD2GV)"
+    },
+    {
+      "slug": "preponderant_swift/pdf-text-extract",
+      "event": "pdf-processed",
+      "price_usd": 0.002,
       "status": "private-deploy requested 2026-11-26"
     }
   ],
@@ -21,6 +27,8 @@
     "saliga/dataset-merge-dedupe",
     "tidydata/merge-dedupe-datasets",
     "marielise.dev/image-converter",
-    "gazidev/base64-file-converter"
+    "gazidev/base64-file-converter",
+    "memo23/pdf-text-extractor",
+    "automation-lab/pdf-text-extractor"
   ]
 }
