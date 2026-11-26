@@ -76,3 +76,7 @@ README の先頭に「For AI agents (machine-readable summary)」を追加（`ve
 ### 修復の確認（2026-11-27 8:33 JST）
 - run-request.txt の push で shop-growth が起動し、`saved_at: 2026-11-26T23:32:56Z`（8:32 JST）、`trigger: push` で保存できた。11/26 は閲覧12（うち店に無いパス8件は修正前の記録）、11/27 は閲覧3（すべてトップ、直接・不明）
 - agentmint-factory も push で起動し、監視（MONITOR.md・monitor.csv）を保存できた
+
+### #README 反映（2026-11-27 8:36 JST、オーナーがチャットで承認）
+- GitHub Actions（agentmint-deploy）で更新・ビルド・試験実行が成功。既定ビルド 0.1.3（SUCCEEDED）に「For AI agents」の節が入ったことを公開 API で確認。公開のまま・Pay per event のまま
+- 公開統計の実行数は 5（3→5、増えた2回は自社の試験。外部の実行には数えない）
