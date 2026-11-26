@@ -1,9 +1,9 @@
 {
- "checked_at": "2026-11-26T12:30:27+00:00",
+ "checked_at": "2026-11-26T12:34:46+00:00",
  "threshold": 0.8,
  "apify": {
   "plan": "FREE",
-  "monthly_usage_usd": 0.005831263492891855,
+  "monthly_usage_usd": 0.005850865784177846,
   "max_monthly_usage_usd": 5,
   "cycle_end": "2026-12-25T23:59:59.999Z",
   "usage_ratio": 0.0012,
