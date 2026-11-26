@@ -1,0 +1,106 @@
+{
+  "title": "Image Converter & Compressor",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "imageUrls": {
+      "title": "Image URLs",
+      "type": "array",
+      "description": "Direct links to images (JPEG, PNG, WebP, AVIF, GIF first frame, TIFF, SVG, HEIC where supported). Duplicate URLs are processed once.",
+      "editor": "stringList",
+      "prefill": [
+        "https://raw.githubusercontent.com/daisukenakagawa-blip/ai-company/main/ventures/agentmint-factory/actors/image-convert-compress/test/fixture.png"
+      ],
+      "sectionCaption": "Images"
+    },
+    "datasetId": {
+      "title": "Or take image URLs from a dataset",
+      "type": "string",
+      "description": "For example the output of a scraper run. Use together with \"URL field\".",
+      "resourceType": "dataset"
+    },
+    "urlField": {
+      "title": "URL field in that dataset",
+      "type": "string",
+      "description": "Field holding the image URL or an array of URLs. Dotted paths work, e.g. \"media.images\".",
+      "editor": "textfield",
+      "default": "imageUrl"
+    },
+    "format": {
+      "title": "Output format",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "webp",
+        "avif",
+        "jpeg",
+        "png"
+      ],
+      "enumTitles": [
+        "WebP (best all-round)",
+        "AVIF (smallest, slower)",
+        "JPEG (mozjpeg)",
+        "PNG"
+      ],
+      "default": "webp",
+      "sectionCaption": "Output",
+      "description": "WebP is supported everywhere and small. AVIF is smaller but slower to encode."
+    },
+    "quality": {
+      "title": "Quality (1-100)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 80,
+      "description": "Lower = smaller files. 75-85 is visually lossless for most photos."
+    },
+    "lossless": {
+      "title": "Lossless (WebP/AVIF/PNG)",
+      "type": "boolean",
+      "default": false,
+      "description": "Keeps every pixel exactly. Files are bigger."
+    },
+    "maxWidth": {
+      "title": "Maximum width (px)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16384,
+      "description": "Shrinks to fit, keeps the aspect ratio, never enlarges. 0 or empty = keep size."
+    },
+    "maxHeight": {
+      "title": "Maximum height (px)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16384,
+      "description": "Shrinks to fit, keeps the aspect ratio, never enlarges. 0 or empty = keep size."
+    },
+    "keepMetadata": {
+      "title": "Keep metadata (EXIF, GPS, ICC)",
+      "type": "boolean",
+      "default": false,
+      "description": "Off by default: metadata (including GPS location) is removed, which also makes files smaller."
+    },
+    "skipIfLarger": {
+      "title": "Keep the original if conversion would make it bigger",
+      "type": "boolean",
+      "default": true,
+      "description": "Only when the format stays the same and no resizing is requested."
+    },
+    "maxImages": {
+      "title": "Maximum images",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "0 = no limit.",
+      "sectionCaption": "Limits"
+    },
+    "concurrency": {
+      "title": "Parallel downloads",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5,
+      "description": "How many images to download and convert at the same time."
+    }
+  }
+}

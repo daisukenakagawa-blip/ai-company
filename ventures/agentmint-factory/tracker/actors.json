@@ -1,9 +1,26 @@
 {
   "actors": [
-    { "slug": "preponderant_swift/dataset-merge-dedup", "event": "result-item", "price_usd": 0.0002, "status": "private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz)" }
+    {
+      "slug": "preponderant_swift/dataset-merge-dedup",
+      "event": "result-item",
+      "price_usd": 0.0002,
+      "status": "private-deployed 2026-11-26 (W9KGGw1Z6grJa8bdz)"
+    },
+    {
+      "slug": "preponderant_swift/image-convert-compress",
+      "event": "image-processed",
+      "price_usd": 0.001,
+      "status": "private-deploy requested 2026-11-26"
+    }
   ],
   "competitors": [
-    "lukaskrivka/dedup-datasets-limited-permissions", "humble-echidna/dataset-transform", "rl1987/jq-helper",
-    "nerolabs/dataset-filter-transform", "saliga/dataset-merge-dedupe", "tidydata/merge-dedupe-datasets"
+    "lukaskrivka/dedup-datasets-limited-permissions",
+    "humble-echidna/dataset-transform",
+    "rl1987/jq-helper",
+    "nerolabs/dataset-filter-transform",
+    "saliga/dataset-merge-dedupe",
+    "tidydata/merge-dedupe-datasets",
+    "marielise.dev/image-converter",
+    "gazidev/base64-file-converter"
   ]
 }

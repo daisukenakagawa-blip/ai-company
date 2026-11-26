@@ -4,7 +4,7 @@
 - 既存の Actor（AgentMint など）には触れない：同じ名前の Actor だけを更新する
 - 始める前に guard.py（費用0円の見張り）を通す。STOP なら何もしない
 """
-import json, os, subprocess, sys, time, urllib.request, urllib.error
+import base64, json, os, subprocess, sys, time, urllib.request, urllib.error
 TOKEN = os.environ["APIFY_TOKEN"]
 API = "https://api.apify.com/v2"
 SKIP = {"node_modules", "storage", "storage-e2e", ".git"}
@@ -25,7 +25,11 @@ def files(root):
         for f in fs:
             p = os.path.join(d, f)
             if f == "package-lock.json": continue
-            out.append({"name": os.path.relpath(p, root), "format": "TEXT", "content": open(p, encoding="utf-8").read()})
+            raw = open(p, "rb").read()
+            try:
+                out.append({"name": os.path.relpath(p, root), "format": "TEXT", "content": raw.decode("utf-8")})
+            except UnicodeDecodeError:
+                out.append({"name": os.path.relpath(p, root), "format": "BASE64", "content": base64.b64encode(raw).decode()})
     return out
 
 def guard():
@@ -53,12 +57,15 @@ def main(root):
         time.sleep(5); b = call("GET", f"/actor-builds/{b['id']}")
     print("build", b["status"])
     if b["status"] != "SUCCEEDED": raise SystemExit("build failed")
-    test = {"items": [{"url": "https://ex.com/1?utm_source=a", "n": 1}, {"url": "https://ex.com/1", "n": 2}, {"url": "https://ex.com/2", "n": 3}],
-            "dedupFields": ["url"], "ignoreUrlTracking": True}
-    run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=120&memory=256&timeout=120", test)
-    print("test run", run["status"], run["id"])
+    smoke = json.load(open(os.path.join(root, ".actor", "smoke.json")))
+    run = call("POST", f"/acts/{act['id']}/runs?waitForFinish=60&memory={smoke.get('memory', 256)}&timeout=180", smoke["input"])
+    while run["status"] in ("READY", "RUNNING"):
+        time.sleep(5); run = call("GET", f"/actor-runs/{run['id']}")
+    print("test run", run["status"], run["id"], "usage USD", run.get("usageTotalUsd"))
     items = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/datasets/{run['defaultDatasetId']}/items", headers={"Authorization": f"Bearer {TOKEN}"})))
-    assert [i["n"] for i in items] == [1, 3], items
+    got = [i.get(smoke["expect"]["field"]) for i in items]
+    if run["status"] != "SUCCEEDED" or got != smoke["expect"]["values"]:
+        raise SystemExit(f"smoke test failed: status={run['status']} got={got}")
     print(f"OK: https://console.apify.com/actors/{act['id']}  (private, user {me['username']})")
 
 if __name__ == "__main__":

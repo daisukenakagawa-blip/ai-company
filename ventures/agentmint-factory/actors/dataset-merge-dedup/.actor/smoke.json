@@ -1,0 +1,2 @@
+{ "input": {"items": [{"url": "https://ex.com/1?utm_source=a", "n": 1}, {"url": "https://ex.com/1", "n": 2}, {"url": "https://ex.com/2", "n": 3}], "dedupFields": ["url"], "ignoreUrlTracking": true},
+  "memory": 256, "expect": {"field": "n", "values": [1, 3]} }

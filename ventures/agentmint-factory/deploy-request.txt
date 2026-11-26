@@ -1,1 +1,1 @@
-dataset-merge-dedup
+image-convert-compress

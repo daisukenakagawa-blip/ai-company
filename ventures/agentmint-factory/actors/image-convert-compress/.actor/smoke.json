@@ -1,0 +1,2 @@
+{ "input": {"imageUrls": ["https://raw.githubusercontent.com/daisukenakagawa-blip/ai-company/main/ventures/agentmint-factory/actors/image-convert-compress/test/fixture.png"], "format": "webp"},
+  "memory": 512, "expect": {"field": "status", "values": ["ok"]} }
