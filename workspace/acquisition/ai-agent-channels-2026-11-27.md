@@ -72,3 +72,7 @@ README の先頭に「For AI agents (machine-readable summary)」を追加（`ve
 ## 5. 公開商品の継続監視（新設）
 
 `tracker/monitor.py` を毎日実行し、`data/monitor.csv`（毎日1行）と `data/MONITOR.md`（1・3・7・14・30日目の表）に記録：外部利用者・外部実行・有料利用・売上・純利益・評価・ブックマーク・Store 検索の順位（5語）・検索1位の競合・AI か人か（不明）。0日目（11/27）：外部利用者0、外部実行0、検索は5語とも圏外（上位200件外）。
+
+### 修復の確認（2026-11-27 8:33 JST）
+- run-request.txt の push で shop-growth が起動し、`saved_at: 2026-11-26T23:32:56Z`（8:32 JST）、`trigger: push` で保存できた。11/26 は閲覧12（うち店に無いパス8件は修正前の記録）、11/27 は閲覧3（すべてトップ、直接・不明）
+- agentmint-factory も push で起動し、監視（MONITOR.md・monitor.csv）を保存できた
