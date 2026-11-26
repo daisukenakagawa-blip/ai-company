@@ -1,13 +1,9 @@
 {
- "checked_at": "2026-11-26T12:20:52+00:00",
+ "checked_at": "2026-11-26T12:30:16+00:00",
  "threshold": 0.8,
  "apify": {
-  "plan": "FREE",
-  "monthly_usage_usd": 0.005812050308177537,
-  "max_monthly_usage_usd": 5,
-  "cycle_end": "2026-12-25T23:59:59.999Z",
-  "usage_ratio": 0.0012,
-  "ok": true
+  "ok": false,
+  "reason": "APIFY_TOKEN が無いため Apify の利用枠を確認できない"
  },
  "github": {
   "repo": "daisukenakagawa-blip/ai-company",
@@ -15,5 +11,5 @@
   "ok": true,
   "note": "公開リポジトリの標準ランナーは無料・無制限（GitHub 公式文書）"
  },
- "decision": "OK"
+ "decision": "STOP"
 }

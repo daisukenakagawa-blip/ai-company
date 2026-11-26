@@ -27,6 +27,7 @@
 | 注意 | 一般規約 7.3・7.5：登録済みのカードに料金・超過料金を請求できる → **カードを登録しないことが0円の前提** | https://docs.apify.com/legal/general-terms-and-conditions.md |
 | GitHub Actions | 公開リポジトリの標準ランナーは無料・無制限 | docs.github.com …/choose-the-runner-for-a-job |
 | GitHub の非公開リポジトリ | 支払い方法が無ければ無料枠を使い切った時点で停止（請求なし） | docs.github.com …/product-billing/github-actions |
+| 有料 API のキーを使うワークフロー | 見張りが STOP にする（daily.yml は 2026-11-26 に停止、.github/disabled-workflows/） | — |
 | GitHub の利用量の API | 個人の「Plan」読み取り権限のトークンが必要。既定の GITHUB_TOKEN では読めない → 非公開なら STOP | docs.github.com/en/rest/billing/usage |
 
 ## 未確認（推測で埋めない）

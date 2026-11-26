@@ -7,6 +7,7 @@
   - GitHub のリポジトリが公開でない（非公開だと Actions が有料枠を消費する。公開リポジトリの標準ランナーは無料・無制限）
   - GitHub の公開状態が読めない
   - 標準ランナー（ubuntu-latest 等）以外を使うワークフローがある
+  - 有料の外部 API のキー（ANTHROPIC_API_KEY 等）を使うワークフローがある
 根拠（公式文書、2026-11-26 確認）:
   - Apify 無料プラン：月 $5 の前払い枠、カード不要、使い切ると翌月まで利用停止（https://apify.com/pricing）
   - GitHub：公開リポジトリの標準ランナーは無料・無制限（docs.github.com …/choose-the-runner-for-a-job）
@@ -17,6 +18,7 @@ import datetime, glob, json, os, re, sys, urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 THRESHOLD = 0.80
+PAID_KEYS = re.compile(r"secrets\.(ANTHROPIC_API_KEY|OPENAI_API_KEY|GEMINI_API_KEY|GOOGLE_API_KEY|COHERE_API_KEY|MISTRAL_API_KEY)")
 STD_RUNNER = re.compile(r"^(ubuntu|windows|macos)-(latest|\d[\d.]*)$")
 
 def get(url, headers):
@@ -60,12 +62,15 @@ def check_github(token, repo):
         return {**out, "ok": False, "reason": "リポジトリが公開でない（非公開では Actions の無料枠を消費する。残量はこの仕組みでは読めない）"}
     bad = []
     for f in glob.glob(os.path.join(ROOT, ".github", "workflows", "*.y*ml")):
-        for m in re.finditer(r"runs-on:\s*([^\n#]+)", open(f, encoding="utf-8").read()):
+        text = open(f, encoding="utf-8").read()
+        for m in PAID_KEYS.finditer(text):
+            bad.append(f"{os.path.basename(f)}: 有料 API のキー {m.group(1)}")
+        for m in re.finditer(r"runs-on:\s*([^\n#]+)", text):
             v = m.group(1).strip().strip("'\"")
             if not STD_RUNNER.match(v):
                 bad.append(f"{os.path.basename(f)}: {v}")
     if bad:
-        return {**out, "ok": False, "reason": "標準ランナー以外（有料になりうる）: " + ", ".join(bad)}
+        return {**out, "ok": False, "reason": "費用が発生しうるワークフロー（標準以外のランナー・有料 API のキー）: " + ", ".join(bad)}
     return {**out, "ok": True, "note": "公開リポジトリの標準ランナーは無料・無制限（GitHub 公式文書）"}
 
 def main():
