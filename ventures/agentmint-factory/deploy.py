@@ -60,8 +60,8 @@ def main(root):
         cur = call("GET", f"/acts/{existing[name]['id']}")
         public = bool(cur.get("isPublic"))
         # 公開中の商品の更新は、利用者に即座に届くため、オーナーの承認番号が無ければ行わない（AUTONOMY.md）
-        if public and not re.fullmatch(r"#\d+", os.environ.get("PUBLIC_UPDATE_APPROVAL", "").strip()):
-            raise SystemExit("公開中の Actor です。更新にはオーナーの承認が必要（deploy-request.txt の2行目に『approved #承認番号』）")
+        if public and not re.fullmatch(r"#\d+|chat-\d{4}-\d{2}-\d{2}", os.environ.get("PUBLIC_UPDATE_APPROVAL", "").strip()):
+            raise SystemExit("公開中の Actor です。更新にはオーナーの承認が必要（deploy-request.txt の2行目に『approved #承認番号』か、チャットでの承認なら『approved chat-日付』）")
         act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"]})
         # 表示情報は別に送る（カテゴリなどが Apify に受け付けられなくても、コードの更新は止めない）
         for k, v in extra.items():
