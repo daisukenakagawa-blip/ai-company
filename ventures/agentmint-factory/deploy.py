@@ -65,6 +65,11 @@ def main(root):
     items = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/datasets/{run['defaultDatasetId']}/items", headers={"Authorization": f"Bearer {TOKEN}"})))
     got = [i.get(smoke["expect"]["field"]) for i in items]
     if run["status"] != "SUCCEEDED" or got != smoke["expect"]["values"]:
+        try:
+            req = urllib.request.Request(f"{API}/actor-runs/{run['id']}/log", headers={"Authorization": f"Bearer {TOKEN}"})
+            print("---- run log (last 40 lines) ----\n" + "\n".join(urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace").splitlines()[-40:]))
+        except Exception as e:
+            print("log unavailable", e)
         raise SystemExit(f"smoke test failed: status={run['status']} got={got}")
     print(f"OK: https://console.apify.com/actors/{act['id']}  (private, user {me['username']})")
 
