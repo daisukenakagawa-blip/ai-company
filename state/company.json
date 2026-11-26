@@ -602,6 +602,11 @@
       "date": "2026-11-27 08:34",
       "text": "2026-11-27 チャット承認：Dataset Merge & Dedup の README（AI エージェント向けの機械可読の仕様）を公開版に反映してよい。AI エージェント向け自動集客を優先（調査・計測・監視は workspace/acquisition/ai-agent-channels-2026-11-27.md）",
       "read": false
+    },
+    {
+      "date": "2026-11-27 08:43",
+      "text": "2026-11-27 Ver.2.0：AI API を月5,000円・年60,000円まで許可（予算管理 ops/ai_budget を通すこと）。AI 間取引と AI エージェント向け集客を最重要テーマに。最初は現状調査と予算管理（済）→ オーナー設定後に有料 API で自律運営",
+      "read": false
     }
   ]
 }
