@@ -1,7 +1,7 @@
 {
   "name": "GENHAYL AIカンパニー",
   "founded": "2026-11-18 19:40",
-  "day": 13,
+  "day": 14,
   "phase": "需要と支払い意思の実証",
   "business": {
     "name": "アイデア工房",
@@ -202,6 +202,18 @@
       "status": "rejected",
       "review": "ok: 費用0円。実態に合わせる変更で規約上の安全性が上がる。agentmint 側への影響はオーナーが判断",
       "owner_note": "オーナー（11/24）：Stripe の表記はそのままで大丈夫"
+    },
+    {
+      "id": 17,
+      "day": 14,
+      "role": "product",
+      "title": "Dataset Merge & Dedup を Apify Store に公開し、料金を設定する（約15分・最重要）",
+      "action": "ventures/agentmint-factory/PUBLISH_GUIDE.md の 1・2 のとおり、Apify Console の Publishing タブで Pay per event（apify-default-dataset-item $0.0002／件、独自イベントは作らない、+usage はオフ）を設定し、Publish on Store を押す。カード登録・有料プランへの切り替えを求められたら止める。終わったら inbox に『#17 やった』と書く。本人確認（KYC）は売上が出てからでよい",
+      "reason": "店は検索・X から人が来ておらず、待っても売上に結びつかない。Apify Store は同種の Actor に30日で590人の利用者がいる（最大手は失敗率64%）。既に買い手が集まる市場に出すのが、第三者の売上への最短経路",
+      "est_cost_jpy": 0,
+      "status": "pending",
+      "review": "ok: 費用0円（無料プラン・カード未登録のまま）。Store Publishing Terms への同意はオーナーが内容を読んで行う。説明文に誇張・他社名の不当な使用なし（競合の名前は出していない）。他社サイトのデータ取得ではない（利用者自身のデータセットの結合・重複削除）。料金は競合の範囲内で二重課金なし（pricing-check.json で確認済み）",
+      "owner_note": ""
     }
   ],
   "decisions": [
@@ -388,6 +400,26 @@
     {
       "day": 13,
       "text": "13日目: 新しい承認依頼は出さない。X の予約は既存3件で足りるため追加しない"
+    },
+    {
+      "day": 14,
+      "text": "14日目: 店の計測は実在ページだけを数える（11/26 の記録11件のうち7件が脆弱性探しだった）"
+    },
+    {
+      "day": 14,
+      "text": "14日目: 第三者の売上に最も近い施策として、Dataset Merge & Dedup の Apify Store 公開を承認依頼 #17 にする"
+    },
+    {
+      "day": 14,
+      "text": "14日目: X の予約は追加しない（公開3件から確認できる訪問0、無料枠を温存）"
+    },
+    {
+      "day": 14,
+      "text": "14日目: Google Custom Search JSON API の終了（2027-01-01）は不採用（C）。受け皿の資産がなく大手が先行"
+    },
+    {
+      "day": 14,
+      "text": "14日目: 宣伝する5商品は、検索需要のデータが無いため選ばない"
     }
   ],
   "history": [
@@ -481,6 +513,13 @@
       "summary": "# 13日目 日報（2026-11-26） ## 今日の結論（3行） - **売上0円・純利益0円・有料顧客0・KeyRelay の利用者0** のままです。決済画面の新規も0件。店の外部閲覧は計測開始から3件（最低値）で、まだ「見つけてもらえていない」段階です。 - 案2「拠出型 SaaS 価格ベンチマーク」は **不採用（C）** にしました。マネーフォワード Admina が3,000件超の価格データで診断と交渉代行を既に提供しており、「国内に空白」という前提が崩れました。 - 宛名印刷の検索で、上位を **Google Workspace Marketplace の同業アドオン**（月500円）が占めていると分かりました。作り直しとオーナーの作業が要るため、今は記録だけにしています。 ## 成果物 - `workspace/day-013/cfo/numbers.md` 主要指標（KeyRelay は D1 を読み取りのみで確認） - `workspace/day-013/researcher/market_gaps.md` 案2 の検証（公式価格ページ20件）・Gap Engine・入札朝刊3日目 - `workspace/day-013/marketing/channel_workspace_marketplace.md` 集客経路の評価（Workspace Marke",
       "cost_usd": 0,
       "report": "reports/day-013.md"
+    },
+    {
+      "day": 14,
+      "date": "2026-11-27 06:58",
+      "summary": "# 14日目 日報（2026-11-27） ## 今日の結論（3行） - **売上0円・純利益0円・有料顧客0・外部の実利用者0** のままです（Stripe の決済開始の新規0、KeyRelay 0、AgentMint は3商品とも非公開で外部利用0）。 - 11/26 の店の閲覧11件のうち **7件は脆弱性探しのボット**で、人の閲覧は約4件でした。計測を直し、今後は店に実在するページだけを数えます。X の公開済み3投稿から確認できる訪問は0、検索への掲載も当社の検索では確認できず、「まだ見つけてもらえていない」段階です。 - 第三者の売上に一番近いのは、利用者が既にいる **Apify Store に Dataset Merge & Dedup を出すこと**です。公開と料金設定はオーナー承認制のため、承認依頼 #17 にしました（約15分）。 ## 成果物 - `workspace/day-014/cfo/numbers.md` 主要指標 - `workspace/day-014/marketing/channel_search_and_x.md` 検索（IndexNow）と X の実績の確認 - `workspace/day-014/product/metrics_fix.md` 計測の修正（`lib/shop_metrics.js`、試験 29・32項目合格） - `",
+      "cost_usd": 0,
+      "report": "reports/day-014.md"
     }
   ],
   "owner_messages": [

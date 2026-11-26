@@ -29,6 +29,8 @@ t("店の中の移動は入口に数えない", !d.entry["/kibou-kyuu/demo.html"
 t("ボットは数えない", !(await M.recordView(req("/kibou-kyuu/", { "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }), env)));
 t("Playwright は数えない", !(await M.recordView(req("/", { "User-Agent": UA + " HeadlessChrome Playwright" }), env)));
 t("画像・API は数えない", !(await M.recordView(req("/kibou-kyuu/screenshot-tool.png"), env)) && !(await M.recordView(req("/api/stats"), env)));
+t("脆弱性探し（/.git/ など店に無いページ）は数えない", !(await M.recordView(req("/.git/"), env)) && !(await M.recordView(req("/wp-content/uploads/"), env)) && !(await M.recordView(req("/admin/backup/"), env)));
+t("ガイドと特商法表記は数える", M.pagePath(new URL("https://x/guide/a.html")) === "/guide/a.html" && M.pagePath(new URL("https://x/tokushoho.html")) === "/tokushoho.html");
 await M.recordView(req("/kibou-kyuu/", { Cookie: "gs_owner=1" }), env);
 d = day(env);
 t("オーナーは別に数え、閲覧に入れない", d.own === 1 && d.pv["/kibou-kyuu/"] === 1);
