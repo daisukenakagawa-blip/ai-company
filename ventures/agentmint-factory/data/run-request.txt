@@ -1,0 +1,1 @@
+2026-11-27 監視の手動起動（このファイルの push で agentmint-factory.yml を起動）

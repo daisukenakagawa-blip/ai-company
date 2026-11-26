@@ -1,0 +1,1 @@
+2026-11-27 計測の手動起動（Claude の GitHub App は workflow_dispatch が 403 のため、このファイルの push で起動）

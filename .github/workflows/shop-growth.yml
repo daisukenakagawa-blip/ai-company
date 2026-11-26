@@ -3,9 +3,14 @@ name: Shop growth (IndexNow + metrics snapshot)
 on:
   push:
     branches: [main]
-    paths: ["ventures/_shop/**"]
+    paths: ["ventures/_shop/**", "workspace/acquisition/raw/run-request.txt"]
+  # GitHub の定時実行は混雑で数時間遅れたり落ちたりする（11/26 は 21:40 UTC の予定が 03:44 UTC に実行、11/27 は 23:25 UTC 時点で未実行）。
+  # 1日に3回の機会を作り、どれか1回でも動けばよい（同じ日の2回目以降は上書き保存）。毎時0分・30分は混むので避ける
+  # Claude（GitHub App）からの手動起動は 403（Actions の書き込み権限なし）のため、run-request.txt の push で起動する
   schedule:
-    - cron: "40 21 * * *"   # 毎日 6:40 JST（朝の定期実行の前）
+    - cron: "40 21 * * *"   # 6:40 JST
+    - cron: "13 23 * * *"   # 8:13 JST（予備）
+    - cron: "47 2 * * *"    # 11:47 JST（予備）
   workflow_dispatch:
 permissions:
   contents: write
@@ -34,7 +39,14 @@ jobs:
         run: |
           mkdir -p workspace/acquisition/raw
           curl -s -m 30 -A "genhayl-metrics-snapshot (bot)" "https://genhayl-shop.pages.dev/api/metrics?days=60" -o /tmp/m.json || true
-          if python3 -c "import json;d=json.load(open('/tmp/m.json'));assert 'days' in d"; then cp /tmp/m.json workspace/acquisition/raw/metrics-latest.json; else echo "metrics not JSON"; head -c 300 /tmp/m.json; echo "{\"error\":\"not json\",\"at\":\"$(date -u +%FT%TZ)\"}" > workspace/acquisition/raw/metrics-latest.json; fi
+          # 取得できたら saved_at（保存時刻）を付けて保存。取得できなければ「計測不能」として記録し、前回の値は metrics-prev.json に残す（0人と書かない）
+          if python3 -c "import json;d=json.load(open('/tmp/m.json'));assert 'days' in d"; then
+            python3 -c "import json,datetime;d=json.load(open('/tmp/m.json'));d['saved_at']=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds');d['trigger']='${{ github.event_name }}';json.dump(d,open('workspace/acquisition/raw/metrics-latest.json','w'),ensure_ascii=False,indent=1)"
+          else
+            echo "metrics not JSON"; head -c 300 /tmp/m.json
+            [ -f workspace/acquisition/raw/metrics-latest.json ] && python3 -c "import json;d=json.load(open('workspace/acquisition/raw/metrics-latest.json'));assert 'days' in d" 2>/dev/null && cp workspace/acquisition/raw/metrics-latest.json workspace/acquisition/raw/metrics-prev.json
+            echo "{\"error\":\"計測不能（/api/metrics が JSON を返さない）\",\"measurable\":false,\"saved_at\":\"$(date -u +%FT%TZ)\"}" > workspace/acquisition/raw/metrics-latest.json
+          fi
       - name: Commit
         run: |
           git config user.name "shop-growth-bot"

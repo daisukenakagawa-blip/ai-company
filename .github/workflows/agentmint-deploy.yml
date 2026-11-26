@@ -39,4 +39,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           test -n "$APIFY_TOKEN" || { echo "APIFY_TOKEN secret is missing"; exit 1; }
+          # 公開中の Actor の更新には、2行目の「approved #番号」（オーナーの承認番号）が必要
+          export PUBLIC_UPDATE_APPROVAL=$(sed -n 2p ventures/agentmint-factory/deploy-request.txt | grep -oE '^approved #[0-9]+' | grep -oE '#[0-9]+' || true)
           cd ventures/agentmint-factory && python3 deploy.py actors/${{ env.ACTOR }}

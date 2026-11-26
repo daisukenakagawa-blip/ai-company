@@ -4,7 +4,7 @@
 - 既存の Actor（AgentMint など）には触れない：同じ名前の Actor だけを更新する
 - 始める前に guard.py（費用0円の見張り）を通す。STOP なら何もしない
 """
-import base64, json, os, subprocess, sys, time, urllib.request, urllib.error
+import base64, json, os, re, subprocess, sys, time, urllib.request, urllib.error
 TOKEN = os.environ["APIFY_TOKEN"]
 API = "https://api.apify.com/v2"
 SKIP = {"node_modules", "storage", "storage-e2e", ".git"}
@@ -57,6 +57,11 @@ def main(root):
         extra = {k: v for k, v in json.load(open(sp)).items() if k in ("seoTitle", "seoDescription", "categories", "actorPermissionLevel")}
     existing = {a["name"]: a for a in (call("GET", "/acts?my=1&limit=1000") or {}).get("items", [])}
     if name in existing:
+        cur = call("GET", f"/acts/{existing[name]['id']}")
+        public = bool(cur.get("isPublic"))
+        # 公開中の商品の更新は、利用者に即座に届くため、オーナーの承認番号が無ければ行わない（AUTONOMY.md）
+        if public and not re.fullmatch(r"#\d+", os.environ.get("PUBLIC_UPDATE_APPROVAL", "").strip()):
+            raise SystemExit("公開中の Actor です。更新にはオーナーの承認が必要（deploy-request.txt の2行目に『approved #承認番号』）")
         act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"]})
         # 表示情報は別に送る（カテゴリなどが Apify に受け付けられなくても、コードの更新は止めない）
         for k, v in extra.items():
@@ -88,8 +93,8 @@ def main(root):
             raise SystemExit(f"smoke test failed: status={run['status']} got={got}")
     a = call("GET", f"/acts/{act['id']}")
     print("isPublic", a.get("isPublic"), "| permission", a.get("actorPermissionLevel"), "| categories", a.get("categories"), "| seoTitle", a.get("seoTitle"))
-    if a.get("isPublic"): raise SystemExit("想定外：Actor が公開になっている")
-    print(f"OK: https://console.apify.com/actors/{act['id']}  (private, user {me['username']})")
+    if a.get("isPublic") and not (name in existing and public): raise SystemExit("想定外：Actor が公開になっている")
+    print(f"OK: https://console.apify.com/actors/{act['id']}  ({'public' if a.get('isPublic') else 'private'}, user {me['username']})")
 
 if __name__ == "__main__":
     main(sys.argv[1])

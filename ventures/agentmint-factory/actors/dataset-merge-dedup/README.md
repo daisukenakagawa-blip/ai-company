@@ -2,6 +2,50 @@
 
 Combine the results of several scraper runs into **one clean dataset**: merge any number of Apify datasets, remove duplicates by the fields you choose, filter rows, and reshape fields — in one run. Built for large datasets: it streams items page by page and, in the default mode, keeps only a short hash of each key in memory.
 
+## For AI agents (machine-readable summary)
+
+| Key | Value |
+|---|---|
+| Actor ID | `preponderant_swift/dataset-merge-dedup` |
+| Purpose | Merge Apify datasets (or inline JSON items), remove duplicates by chosen fields, filter and reshape. Reads only the data you pass; never accesses websites |
+| Input | `datasetIds` (string[]) and/or `items` (object[]); options below. Full JSON Schema (no token needed): `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default` → `data.inputSchema`. OpenAPI: `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default/openapi.json` |
+| Output | Default dataset = the kept items (same fields as input after reshaping). Key-value record `OUTPUT` = run summary (counts) |
+| Pricing (Pay per event) | `apify-default-dataset-item` **$0.0002 per output item** ($0.20 / 1,000). `apify-actor-start` **$0.00005** per run (per GB of memory, minimum 1). Platform usage is included (not charged separately). Removed duplicates and filtered rows are free |
+| Cost before running | Upper bound = `0.00005 × max(1, memoryGB) + 0.0002 × (sum of itemCount of all input datasets + number of inline items)`. Get `itemCount` with `GET https://api.apify.com/v2/datasets/{datasetId}`. Actual cost is lower when duplicates or filtered rows are removed |
+| Hard cost cap | Set `maxTotalChargeUsd` when starting the run (API option) — the Actor stops cleanly at the cap and reports `OUTPUT.stoppedAtChargeLimit: true`. Or set `maxItems` in the input |
+| Typical latency | Seconds for thousands of items (streams 5,000 items per page) |
+| Memory | 256 MB–4 GB. `keep: "first"` needs ~28 bytes per unique key; `last` / `mostComplete` hold one copy per unique item |
+| Permissions | Limited permissions (reads only the datasets it is given) — usable from the Apify MCP server |
+| Free trial run | Start with an empty input `{}`: runs on a built-in 6-item sample and writes 4 items |
+
+### Call it from an MCP client
+
+- Apify MCP server (`https://mcp.apify.com`): search for "dataset merge dedup", then `call-actor` with actor `preponderant_swift/dataset-merge-dedup`. `call-actor` returns the run status and storage IDs; read the items from the default dataset
+- Expose only this Actor as a tool: `https://mcp.apify.com?tools=preponderant_swift/dataset-merge-dedup` (tool name `preponderant_swift--dataset-merge-dedup`)
+- Authentication: OAuth, or header `Authorization: Bearer <APIFY_TOKEN>`
+
+### Minimal calls
+
+```json
+{ "datasetIds": ["<id1>", "<id2>"], "dedupFields": ["url"] }
+```
+
+```json
+{ "items": [{"url": "https://a.com/1?utm_source=x"}, {"url": "https://a.com/1"}], "dedupFields": ["url"], "ignoreUrlTracking": true }
+```
+
+### Errors (run status FAILED, message in the status message)
+
+| Cause | Message (starts with) | Fix |
+|---|---|---|
+| `keep` is not first / last / mostComplete | `"keep" must be first, last or mostComplete.` | Use one of the three values |
+| Filter without a field | `Filter needs a "field"` | Each filter needs `field` (string) |
+| Unknown filter operator | `Unknown filter op` | Use eq, neq, contains, notContains, exists, notExists, gt, gte, lt, lte, regex |
+| Invalid regular expression | `Invalid regular expression` | Fix the `value` of the regex filter |
+| Dataset ID not found or not readable with your token | Apify API error (e.g. record not found) | Pass a dataset ID your token can read |
+
+Not an error: reaching the spending cap (`stoppedAtChargeLimit: true`, status SUCCEEDED).
+
 ## What it does
 
 - **Merge** any number of datasets, in the order you list them
@@ -71,6 +115,9 @@ Pay per event: you pay only for **items written to the output dataset** (plus Ap
 - `keep: last` and `keep: mostComplete` must hold the winning copy of every unique item until the end; give the run more memory for very large datasets
 
 ## Limits and notes
+
+- Inline `items` are limited by Apify's maximum run input size; use datasets for large data
+- Terms: you must have the right to process the data you pass. The Actor keeps no copy outside your own run storage (Apify's storage retention applies)
 
 - Only reads datasets you give it; it does not access any website
 - `regex` filters are case-insensitive
