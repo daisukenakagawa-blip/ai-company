@@ -9,6 +9,12 @@ TOKEN = os.environ["APIFY_TOKEN"]
 API = "https://api.apify.com/v2"
 SKIP = {"node_modules", "storage", "storage-e2e", ".git"}
 
+def call_or_none(method, path, body=None):
+    try:
+        return call(method, path, body)
+    except SystemExit as e:
+        print("warning:", e); return None
+
 def call(method, path, body=None):
     req = urllib.request.Request(API + path, method=method, data=json.dumps(body).encode() if body is not None else None,
                                  headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"})
@@ -51,7 +57,11 @@ def main(root):
         extra = {k: v for k, v in json.load(open(sp)).items() if k in ("seoTitle", "seoDescription", "categories", "actorPermissionLevel")}
     existing = {a["name"]: a for a in (call("GET", "/acts?my=1&limit=1000") or {}).get("items", [])}
     if name in existing:
-        act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"], **extra})
+        act = call("PUT", f"/acts/{existing[name]['id']}", {"versions": [version], "title": meta["title"], "description": meta["description"]})
+        # 表示情報は別に送る（カテゴリなどが Apify に受け付けられなくても、コードの更新は止めない）
+        for k, v in extra.items():
+            if call_or_none("PUT", f"/acts/{act['id']}", {k: v}) is None:
+                print(f"warning: {k} を設定できなかった（Console の Publishing → Display information で設定する）")
         print("updated", act["id"])
     else:
         act = call("POST", "/acts", {"name": name, "title": meta["title"], "description": meta["description"], "isPublic": False, "versions": [version], **extra})

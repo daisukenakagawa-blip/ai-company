@@ -3,8 +3,7 @@
   "seoDescription": "Merge several Apify datasets into one and remove duplicates by URL or any field. Ignore case and UTM tags, keep the most complete copy, filter and reshape.",
   "categories": [
     "DEVELOPER_TOOLS",
-    "TRANSFORM_AND_PROCESS_DATA",
-    "CLEAN_VALIDATE_AND_DEDUPLICATE_DATASETS"
+    "AUTOMATION"
   ],
   "actorPermissionLevel": "LIMITED_PERMISSIONS"
 }
