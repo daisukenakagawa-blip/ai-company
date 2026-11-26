@@ -11,3 +11,4 @@
 - 料金：Pay per event。Result item（apify-default-dataset-item）$0.20／1,000件、Actor start $0.00005、Pay per event + usage はオフ、独自イベントなし、Primary event＝Result item
 - 公開プロフィール：表示名 GENHAYL SHOP。受け取り：PayPal。本人確認：提出済み・審査中（最大5営業日。確認までの収益は繰り越し）
 - 次：外部の利用者・実行を毎日記録（data/DASHBOARD.md）。売上・有料利用者は Console の Analytics の書き出しが無ければ「未確認」
+- 2026-11-27 8:20 JST ごろ：オーナーがシークレットウィンドウで公開ページが開くことを確認（一般公開を確認）
