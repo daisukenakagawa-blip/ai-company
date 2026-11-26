@@ -211,9 +211,9 @@
       "action": "ventures/agentmint-factory/PUBLISH_GUIDE.md の 1・2 のとおり、Apify Console の Publishing タブで Pay per event（apify-default-dataset-item $0.0002／件、独自イベントは作らない、+usage はオフ）を設定し、Publish on Store を押す。カード登録・有料プランへの切り替えを求められたら止める。終わったら inbox に『#17 やった』と書く。本人確認（KYC）は売上が出てからでよい",
       "reason": "店は検索・X から人が来ておらず、待っても売上に結びつかない。Apify Store は同種の Actor に30日で590人の利用者がいる（最大手は失敗率64%）。既に買い手が集まる市場に出すのが、第三者の売上への最短経路",
       "est_cost_jpy": 0,
-      "status": "pending",
+      "status": "done",
       "review": "ok: 費用0円（無料プラン・カード未登録のまま）。Store Publishing Terms への同意はオーナーが内容を読んで行う。説明文に誇張・他社名の不当な使用なし（競合の名前は出していない）。他社サイトのデータ取得ではない（利用者自身のデータセットの結合・重複削除）。料金は競合の範囲内で二重課金なし（pricing-check.json で確認済み）",
-      "owner_note": ""
+      "owner_note": "2026-11-27 8:14 JST オーナーが公開。https://apify.com/preponderant_swift/dataset-merge-dedup 。Monetization Active（Pay per event：Result item $0.20/1,000件、Actor start $0.00005、+usage オフ）。支払い情報 PayPal、本人確認は審査中（最大5営業日）"
     }
   ],
   "decisions": [
