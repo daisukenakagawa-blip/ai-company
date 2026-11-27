@@ -19,7 +19,7 @@
       "id": "dataset-merge-dedup",
       "division": "d1",
       "name": "Dataset Merge & Dedup（Apify Store）",
-      "status": "公開中（2026-11-27）",
+      "status": "公開中（2026-11-27、0.1.4 で CSV/JSON ファイル入力を追加）",
       "revenue_source": "Apify Pay per event（有料プランの利用者のみ、売上の80%−計算費）"
     },
     {
@@ -68,7 +68,7 @@
       "id": "d2-table-export",
       "division": "d2",
       "name": "試作：Chrome 拡張「表を Excel へ」（結合セル・文字化け対応）",
-      "status": "開発中（手元の試作のみ・未公開）",
+      "status": "試作のみ・未公開（検証で55点に降格）",
       "revenue_source": "予定：無料版＋Pro（自前の Stripe）。公開には Chrome Web Store の登録（オーナー承認）が必要"
     }
   ],
