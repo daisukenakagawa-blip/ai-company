@@ -118,6 +118,19 @@ def main():
         L += ["| 事業部 | 候補 | 点数 | 状態 |", "|---|---|---|---|"] + [f"| {c.get('division')} | {c.get('name')} | {c.get('score', '—')} | {c.get('status', '')} |" for c in cands[:10]]
     else:
         L.append("（調査中）")
+    d3 = div.get("divisions", {}).get("d3")
+    if d3:
+        paying = [S.get(d, {}).get("paying_customers") for d in ("d1", "d2")]
+        has_paying = any(isinstance(v, int) and v > 0 for v in paying)
+        L += ["", "## 第3事業部（構想・未設立）の設立条件", "", "| 条件 | 状態 |", "|---|---|"]
+        for i, c in enumerate(d3.get("conditions", [])):
+            st = ("達成" if has_paying else "未達") if i == 0 else "未達（判定はオーナーへの提案時）"
+            L.append(f"| {c} | {st} |")
+        try:
+            sys.path.insert(0, os.path.join(ROOT, "ops", "knowledge")); import kb
+            L += ["", "知識データの件数：" + "、".join(f"{k} {len(kb.load(k))}" for k in kb.SCHEMA)]
+        except Exception:
+            pass
     s = load("state/company.json", {})
     pend = [a for a in s.get("approvals", []) if a.get("status") == "pending"]
     L += ["", "## 承認待ち", ""] + ([f"- #{a['id']} {a['title']}" for a in pend] or ["なし"])

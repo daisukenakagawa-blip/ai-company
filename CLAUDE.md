@@ -29,6 +29,11 @@
 7. **報告**：オーナーに、次の8項目を短く送る（Ver.2.0 第11条）：実際の売上と純利益／外部利用者と有料顧客数／新しく確認された需要／自動集客の実績（訪問・登録・利用・決済開始・購入・継続を区別）／解決した問題／未解決の問題／次の収益化施策／オーナーの承認が必要な事項。成果のない調査・開発を進捗として過大評価しない
 8. **実行記録**：この定期タスクの実行結果（成功・失敗・止まった所）を `workspace/ops/runs.md` に1行追記する
 
+## Ver.2.5 経営システムの将来の商品化（2026-11-27 オーナー。第3事業部は構想のみ）
+- **今は販売しない・宣伝しない・追加支出しない**。第1・第2事業部の収益化が最優先。実績のないシステムを稼げるものとして宣伝しない
+- 機能の境界：`ops/knowledge/MODULES.md`（大規模な追加開発はしない）。設立条件8項目（`ops/hq/divisions.json` の d3）を全部満たしたらオーナーに提案
+- 構造化データを貯める：`ops/knowledge/kb.py`（opportunity・decision・experiment・product・outcome・exit の JSON Lines）。判断には予測を書き、後で outcome を足す。個人情報・機密・API キー・再販売できないデータは入れない（`python3 ops/knowledge/kb.py check`）
+
 ## Ver.2.2 複数事業部制（2026-11-27 オーナー。事業構成は Ver.2.0・2.1 より優先。予算管理・安全管理・承認制度は維持）
 - AI経営本部（hq）／第1事業部 d1：AI顧客向け（AgentMint Factory・Dataset Merge & Dedup・MCP・AI 間取引）／第2事業部 d2：AI 顧客に限らない新規収益事業（消費者・企業・個人事業主）。資産の所属は `ops/hq/divisions.json`（店・KeyRelay は d2、旧 AgentMint MVP は d1、meme-radar-ai は対象外。どれも削除しない）
 - AI API の予算は全社で1つ（月5,000円、4,500円で全停止は変更禁止）。事業部の配分は `ops/ai_budget/allocation.json`（初期 d1 1,500・d2 2,500・hq 500・予備 500）で、経営本部が実績で変えてよい。`guarded_call(division=...)` で事業部ごとに記録・停止（`STOP-d1` など）

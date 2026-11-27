@@ -1,0 +1,56 @@
+{"id": "dec-legacy-001", "date": "day-1", "division": "hq", "decision": "最初の事業を『エチオピア飲食開業ガイド』に決定。理由：オーナーの実体験は誰にも真似できず、YouTubeという無料の集客経路が既にあり、元手0円で始められるため", "basis": "日報（reports/day-001.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-002", "date": "day-1", "division": "hq", "decision": "競艇・競馬の予想販売は、信用面と景品表示法のリスクが大きいため当面保留", "basis": "日報（reports/day-001.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-003", "date": "day-1", "division": "hq", "decision": "体験談はAIが作らない。下書きの【オーナー記入】欄はオーナーが埋める", "basis": "日報（reports/day-001.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-004", "date": "day-1", "division": "hq", "decision": "販売の順番：無料の予告記事 → YouTube告知 → 有料記事の公開", "basis": "日報（reports/day-001.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-005", "date": "day-2", "division": "hq", "decision": "オーナーの却下を受け、事業を『唐揚げ指数（Karaage Index）』に変更", "basis": "日報（reports/day-002.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-006", "date": "day-2", "division": "hq", "decision": "理由：AIだけの会社の多くは集客と一次データがなく売上0で終わっている。オーナーだけが持つ一次データ（仕入れ伝票）にAIの処理能力を掛け合わせれば、誰にも真似できない", "basis": "日報（reports/day-002.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-007", "date": "day-2", "division": "hq", "decision": "最初の8週は無料で発行して信用を作る。8週で読者が伸びなければ見直す", "basis": "日報（reports/day-002.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-008", "date": "day-2", "division": "hq", "decision": "数量・仕入れ先は非公開とし、公開は指数と変化率に限定する", "basis": "日報（reports/day-002.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-009", "date": "day-3", "division": "hq", "decision": "オーナーの却下を受け、エチオピア関連から撤退。日本向けの『値上げ前夜』に決定", "basis": "日報（reports/day-003.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-010", "date": "day-3", "division": "hq", "decision": "理由：2026年の食品値上げは2万品目を超えて全国民の痛みになっている。値上げ日は事前に公表されているのに、『いつ・何を買うか』に変換するサービスがない。収集・判定・公開・投稿文の作成まで、ほぼ全部AIが自動でできる", "basis": "日報（reports/day-003.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-011", "date": "day-3", "division": "hq", "decision": "集客の柱は検索（商品ごとのページ）。AIが最も得意な経路", "basis": "日報（reports/day-003.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-012", "date": "day-3", "division": "hq", "decision": "掲載するのは出典のある情報だけ。買い占めはあおらない", "basis": "日報（reports/day-003.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-013", "date": "day-4", "division": "hq", "decision": "オーナーの選択により、方針を『AIが作る会社を売る』に変更。アフィリエイトは使わない", "basis": "日報（reports/day-004.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-014", "date": "day-4", "division": "hq", "decision": "AIで記事を量産したサイトは作らない。売却市場で価値が落ちているため、ツール・データ・サービスに絞る", "basis": "日報（reports/day-004.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-015", "date": "day-4", "division": "hq", "decision": "毎月1件着手し、同時に開発するのは2件まで。6ヶ月目に最初の売却掲載を目指す", "basis": "日報（reports/day-004.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-016", "date": "day-4", "division": "hq", "decision": "値上げ前夜は、ポートフォリオの1件目の候補として残す（収益は法人向けの月額に切り替える）", "basis": "日報（reports/day-004.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-017", "date": "day-5", "division": "hq", "decision": "オーナーの選択で『後出しできないAI競艇予想』に決定（条件：放置で回る、領域：データ・予測・勝負）", "basis": "日報（reports/day-005.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-018", "date": "day-5", "division": "hq", "decision": "予想エンジンはオーナーの既存システム（kyouteiAI）をそのまま使う。既存のデータ・台帳・ワークフローは書き換えず、公開用の成績表だけを追加する", "basis": "日報（reports/day-005.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-019", "date": "day-5", "division": "hq", "decision": "成績は良くても悪くても全部公開する。公式サイトの生データ（オッズ表など）は公開しない", "basis": "日報（reports/day-005.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-020", "date": "day-6", "division": "hq", "decision": "6日目: 承認待ちが3件あるため新しい依頼は増やさず、オーナーの作業を3分の1セットにまとめた", "basis": "日報（reports/day-006.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-021", "date": "day-6", "division": "hq", "decision": "6日目: 広告は単価が低めの分野と見積もり、PR案件・購入リンク・アフィリエイトは置かない。本命は3ヶ月後の有料会員", "basis": "日報（reports/day-006.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-022", "date": "day-6", "division": "hq", "decision": "6日目: 予想エンジンに接続できない日は、成績を推測で埋めず『未集計』と明記する", "basis": "日報（reports/day-006.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-023", "date": "day-7", "division": "hq", "decision": "GitHub Pages は規約上、販売用の店に使えない可能性が高いため、置き場所を Cloudflare Pages（ai-company を接続、出力 ventures/_shop）に変える案を出す（#14、オーナー承認待ち）", "basis": "日報（reports/day-007.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-024", "date": "day-7", "division": "hq", "decision": "承認待ちは #14 の1件に絞り、承認後すぐ販売を始められるよう準備を済ませる", "basis": "日報（reports/day-007.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-025", "date": "day-7", "division": "hq", "decision": "新商品づくりは2時間ごとの工房に任せ、朝の会議では重ねない", "basis": "日報（reports/day-007.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-026", "date": "day-8", "division": "hq", "decision": "8日目: 壁は商品数ではなく『見つかっていないこと』。朝の作業は集客に集中する", "basis": "日報（reports/day-008.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-027", "date": "day-8", "division": "hq", "decision": "8日目: 承認依頼は #15（note 記事投稿、最重要）と #16（Stripe 表記の修正）の2件に絞る", "basis": "日報（reports/day-008.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-028", "date": "day-8", "division": "hq", "decision": "8日目: 工房は既存商品と重なる道具を作らず、余ったサイクルは無料のお試しと説明の充実に使う", "basis": "日報（reports/day-008.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-029", "date": "day-8", "division": "hq", "decision": "8日目: 見直し日を 2026-12-04（販売開始から2週間）とする", "basis": "日報（reports/day-008.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-030", "date": "day-9", "division": "hq", "decision": "9日目: 新しい承認依頼は増やさず、#15・#16 の返事を1行で書ける形にした", "basis": "日報（reports/day-009.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-031", "date": "day-9", "division": "hq", "decision": "9日目: 工房の動作確認では Payment Link を開かない（決済画面の数で集客の効果を測るため）", "basis": "日報（reports/day-009.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-032", "date": "day-9", "division": "hq", "decision": "9日目: 周知はガイド1日1本、X は平日1件程度の予約で続ける", "basis": "日報（reports/day-009.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-033", "date": "day-10", "division": "hq", "decision": "10日目: 新しい承認依頼は出さない。オーナーへのお願いは note の設定2点と #16 のみ", "basis": "日報（reports/day-010.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-034", "date": "day-10", "division": "hq", "decision": "10日目: 年賀状の時期に合わせ、周知は宛名印刷を優先する", "basis": "日報（reports/day-010.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-035", "date": "day-10", "division": "hq", "decision": "10日目: 工房の時間帯と重なる決済画面は『判断不能』として来店に数えない", "basis": "日報（reports/day-010.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-036", "date": "day-11", "division": "hq", "decision": "11日目: 新しい承認依頼は出さない。オーナーへのお願いは note の設定2点と #16 のみ（継続）", "basis": "日報（reports/day-011.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-037", "date": "day-11", "division": "hq", "decision": "11日目: 周知の2本目の柱を『部活・教室・サークルの世話役』向けにする（工房の最近の商品に合わせる）", "basis": "日報（reports/day-011.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-038", "date": "day-12", "division": "hq", "decision": "12日目: 案3（AI 保守の LTS フォーク）は同型の無料 fork（@keep-lts）が既にあり C に下げ、研究を止める。npm 公開の実験は依頼しない", "basis": "日報（reports/day-012.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-039", "date": "day-12", "division": "hq", "decision": "12日目: Last.fm API の有料化（12/1）は公式 Pro が安く、趣味の用途中心のため不採用", "basis": "日報（reports/day-012.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-040", "date": "day-12", "division": "hq", "decision": "12日目: 官公需ポータルの規約を確認（出典明記・リンク・過負荷禁止）。外部に出す前にオーナーが判断。検証は 12/9 まで継続", "basis": "日報（reports/day-012.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-041", "date": "day-12", "division": "hq", "decision": "12日目: 経路 #5（パッケージ市場）は単独では不可と評価", "basis": "日報（reports/day-012.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-042", "date": "day-12", "division": "hq", "decision": "12日目: 明日は案2（拠出型 SaaS 価格ベンチマーク）の承認不要の段階を進める", "basis": "日報（reports/day-012.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-043", "date": "day-13", "division": "hq", "decision": "13日目: 案2（拠出型 SaaS 価格ベンチマーク）は C に下げ研究停止（マネーフォワード Admina の Vendor プランが3,000件超の価格データで提供済み）", "basis": "日報（reports/day-013.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-044", "date": "day-13", "division": "hq", "decision": "13日目: Google Workspace Marketplace は経路候補として記録のみ（作り直しとオーナーの Google アカウント作業が必要なため見送り）", "basis": "日報（reports/day-013.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-045", "date": "day-13", "division": "hq", "decision": "13日目: 入札の規約はオーナー了承を反映。外部に出すときは出典とリンク必須、公開・送信は承認後", "basis": "日報（reports/day-013.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-046", "date": "day-13", "division": "hq", "decision": "13日目: 新しい承認依頼は出さない。X の予約は既存3件で足りるため追加しない", "basis": "日報（reports/day-013.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-047", "date": "day-14", "division": "hq", "decision": "14日目: 店の計測は実在ページだけを数える（11/26 の記録11件のうち7件が脆弱性探しだった）", "basis": "日報（reports/day-014.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-048", "date": "day-14", "division": "hq", "decision": "14日目: 第三者の売上に最も近い施策として、Dataset Merge & Dedup の Apify Store 公開を承認依頼 #17 にする", "basis": "日報（reports/day-014.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-049", "date": "day-14", "division": "hq", "decision": "14日目: X の予約は追加しない（公開3件から確認できる訪問0、無料枠を温存）", "basis": "日報（reports/day-014.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-050", "date": "day-14", "division": "hq", "decision": "14日目: Google Custom Search JSON API の終了（2027-01-01）は不採用（C）。受け皿の資産がなく大手が先行", "basis": "日報（reports/day-014.md）", "prediction": null, "outcome": null}
+{"id": "dec-legacy-051", "date": "day-14", "division": "hq", "decision": "14日目: 宣伝する5商品は、検索需要のデータが無いため選ばない", "basis": "日報（reports/day-014.md）", "prediction": null, "outcome": null}
+{"id": "dec-2026-11-27-001", "date": "2026-11-27", "division": "d1", "decision": "Dataset Merge & Dedup を Apify Store に有料公開（$0.20/1,000件）", "basis": "同種の有料競合3本が30日55〜106人", "prediction": "公開4週間で外部の実行1件以上（成功条件）", "outcome": null}
+{"id": "dec-2026-11-27-002", "date": "2026-11-27", "division": "d1", "decision": "CSV/JSON ファイル入力を追加（0.1.4）", "basis": "有料の競合2本が題名で CSV/Excel を示す", "prediction": "Store 検索の圏内に入り外部実行が増える（未検証）", "outcome": null}
+{"id": "dec-2026-11-27-003", "date": "2026-11-27", "division": "d2", "decision": "Chrome 拡張の評価を63→55点に下げ、登録料の承認を求めない", "basis": "有料の証拠は購入者1人の発言のみ", "prediction": "—", "outcome": null}
+{"id": "dec-2026-11-27-004", "date": "2026-11-27", "division": "d2", "decision": "入札の監視・通知を58点に降格", "basis": "官公需・調達ポータルが無料の通知を提供", "prediction": "—", "outcome": null}
+{"id": "dec-2026-11-27-005", "date": "2026-11-27", "division": "hq", "decision": "有料 AI API は予算管理（全社5,000円）を通し、キー設定後に100円以内の試験から", "basis": "オーナー Ver.2.0", "prediction": "—", "outcome": null}

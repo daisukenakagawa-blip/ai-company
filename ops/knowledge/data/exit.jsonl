@@ -1,0 +1,5 @@
+{"id": "exit-kyotei", "date": "2026-11-27", "division": "outside", "name": "競艇予想（kyouteiAI）", "reason": "オーナー指示で終了（賭け・予想は禁止分野）", "lesson": "禁止分野は最初から候補にしない"}
+{"id": "exit-idea-factory", "date": "2026-11-27", "division": "d2", "name": "アイデア工房（2時間ごとに商品を量産）", "reason": "約60商品で売上0円、訪問ほぼ0", "lesson": "集客経路が無いまま商品を増やしても売れない"}
+{"id": "exit-coconala", "date": "2026-11-27", "division": "d2", "name": "ココナラ出品（PDF→Excel）", "reason": "オーナー指示で不採用（受託・作業代行型）", "lesson": "受託型は自動の収益資産にならない"}
+{"id": "exit-lts-fork", "date": "2026-11-27", "division": "d2", "name": "AI 保守の LTS フォーク", "reason": "同型の無料 fork（@keep-lts）が既にあり、利用は本家の0.1%前後", "lesson": "npm に置くだけでは客が来ない"}
+{"id": "exit-saas-benchmark", "date": "2026-11-27", "division": "d2", "name": "拠出型 SaaS 価格ベンチマーク", "reason": "マネーフォワード Admina が3,000件超のデータで提供済み", "lesson": "「国内に空白」の前提は大手の機能ページで先に確かめる"}

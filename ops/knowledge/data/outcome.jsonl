@@ -1,0 +1,5 @@
+{"id": "out-2026-11-revenue-d2", "period": "2026-11", "division": "d2", "metric": "Stripe 売上（円、11月）", "value": 0, "measured": true}
+{"id": "out-2026-11-revenue-d1", "period": "2026-11", "division": "d1", "metric": "Apify 売上（USD、11月）", "value": null, "measured": false}
+{"id": "out-2026-11-27-ext-users-d1", "period": "2026-11-27", "division": "d1", "metric": "Apify 外部利用者（30日）", "value": 0, "measured": true}
+{"id": "out-2026-11-27-shop-pv", "period": "2026-11-27", "division": "d2", "metric": "店の閲覧（実在ページ、11/27 12:46 まで）", "value": 3, "measured": true}
+{"id": "out-2026-11-ai-cost", "period": "2026-11", "division": "hq", "metric": "AI API 費用（円、11月）", "value": 0, "measured": true}
