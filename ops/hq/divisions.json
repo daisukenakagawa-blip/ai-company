@@ -89,7 +89,7 @@
       "id": "d2-ship-csv",
       "division": "d2",
       "name": "試作：Shopify の注文 → 送り状 CSV（B2クラウド・クリックポスト）",
-      "status": "開発中（手元の試作・試験済み・未公開）",
+      "status": "保留（2026-11-28、競合4社を確認・優位なし。$19 は支払わない。試作は保管）",
       "revenue_source": "予定：Shopify アプリの月額（Billing API）または買い切り"
     }
   ],

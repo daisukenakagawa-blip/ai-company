@@ -98,8 +98,10 @@ def main():
     if rows:
         last = max(r["date"] for r in rows)
         L += [f"### 第1事業部：Apify の実測（{last}、公開統計−自分の試験）", "", "| 商品 | 外部利用者(30日) | 外部実行(30日) | 有料利用者 | 売上 USD |", "|---|---|---|---|---|"]
+        seen = set()
         for r in rows:
-            if r["date"] == last:
+            if r["date"] == last and r["slug"] not in seen:  # 同じ日に複数回の記録があっても1行だけ出す
+                seen.add(r["slug"])
                 L.append(f"| {r['slug'].split('/')[-1]} | {r['external_users30']} | {r['external_runs30']} | {r['paying_users']} | {r['revenue_usd']} |")
         L.append("")
     # 第2事業部：店の閲覧
