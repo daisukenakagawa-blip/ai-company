@@ -1,3 +1,3 @@
 dataset-merge-dedup
-approved chat-2026-11-27
-# 2026-11-27 Ver.2.3 オーナー指示「影響・セキュリティ・費用・回帰試験を確認後に反映」：CSV/TSV/JSON/JSONL の URL 入力（SSRF 対策・50MB 上限）。確認結果は workspace/research/2026-11-27/verification-v23.md
+approved chat-2026-11-28
+# 2026-11-28 オーナー承認（チャット）：題名・説明・README 冒頭・SEO 題名の更新のみ。機能・価格は変更しない
