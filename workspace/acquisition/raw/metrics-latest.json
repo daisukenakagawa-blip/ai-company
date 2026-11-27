@@ -1,15 +1,6 @@
 {
  "days": [
   {
-   "date": "2026-09-29",
-   "pv": 0,
-   "entries": 0,
-   "buy": 0,
-   "demo_use": 0,
-   "owner": 0,
-   "capped": false
-  },
-  {
    "date": "2026-09-30",
    "pv": 0,
    "entries": 0,
@@ -539,17 +530,26 @@
    "demo_use": 0,
    "owner": 0,
    "capped": false
+  },
+  {
+   "date": "2026-11-28",
+   "pv": 3,
+   "entries": 2,
+   "buy": 0,
+   "demo_use": 0,
+   "owner": 0,
+   "capped": false
   }
  ],
  "total": {
-  "pv": 21,
-  "entries": 19,
+  "pv": 24,
+  "entries": 21,
   "buy": 0,
   "demo_use": 0,
   "owner": 0
  },
  "pages": {
-  "/": 12,
+  "/": 15,
   "/atena-hagaki/": 1,
   "/.git/": 1,
   "/admin/backup/": 1,
@@ -561,14 +561,14 @@
   "/scoutsuite-report/": 1
  },
  "sources": {
-  "（直接・不明）": 17,
+  "（直接・不明）": 19,
   "ref:x": 1,
   "www.baidu.com": 1
  },
  "countries": {
   "NL": 7,
-  "US": 4,
-  "FI": 2,
+  "US": 5,
+  "FI": 3,
   "HK": 1,
   "FR": 1,
   "CN": 1,
@@ -578,6 +578,6 @@
  },
  "events": {},
  "note": "ボットらしいアクセスとオーナーの閲覧は除外（オーナーは owner に件数だけ）。entries＝外部・直接から来た最初のページ。KV の性質上、同時のアクセスで少なめに数えることがある（最低値として扱う）。1日 800 件で記録を止める（capped）",
- "saved_at": "2026-11-27T11:27:11+00:00",
- "trigger": "schedule"
+ "saved_at": "2026-11-27T23:21:41+00:00",
+ "trigger": "push"
 }
