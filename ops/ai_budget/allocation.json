@@ -1,8 +1,9 @@
 {
-  "_note": "事業部ごとの月の配分（円）。AI 経営本部が実績に応じて変えてよい。ただし合計は limits.json の monthly_budget_jpy（5,000円）と同じでなければ有料 API を止める。reserve は予備で、直接は使わない（配分を変えて使う）。2026-11-27 Ver.2.2 の初期配分",
+  "_note": "事業部ごとの月の配分（円）。AI 経営本部が実績に応じて変えてよい。ただし合計は limits.json の monthly_budget_jpy（5,000円）と同じでなければ有料 API を止める。reserve は予備で、直接は使わない（配分を変えて使う）。2026-11-27 Ver.2.2 の初期配分。2026-11-28 Ver.3.0：d3 を新設し、d2 の 2,500円（使用 17.5円）から 1,000円を d3 に移した（合計5,000円は不変）",
   "divisions_jpy": {
     "d1": 1500,
-    "d2": 2500,
+    "d2": 1500,
+    "d3": 1000,
     "hq": 500,
     "reserve": 500
   },
@@ -10,7 +11,15 @@
     "d1": "第1事業部：AI顧客向け事業",
     "d2": "第2事業部：新規収益事業",
     "hq": "AI経営本部",
-    "reserve": "予備費"
+    "reserve": "予備費",
+    "d3": "第3事業部：Autonomous Revenue Division"
   },
-  "purposes": ["research", "planning", "development", "marketing", "qa", "reporting"]
+  "purposes": [
+    "research",
+    "planning",
+    "development",
+    "marketing",
+    "qa",
+    "reporting"
+  ]
 }

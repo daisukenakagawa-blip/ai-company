@@ -16,6 +16,14 @@
    "external_users": "未確認（店の閲覧は約9件、利用者としては数えられない。KeyRelay 0）",
    "paying_customers": 0,
    "sources": "Stripe Charges 0件（2026-11-27 確認）、KeyRelay D1、店の自社計測"
+  },
+  "d3": {
+   "revenue_jpy": 0,
+   "other_cost_jpy": 0,
+   "external_users": 0,
+   "paying_customers": 0,
+   "paid_demands_served": 0,
+   "sources": "2026-11-28 設立。有償需要への対応件数（paid_demands_served）と純利益で評価"
   }
  }
 }

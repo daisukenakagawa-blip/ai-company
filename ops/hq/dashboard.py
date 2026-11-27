@@ -55,10 +55,10 @@ def main():
 
     L = [f"# 全社経営ダッシュボード", "", f"更新：{JST:%Y-%m-%d %H:%M} JST（自動）。**取れない数字は「未確認」、古い数字は「計測不能」**。自己テスト・自分の操作は外部の実績に入れない。", ""]
     # 全社
-    revs = [money(d, "revenue_jpy") for d in ("d1", "d2")]
+    revs = [money(d, "revenue_jpy") for d in ("d1", "d2", "d3")]
     total_rev = None if (not sales_ok or any(v is None for v in revs)) else sum(revs)  # 1つでも未確認なら全社も未確認
     ai_month = st.get("month_jpy", 0)
-    total_profit = None if total_rev is None else total_rev - ai_month - sum((money(d, "other_cost_jpy") or 0) for d in ("d1", "d2"))
+    total_profit = None if total_rev is None else total_rev - ai_month - sum((money(d, "other_cost_jpy") or 0) for d in ("d1", "d2", "d3"))
     stop = "停止中" if st.get("stopped") else "動作可"
     L += ["## 全社", "", "| 項目 | 値 |", "|---|---|",
           f"| 今月の売上（全社） | {yen(total_rev)} |",
@@ -73,7 +73,7 @@ def main():
     # 事業部
     L += ["## 事業部別", "", "| 事業部 | 今月の売上 | 今月の純利益 | AI API 費用 | 予算（配分） | 予算残高 | 外部利用者 | 有料顧客 | 公開中の商品 | 停止 |", "|---|---|---|---|---|---|---|---|---|---|"]
     assets = div.get("assets", [])
-    for d in ("d1", "d2", "hq"):
+    for d in ("d1", "d2", "d3", "hq"):
         name = div.get("divisions", {}).get(d, {}).get("name", d)
         used = by_div.get(d, 0.0)
         rev = money(d, "revenue_jpy")
@@ -120,11 +120,11 @@ def main():
         L += ["| 事業部 | 候補 | 点数 | 状態 |", "|---|---|---|---|"] + [f"| {c.get('division')} | {c.get('name')} | {c.get('score', '—')} | {c.get('status', '')} |" for c in cands[:10]]
     else:
         L.append("（調査中）")
-    d3 = div.get("divisions", {}).get("d3")
+    d3 = div.get("divisions", {}).get("concept_ops")
     if d3:
-        paying = [S.get(d, {}).get("paying_customers") for d in ("d1", "d2")]
+        paying = [S.get(d, {}).get("paying_customers") for d in ("d1", "d2", "d3")]
         has_paying = any(isinstance(v, int) and v > 0 for v in paying)
-        L += ["", "## 第3事業部（構想・未設立）の設立条件", "", "| 条件 | 状態 |", "|---|---|"]
+        L += ["", "## 構想：AI経営システムの商品化（旧・第3事業部の構想）の設立条件", "", "| 条件 | 状態 |", "|---|---|"]
         for i, c in enumerate(d3.get("conditions", [])):
             st = ("達成" if has_paying else "未達") if i == 0 else "未達（判定はオーナーへの提案時）"
             L.append(f"| {c} | {st} |")

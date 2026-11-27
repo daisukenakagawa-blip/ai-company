@@ -1,75 +1,105 @@
 {
-  "_note": "新規事業の候補（2026-11-27 Ver.2.3 更新、累計129件の調査から）。100点満点。75点以上は無し。根拠：workspace/research/2026-11-27/opportunities-ledger.md・verification-v23.md",
-  "candidates": [
-    {
-      "division": "d2",
-      "name": "Shopify：日本の配送会社別の送り状 CSV（ヤマト・佐川・郵便）",
-      "score": 68,
-      "status": "保留（2026-11-28）：競合4社を確認、優位なし。$19 は支払わない。変換の中身は試作のまま保管",
-      "evidence": "月額で売る競合3社 $9.90〜29.99。最大手は上位プランだけの機能"
-    },
-    {
-      "division": "d2",
-      "name": "終了サービスの移行ツール（Microsoft To Do 2027-06・Jooto 2027-07・みんなの筆王 2027-03）",
-      "score": 66,
-      "status": "検証候補：書き出し形式の確認（To Do は未発表）",
-      "evidence": "公式の終了告知。To Do 1,000万DL、Jooto 利用者50万人・有料2,500社"
-    },
-    {
-      "division": "d2",
-      "name": "印刷後も行き先を変えられる QR コード",
-      "score": 64,
-      "status": "検証候補（悪用対策の設計が前提）",
-      "evidence": "TrustMRR 第三者確認 MRR $7,210・顧客38,492"
-    },
-    {
-      "division": "d2",
-      "name": "静的サイトのフォーム送信 API（日本語のスパム対策・kintone/LINE 転送）",
-      "score": 63,
-      "status": "検証候補",
-      "evidence": "Web3Forms 第三者確認 MRR $44,757・有料3,249"
-    },
-    {
-      "division": "d1",
-      "name": "Dataset Merge & Dedup（CSV/JSON 入力を追加、公開版 0.1.4）",
-      "score": 62,
-      "status": "公開中・外部利用待ち",
-      "evidence": "同種の有料競合3本が30日55〜106人"
-    },
-    {
-      "division": "d2",
-      "name": "kintone プラグイン",
-      "score": 60,
-      "status": "販売経路の規約を確認",
-      "evidence": "契約約40,000社・ARR 240億円（決算資料）。プラグインは月¥1,000〜20,000"
-    },
-    {
-      "division": "d2",
-      "name": "証明写真（規格どおり）",
-      "score": 58,
-      "status": "保留",
-      "evidence": "Snap2Pass 第三者確認 累計 $198,440"
-    },
-    {
-      "division": "d2",
-      "name": "TLS 証明書の監視",
-      "score": 58,
-      "status": "保留（同種の小規模が売れていない反例）",
-      "evidence": "CA/B Forum SC-081v3。statuspage 型 MRR $109"
-    },
-    {
-      "division": "d2",
-      "name": "Chrome 拡張「表を Excel へ」（試作）",
-      "score": 55,
-      "status": "63点から降格。試作は維持、登録料の承認は求めない",
-      "evidence": "有料の証拠は Table Capture Pro の購入者1人の発言のみ。主要機能は無料の競合が対応済み"
-    },
-    {
-      "division": "d2",
-      "name": "入札の監視・通知",
-      "score": 58,
-      "status": "降格（公的な無料の通知あり）",
-      "evidence": "NJSS 有料約8,000社"
-    }
-  ]
+ "_note": "新規事業の候補（2026-11-27 Ver.2.3 更新、累計129件の調査から）。100点満点。75点以上は無し。根拠：workspace/research/2026-11-27/opportunities-ledger.md・verification-v23.md",
+ "candidates": [
+  {
+   "division": "d3",
+   "name": "Apify Actor への直リンクの流入（実証A、Discord #actor-promotion・Insights 対応）",
+   "score": 62,
+   "status": "実験候補（0円、承認待ち）。Ver.3.0 の採点"
+  },
+  {
+   "division": "d3",
+   "name": "x402 の有料エンドポイント（重複除去 1回0.01ドル、Agentic.Market に自動掲載）",
+   "score": 60,
+   "status": "実験候補：先に Bazaar の需要を計測（api.cdp.coinbase.com の許可が必要）。USDC の法務・税務の確認が前提"
+  },
+  {
+   "division": "d3",
+   "name": "Virtuals ACP の提供エージェント",
+   "score": 57,
+   "status": "保留（トークン経済・Sandbox の卒業）"
+  },
+  {
+   "division": "d3",
+   "name": "Zyla・RapidAPI への API 出品（既存機能）",
+   "score": 56,
+   "status": "実験候補（オーナーのアカウントが必要）"
+  },
+  {
+   "division": "d3",
+   "name": "AWS Data Exchange に権利のあるデータを無料出品",
+   "score": 55,
+   "status": "保留（売れる独自データが無い）"
+  },
+  {
+   "division": "d2",
+   "name": "Shopify：日本の配送会社別の送り状 CSV（ヤマト・佐川・郵便）",
+   "score": 68,
+   "status": "保留（2026-11-28）：競合4社を確認、優位なし。$19 は支払わない。変換の中身は試作のまま保管",
+   "evidence": "月額で売る競合3社 $9.90〜29.99。最大手は上位プランだけの機能"
+  },
+  {
+   "division": "d2",
+   "name": "終了サービスの移行ツール（Microsoft To Do 2027-06・Jooto 2027-07・みんなの筆王 2027-03）",
+   "score": 66,
+   "status": "検証候補：書き出し形式の確認（To Do は未発表）",
+   "evidence": "公式の終了告知。To Do 1,000万DL、Jooto 利用者50万人・有料2,500社"
+  },
+  {
+   "division": "d2",
+   "name": "印刷後も行き先を変えられる QR コード",
+   "score": 64,
+   "status": "検証候補（悪用対策の設計が前提）",
+   "evidence": "TrustMRR 第三者確認 MRR $7,210・顧客38,492"
+  },
+  {
+   "division": "d2",
+   "name": "静的サイトのフォーム送信 API（日本語のスパム対策・kintone/LINE 転送）",
+   "score": 63,
+   "status": "検証候補",
+   "evidence": "Web3Forms 第三者確認 MRR $44,757・有料3,249"
+  },
+  {
+   "division": "d1",
+   "name": "Dataset Merge & Dedup（CSV/JSON 入力を追加、公開版 0.1.4）",
+   "score": 62,
+   "status": "公開中・外部利用待ち",
+   "evidence": "同種の有料競合3本が30日55〜106人"
+  },
+  {
+   "division": "d2",
+   "name": "kintone プラグイン",
+   "score": 60,
+   "status": "販売経路の規約を確認",
+   "evidence": "契約約40,000社・ARR 240億円（決算資料）。プラグインは月¥1,000〜20,000"
+  },
+  {
+   "division": "d2",
+   "name": "証明写真（規格どおり）",
+   "score": 58,
+   "status": "保留",
+   "evidence": "Snap2Pass 第三者確認 累計 $198,440"
+  },
+  {
+   "division": "d2",
+   "name": "TLS 証明書の監視",
+   "score": 58,
+   "status": "保留（同種の小規模が売れていない反例）",
+   "evidence": "CA/B Forum SC-081v3。statuspage 型 MRR $109"
+  },
+  {
+   "division": "d2",
+   "name": "Chrome 拡張「表を Excel へ」（試作）",
+   "score": 55,
+   "status": "63点から降格。試作は維持、登録料の承認は求めない",
+   "evidence": "有料の証拠は Table Capture Pro の購入者1人の発言のみ。主要機能は無料の競合が対応済み"
+  },
+  {
+   "division": "d2",
+   "name": "入札の監視・通知",
+   "score": 58,
+   "status": "降格（公的な無料の通知あり）",
+   "evidence": "NJSS 有料約8,000社"
+  }
+ ]
 }
