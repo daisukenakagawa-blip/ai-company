@@ -1,0 +1,31 @@
+{
+ "date": "2026-11-27",
+ "days": 3,
+ "sources": {
+  "hackernews": {
+   "fetched": 130,
+   "new": 21,
+   "errors": [],
+   "measurable": true
+  },
+  "endoflife": {
+   "fetched": 335,
+   "new": 335,
+   "errors": [],
+   "measurable": true
+  },
+  "federalregister": {
+   "fetched": 4,
+   "new": 4,
+   "errors": [],
+   "measurable": true
+  },
+  "github": {
+   "fetched": 80,
+   "new": 0,
+   "errors": [],
+   "measurable": true
+  }
+ },
+ "new_total": 360
+}
