@@ -21,5 +21,14 @@
     "marketing",
     "qa",
     "reporting"
-  ]
+  ],
+  "purposes_plan_jpy": {
+    "全領域の市場調査・事業発掘（research）": 1500,
+    "有望事業の小規模実証（experiment）": 1000,
+    "商品・システム開発（development）": 1000,
+    "集客・販売経路の改善（marketing）": 700,
+    "経営分析・品質管理（planning・qa・reporting）": 300,
+    "予備費": 500
+  },
+  "_note_purposes": "2026-11-28 Ver.4.0 オーナーの初期配分（用途別、合計5,000円）。これは全社の1つの予算の内訳で、事業部の配分（divisions_jpy）とは同じお金を別の切り口で見たもの（重複計上しない）。強制の停止は budget.py が divisions_jpy と全社の上限で行う（budget.py は AI が変更しない）。用途別の実績は台帳の purpose で集計し DASHBOARD に出す。有望事業が見つかれば予算内で配分を変えてよい"
 }

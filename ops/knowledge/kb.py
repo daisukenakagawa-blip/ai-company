@@ -9,7 +9,7 @@
 - outcome：売上・純利益・利用者などの実績（期間ごと、実測だけ）
 - exit：撤退した事業と理由
 入れてはいけないもの：個人情報（氏名・メール・住所・電話）、顧客の機密、API キー・トークン、再販売の権利がないデータ（他社の有料データ・規約で再配布できない本文の転載）。check() が簡易に検出して拒否する
-使い方：python3 ops/knowledge/kb.py stats ／ python3 ops/knowledge/kb.py check
+使い方：python3 ops/knowledge/kb.py stats ／ python3 ops/knowledge/kb.py check ／ python3 ops/knowledge/kb.py explored [語]（調べ済みの市場を業界・構造別に一覧。毎日の事業発掘で同じ調査を繰り返さないために、調べる前に見る。Ver.4.0）
 """
 import datetime, glob, json, os, re, sys
 
@@ -81,4 +81,15 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "stats"
     if cmd == "check":
         e = check_all(); print("\n".join(e) if e else "OK"); sys.exit(1 if e else 0)
+    if cmd == "explored":
+        q = sys.argv[2] if len(sys.argv) > 2 else ""
+        rows = [r for r in load("opportunity") if q in json.dumps(r, ensure_ascii=False)]
+        by = {}
+        for r in rows:
+            by.setdefault((r.get("industry") or "未分類", r.get("structure") or "—"), []).append(r)
+        for (ind, st), rs in sorted(by.items()):
+            print(f"■ {ind}／{st}（{len(rs)}件）")
+            for r in sorted(rs, key=lambda r: r["date"]):
+                print(f"  {r['date']} {r['title']}｜{r.get('score') if r.get('score') is not None else '—'}点｜{str(r.get('status'))[:70]}")
+        sys.exit(0)
     print(json.dumps({k: len(load(k)) for k in SCHEMA}, ensure_ascii=False))
