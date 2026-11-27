@@ -12,14 +12,14 @@ FIELDS = [("issued", "公告日"), ("deadline", "入札書の提出期限"), ("p
           ("cat", "種別"), ("proc", "手続きの種類"), ("url", "公告の URL（各機関のページ）")]
 
 
-def search(q, since):
-    url = "https://www.kkj.go.jp/api/?" + urllib.parse.urlencode({"Query": q, "CFT_Issue_Date": f"{since}/", "Count": 1000})
+def search(q, since, until=""):
+    url = "https://www.kkj.go.jp/api/?" + urllib.parse.urlencode({"Query": q, "CFT_Issue_Date": f"{since}/{until}", "Count": 1000})
     for i in range(3):  # 通信の一時的な切断に備えて、間を空けて3回まで
         try:
             with urllib.request.urlopen(url, timeout=120) as r:
                 root = ET.fromstring(r.read())
             break
-        except OSError:
+        except Exception:  # 切断・途中で切れた応答（IncompleteRead）など
             if i == 2: raise
             time.sleep(10)
     for x in root.iter("SearchResult"):
@@ -36,10 +36,12 @@ def main():
     start = end - datetime.timedelta(days=days - 1)
     seen = {}
     for w in SEGMENTS[seg]:
-        for it in search(w, start.isoformat()):
-            if w in it["name"] and start.isoformat() <= it["issued"] <= end.isoformat():
-                seen.setdefault(it["key"] or it["url"], it)
-        time.sleep(3)
+        for k in range(days):  # 応答が大きいと途中で切れるので、1日ずつ問い合わせる
+            d = (start + datetime.timedelta(days=k)).isoformat()
+            for it in search(w, d, d):
+                if w in it["name"] and start.isoformat() <= it["issued"] <= end.isoformat():
+                    seen.setdefault(it["key"] or it["url"], it)
+            time.sleep(3)
     rows = sorted(seen.values(), key=lambda i: (i["issued"], i["pref"]), reverse=True)
     out = os.path.join(HERE, "out", f"kkj-{seg}-{start}_{end}")
     os.makedirs(out, exist_ok=True)

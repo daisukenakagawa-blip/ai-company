@@ -40,7 +40,16 @@ def rows_from(zf):
     with zipfile.ZipFile(zf) as z:
         for nm in z.namelist():
             if nm.lower().endswith(".csv"):
-                for r in csv.reader(io.TextIOWrapper(z.open(nm), encoding="utf-8")):
+                b = z.read(nm)
+                for enc in ("utf-8-sig", "cp932"):  # Unicode 版と Shift-JIS 版のどちらでも読む
+                    try:
+                        text = b.decode(enc); break
+                    except UnicodeDecodeError:
+                        continue
+                else:
+                    raise ValueError(f"文字コードを判定できない: {nm}")
+                print(os.path.basename(zf), nm, enc)
+                for r in csv.reader(io.StringIO(text)):
                     yield r
 
 
