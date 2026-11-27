@@ -54,3 +54,4 @@
 {"id": "dec-2026-11-27-003", "date": "2026-11-27", "division": "d2", "decision": "Chrome 拡張の評価を63→55点に下げ、登録料の承認を求めない", "basis": "有料の証拠は購入者1人の発言のみ", "prediction": "—", "outcome": null}
 {"id": "dec-2026-11-27-004", "date": "2026-11-27", "division": "d2", "decision": "入札の監視・通知を58点に降格", "basis": "官公需・調達ポータルが無料の通知を提供", "prediction": "—", "outcome": null}
 {"id": "dec-2026-11-27-005", "date": "2026-11-27", "division": "hq", "decision": "有料 AI API は予算管理（全社5,000円）を通し、キー設定後に100円以内の試験から", "basis": "オーナー Ver.2.0", "prediction": "—", "outcome": null}
+{"id": "dec-2026-11-27-006", "date": "2026-11-27", "division": "d2", "decision": "最高点の候補（Shopify 送り状 CSV、68点）の変換の中身を試作（オーナー「判断して良いものは開発」）", "basis": "月額で売る競合3社・競合の価格と品質への不満", "prediction": "公開すれば Shopify App Store の検索で見つかり、30日以内に無料インストール1件以上（未検証）", "outcome": null}

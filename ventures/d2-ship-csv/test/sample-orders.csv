@@ -1,0 +1,10 @@
+Name,Email,Financial Status,Fulfillment Status,Lineitem quantity,Lineitem name,Lineitem SKU,Lineitem requires shipping,Shipping Name,Shipping Address1,Shipping Address2,Shipping Company,Shipping City,Shipping Zip,Shipping Province,Shipping Province Name,Shipping Country,Shipping Phone,Cancelled at
+#1001,a@example.com,paid,unfulfilled,2,オーガニック緑茶 100g,TEA-1,true,山田 太郎,千代田1-1,グランドマンション101,,千代田区,1000001,JP-13,Tokyo,JP,+81 90-1234-5678,
+#1001,,,,1,湯のみ,CUP-1,true,,,,,,,,,,,
+#1001,,,,1,ギフト包装,GIFT,false,,,,,,,,,,,
+#1002,b@example.com,paid,unfulfilled,1,ほうじ茶,TEA-2,true,佐藤 花子,大阪府大阪市北区梅田3-1-1,,株式会社テスト,大阪市北区,530-0001,JP-27,Osaka,JP,06-1234-5678,
+#1003,c@example.com,paid,unfulfilled,1,抹茶,TEA-3,true,髙橋 𠮷子,札幌市中央区北1条西2丁目,,,札幌市中央区,0600001,JP-01,Hokkaido,JP,011-222-3333,
+#1004,d@example.com,refunded,unfulfilled,1,緑茶,TEA-1,true,鈴木 一郎,中央1-1,,,名古屋市,4600001,JP-23,Aichi,JP,052-000-0000,2026-11-20 10:00:00 +0900
+#1005,e@example.com,paid,unfulfilled,1,緑茶,TEA-1,true,John Smith,1 Main St,,,Seattle,98101,WA,Washington,US,+1 206 555 0100,
+#1006,f@example.com,paid,unfulfilled,1,緑茶,TEA-1,true,田中 次郎,横浜市西区みなとみらい二丁目三番一号クイーンズタワーＡ棟の非常に長い住所の例として三十二文字を超える部分,,,横浜市西区,220-0012,JP-14,Kanagawa,JP,045-000-0000,
+#1007,g@example.com,paid,unfulfilled,1,緑茶,TEA-1,true,伊藤 三郎,本町1-1,,,渋谷区,1510071,JP-13,Tokyo,JP,,

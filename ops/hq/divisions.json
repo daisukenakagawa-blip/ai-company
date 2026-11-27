@@ -84,6 +84,13 @@
       "name": "試作：Chrome 拡張「表を Excel へ」（結合セル・文字化け対応）",
       "status": "試作のみ・未公開（検証で55点に降格）",
       "revenue_source": "予定：無料版＋Pro（自前の Stripe）。公開には Chrome Web Store の登録（オーナー承認）が必要"
+    },
+    {
+      "id": "d2-ship-csv",
+      "division": "d2",
+      "name": "試作：Shopify の注文 → 送り状 CSV（B2クラウド・クリックポスト）",
+      "status": "開発中（手元の試作・試験済み・未公開）",
+      "revenue_source": "予定：Shopify アプリの月額（Billing API）または買い切り"
     }
   ],
   "shared_cost_rule": "共通費（GitHub Actions・Cloudflare・Apify の無料枠、AI 経営本部の AI 費用）は、現在すべて0円または本部の予算。追加支出が出たら、その月の各事業部の AI API 費用の比率で配分する（AI 費用が0の月は均等）"

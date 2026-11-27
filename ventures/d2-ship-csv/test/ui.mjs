@@ -1,0 +1,26 @@
+// 画面の試験：Playwright で CSV を選び、B2 とクリックポストの CSV（Shift_JIS）が保存されることを確かめる
+import { createRequire } from 'node:module';
+const { chromium } = createRequire(import.meta.url)('playwright');
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { readFileSync } from 'node:fs';
+const DIR = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const b = await chromium.launch(); const p = await b.newPage({ acceptDownloads: true });
+const errors = []; p.on('pageerror', (e) => errors.push(e.message));
+await p.goto('file://' + path.join(DIR, 'src/index.html'));
+await p.setInputFiles('#file', path.join(DIR, 'test/sample-orders.csv'));
+await p.waitForFunction(() => !document.getElementById('go').disabled);
+for (const [k, v] of Object.entries({ senderName: 'テスト茶舗', senderPhone: '03-1111-2222', senderZip: '1000005', senderAddress: '東京都千代田区丸の内1-1', billingCode: '0123456789' })) await p.fill('#' + k, v);
+let [dl] = await Promise.all([p.waitForEvent('download'), p.click('#go')]);
+const txt = new TextDecoder('shift_jis').decode(readFileSync(await dl.path()));
+assert.ok(txt.startsWith('お客様管理番号,送り状種類'), 'B2 の見出し');
+assert.ok(txt.includes('1001,0,0,,') && txt.includes('東京都千代田区千代田1-1'), 'B2 の中身');
+assert.match(await p.textContent('#result'), /2 件/);
+assert.match(await p.textContent('#warn'), /#1003/);
+await p.selectOption('#fmt', 'cp');
+[dl] = await Promise.all([p.waitForEvent('download'), p.click('#go')]);
+const cp = new TextDecoder('shift_jis').decode(readFileSync(await dl.path()));
+assert.ok(cp.startsWith('お届け先郵便番号,お届け先氏名'), 'クリックポストの見出し');
+await p.screenshot({ path: path.join(DIR, 'test/screenshot.png'), fullPage: true });
+assert.deepEqual(errors, []);
+await b.close(); console.log('ui ok');

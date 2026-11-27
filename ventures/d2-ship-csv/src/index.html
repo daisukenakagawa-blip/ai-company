@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopify の注文 → 送り状 CSV（ヤマト B2クラウド・クリックポスト）</title>
+<style>
+:root{--fg:#1f2937;--mut:#6b7280;--line:#e5e7eb;--acc:#0f766e;--bg:#f8fafc;--warn:#92400e;--warnbg:#fffbeb;--err:#991b1b}
+*{box-sizing:border-box}body{margin:0;font:15px/1.7 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;color:var(--fg);background:var(--bg)}
+main{max-width:860px;margin:0 auto;padding:24px 16px}h1{font-size:22px;margin:0 0 4px}p.lead{color:var(--mut);margin:0 0 20px}
+section{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:0 0 16px}
+h2{font-size:16px;margin:0 0 10px}label{display:block;margin:8px 0 2px;font-size:13px;color:var(--mut)}
+input,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font:inherit}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+button{font:inherit;padding:10px 18px;border:0;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer;margin:8px 8px 0 0}
+button:disabled{opacity:.4;cursor:default}
+#warn{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:13px;display:none}
+#err{color:var(--err);white-space:pre-wrap}.ok{color:var(--acc);font-weight:600}
+small{color:var(--mut)}
+</style></head>
+<body><main>
+<h1>Shopify の注文 → 送り状 CSV</h1>
+<p class="lead">Shopify の「注文をエクスポート」で保存した CSV を、ヤマト運輸 B2クラウド・日本郵便クリックポストに取り込める CSV（Shift_JIS）に変えます。<b>注文データはこのページの中だけで処理し、どこにも送りません。</b></p>
+
+<section><h2>1. 注文 CSV を選ぶ</h2>
+<input type="file" id="file" accept=".csv,text/csv"><small id="fileinfo"></small></section>
+
+<section><h2>2. 出力の形式</h2>
+<select id="fmt"><option value="b2">ヤマト運輸 B2クラウド（外部データから発行）</option><option value="cp">日本郵便 クリックポスト（まとめ申込、40件ごと）</option></select>
+<label><input type="checkbox" id="skipFulfilled" checked style="width:auto"> 発送済みの注文は除く</label>
+<div id="b2opts"><div class="grid">
+<div><label>送り状の種類</label><select id="type"><option value="0">発払い（宅急便）</option><option value="8">宅急便コンパクト</option><option value="A">ネコポス</option><option value="7">クロネコゆうパケット</option></select></div>
+<div><label>出荷予定日</label><input type="date" id="shipDate"></div>
+<div><label>配達時間帯</label><select id="time"><option value="">指定なし</option><option value="0812">午前中</option><option value="1416">14〜16時</option><option value="1618">16〜18時</option><option value="1820">18〜20時</option><option value="1921">19〜21時</option></select></div>
+<div><label>クール区分</label><select id="cool"><option value="0">通常</option><option value="1">冷凍</option><option value="2">冷蔵</option></select></div>
+<div><label>請求先顧客コード（ヤマトとの契約の番号、10〜12桁）</label><input id="billingCode" inputmode="numeric"></div>
+<div><label>運賃管理番号（通常 01）</label><input id="freightNo" value="01" inputmode="numeric"></div>
+</div></div>
+<div id="cpopts" style="display:none"><label>内容品（空欄なら商品名）</label><input id="contents" placeholder="例：書籍"></div>
+</section>
+
+<section><h2>3. ご依頼主（あなたのお店）</h2><div class="grid">
+<div><label>名前</label><input id="senderName"></div><div><label>電話番号</label><input id="senderPhone"></div>
+<div><label>郵便番号</label><input id="senderZip"></div><div><label>住所</label><input id="senderAddress"></div>
+<div><label>建物名</label><input id="senderBuilding"></div></div>
+<small>この画面の入力は、次回のためにこのブラウザにだけ保存します。</small></section>
+
+<section><h2>4. 変換して保存</h2>
+<button id="go" disabled>変換する</button><div id="err"></div><p id="result"></p><div id="warn"></div><div id="dl"></div></section>
+<p><small>B2クラウドの取り込みでは、1行目が見出しです（取り込みの設定で「2行目から」を選んでください）。クリックポストは見出しつきで40件ずつのファイルになります。Shift_JIS にない文字（𠮷 など）がある注文は出力せず、一覧で知らせます。</small></p>
+</main>
+<script src="core.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const KEYS = ['senderName', 'senderPhone', 'senderZip', 'senderAddress', 'senderBuilding', 'billingCode', 'freightNo', 'type', 'time', 'cool', 'fmt', 'contents'];
+try { const saved = JSON.parse(localStorage.getItem('shipcsv') || '{}'); KEYS.forEach((k) => { if (saved[k] != null) $(k).value = saved[k]; }); } catch (e) {}
+const t = new Date(Date.now() + 9 * 3600e3); $('shipDate').value = t.toISOString().slice(0, 10);
+const sync = () => { $('b2opts').style.display = $('fmt').value === 'b2' ? '' : 'none'; $('cpopts').style.display = $('fmt').value === 'cp' ? '' : 'none'; };
+$('fmt').onchange = sync; sync();
+let orders = null;
+$('file').onchange = async () => {
+  const f = $('file').files[0]; if (!f) return;
+  try { orders = ShipCsv.groupOrders(ShipCsv.parseCsv(await f.text())); $('fileinfo').textContent = `${orders.length} 件の注文を読み込みました`; $('go').disabled = !orders.length; }
+  catch (e) { $('fileinfo').textContent = '読み込めませんでした：' + e.message; }
+};
+function download(name, rows, header) {
+  const { bytes } = ShipCsv.encodeSjis(ShipCsv.toCsv(rows, header));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes], { type: 'text/csv' })); a.download = name; a.textContent = name;
+  const p = document.createElement('p'); p.append(a); $('dl').append(p); a.click();
+}
+$('go').onclick = () => {
+  const s = {}; KEYS.forEach((k) => (s[k] = $(k).value.trim())); s.shipDate = $('shipDate').value.replace(/-/g, '/'); s.skipFulfilled = $('skipFulfilled').checked;
+  try { localStorage.setItem('shipcsv', JSON.stringify(Object.fromEntries(KEYS.map((k) => [k, s[k]])))); } catch (e) {}
+  $('err').textContent = ''; $('warn').style.display = 'none'; $('dl').innerHTML = ''; $('result').textContent = '';
+  const day = s.shipDate.replace(/\//g, '');
+  if (s.fmt === 'b2') {
+    const r = ShipCsv.toB2(orders, s);
+    if (r.errors.length) { $('err').textContent = r.errors.join('\n'); return; }
+    if (r.rows.length) download(`b2_${day}.csv`, r.rows, r.header);
+    $('result').innerHTML = `<span class="ok">${r.rows.length} 件</span>を出力しました。`;
+    if (r.warnings.length) { $('warn').textContent = r.warnings.join('\n'); $('warn').style.display = 'block'; }
+  } else {
+    const r = ShipCsv.toClickPost(orders, s);
+    r.files.forEach((rows, i) => download(`clickpost_${day}_${i + 1}.csv`, rows, r.header));
+    $('result').innerHTML = `<span class="ok">${r.files.reduce((n, f) => n + f.length, 0)} 件</span>を ${r.files.length} 個のファイルに出力しました。`;
+    if (r.warnings.length) { $('warn').textContent = r.warnings.join('\n'); $('warn').style.display = 'block'; }
+  }
+};
+</script>
+</body></html>
