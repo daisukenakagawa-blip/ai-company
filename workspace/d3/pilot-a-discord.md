@@ -39,3 +39,4 @@
 - **2026-11-28 7:47 JST オーナーが投稿**（Discord「dadayop」、#🚀actor-promotion、上の文のまま。ピン留めは無し。チャンネルの説明「Apify Store に公開した新しい Actor を紹介する場所・Apify Actor 専用」に合致）
 - 投稿の直前の基準値（公開 API）：totalUsers 1・totalRuns 11・30日の利用者 0（利用者1・実行11はすべて自社）
 - 測定期間：2026-11-28〜12-12。毎朝、外部の利用者（totalUsers−1）と Store 検索への復帰を記録する
+- 2026-11-28 7:51 JST オーナーが Console を確認：Actor の画面のタブに Insights は無い（Source・Runs・Builds・Integrations・Monitoring・Tasks・Settings・Publishing）。Publishing の5項目（Display information・Monetization Active・Input schema・Output schema・Actor permissions）はすべて済み。推測：外部の利用が0のため Insights が出ていない。直す点の指摘は無し
