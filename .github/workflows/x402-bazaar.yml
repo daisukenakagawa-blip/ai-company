@@ -1,0 +1,30 @@
+name: x402 Bazaar demand (read-only, 0円)
+# Ver.3.0 実証B の下調べ（2026-11-28 オーナー承認）。Coinbase の公開 discovery API（キー不要）を読み、分野別の30日の呼び出し・支払い元を集計する。
+# 支払い・登録はしない。Claude の実行環境からは api.cdp.coinbase.com に接続できないため、GitHub の標準ランナー（公開リポジトリは無料）で動かす。
+on:
+  schedule:
+    - cron: "47 21 * * *"   # 毎日 6:47 JST
+  push:
+    branches: [main]
+    paths: ["workspace/market-gaps/x402/run-request.txt"]
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch and summarize
+        run: python3 ventures/_gap/x402_bazaar.py || echo "::warning::Bazaar を取得できなかった"
+      - name: Commit
+        run: |
+          git config user.name "x402-bazaar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add workspace/market-gaps/x402 || true
+          git diff --cached --quiet && exit 0
+          git commit -m "x402 Bazaar: 需要の集計"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done
