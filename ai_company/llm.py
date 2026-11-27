@@ -45,7 +45,7 @@ class LLM:
         """有料 API は必ず ops/ai_budget の予算管理を通す（2026-11-27 Ver.2.0）。止められたら BudgetExceeded"""
         budget = _budget_module()
         purpose = ROLE_PURPOSE.get(self._role, "research")
-        kwargs = dict(purpose=purpose, priority="normal", model=self.model or "claude-haiku-5-5", system=system,
+        kwargs = dict(division="hq", purpose=purpose, priority="normal", model=self.model or "claude-haiku-5-5", system=system,
                       messages=[{"role": "user", "content": prompt}], max_tokens=4000, task=self._role)
         if use_search:
             kwargs.update(tools=[{"type": self.search_tool, "name": "web_search", "max_uses": 3}], max_searches=3)

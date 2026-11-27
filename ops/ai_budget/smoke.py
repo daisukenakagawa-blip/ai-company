@@ -48,7 +48,7 @@ def main():
     before = budget.status()
     t0 = time.time()
     try:
-        resp = budget.guarded_call(client, purpose="qa", priority="high", model=call_model, max_tokens=200, task="初回の有料 API 試験",
+        resp = budget.guarded_call(client, division="hq", purpose="qa", priority="high", model=call_model, max_tokens=200, task="初回の有料 API 試験",
                                    system="あなたは試験用の応答係です。指示どおり短く答えてください。",
                                    messages=[{"role": "user", "content": "「予算管理の試験は成功」とだけ返してください。"}])
     except budget.BudgetBlocked as e:

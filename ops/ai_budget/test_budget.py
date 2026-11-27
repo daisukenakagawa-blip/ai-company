@@ -40,7 +40,7 @@ class FakeClient:
         return types.SimpleNamespace(usage=self.usage(), content=[], model=kw["model"] + "-20261101")
 
 
-ARGS = dict(purpose="research", priority="normal", model="claude-haiku-5-5", system="s", messages=[{"role": "user", "content": "hi"}], max_tokens=1000)
+ARGS = dict(division="d1", purpose="research", priority="normal", model="claude-haiku-5-5", system="s", messages=[{"role": "user", "content": "hi"}], max_tokens=1000)
 
 
 def _proc_worker(tmp, sha, q):
@@ -66,14 +66,14 @@ class T(unittest.TestCase):
     def call(self, client=None, **kw):
         return self.b.guarded_call(client or FakeClient(), **{**ARGS, **kw})
 
-    def seed(self, jpy, purpose="development", when=None, today=False):
+    def seed(self, jpy, purpose="development", when=None, today=False, division="hq"):
         """月の使用額を作る。既定は月初（今日の上限に当たらないように）。今日が1日なら月の試験は飛ばす"""
         now = self.b.utc_now()
         if when is None and not today:
             if now.day == 1:
                 self.skipTest("月初の1日は、今日と月初が同じ日になるため飛ばす")
             when = now.replace(day=1, hour=0, minute=0)
-        self.b.record({"at_utc": (when or now).isoformat(), "purpose": purpose, "kind": "reserve", "jpy": jpy})
+        self.b.record({"at_utc": (when or now).isoformat(), "division": division, "purpose": purpose, "kind": "reserve", "jpy": jpy})
 
     def k(self):
         return 150.0 * self.lim["fx_buffer"] * self.lim["tax_and_fee_multiplier"] * self.lim["price_buffer"]
@@ -153,13 +153,32 @@ class T(unittest.TestCase):
         with self.assertRaises(self.b.BudgetBlocked): self.call(priority="low")
         self.call(priority="high")
 
-    def test_purpose_allocation_and_sum(self):
-        self.seed(800, purpose="research")
-        with self.assertRaises(self.b.BudgetBlocked): self.call(purpose="research")
-        self.call(purpose="qa")
-        a = json.load(open(os.path.join(self.tmp, "allocation.json"))); a["allocation_jpy"]["qa"] += 1
+    def test_division_allocation_and_sum(self):
+        self.seed(1500, division="d1")
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="d1")
+        self.call(division="d2")  # 別の事業部はまだ使える（予算は全社で1つ）
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="reserve")  # 予備費は直接使わない
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="d9")
+        a = json.load(open(os.path.join(self.tmp, "allocation.json"))); a["divisions_jpy"]["d2"] += 1
         json.dump(a, open(os.path.join(self.tmp, "allocation.json"), "w"))
-        with self.assertRaises(self.b.BudgetBlocked): self.call(purpose="qa")
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="d2")
+
+    def test_division_kill_switch(self):
+        open(os.path.join(self.tmp, "STOP-d2"), "w").write("x")
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="d2")
+        self.call(division="d1")
+        os.environ["AI_KILL_SWITCH_D1"] = "1"
+        try:
+            with self.assertRaises(self.b.BudgetBlocked): self.call(division="d1")
+        finally:
+            os.environ.pop("AI_KILL_SWITCH_D1")
+
+    def test_shared_total_cap_across_divisions(self):
+        """事業部ごとに別々の5,000円は使えない：全社の合計で90%に達したら、配分が残っている事業部も止まる"""
+        a = json.load(open(os.path.join(self.tmp, "allocation.json"))); a["divisions_jpy"] = {"d1": 4800, "d2": 100, "hq": 100, "reserve": 0}
+        json.dump(a, open(os.path.join(self.tmp, "allocation.json"), "w"))
+        self.seed(4499, division="d1")
+        with self.assertRaises(self.b.BudgetBlocked): self.call(division="d2", max_tokens=16000)
 
     def test_per_call_cap(self):
         with self.assertRaises(self.b.BudgetBlocked):

@@ -1,0 +1,21 @@
+{
+ "_note": "毎朝の経営の実行（CFO）が、Stripe（GPT自動・本番）の Charges と Apify の書き出し・公開統計から記録する。null＝未確認。自己テストは含めない",
+ "updated_at": "2026-11-27T00:44:26+00:00",
+ "month": "2026-11",
+ "divisions": {
+  "d1": {
+   "revenue_jpy": null,
+   "other_cost_jpy": 0,
+   "external_users": 0,
+   "paying_customers": null,
+   "sources": "Apify 公開統計（外部利用者=30日の利用者−自分）。売上・有料利用者は Console の Analytics の書き出しが無いため未確認"
+  },
+  "d2": {
+   "revenue_jpy": 0,
+   "other_cost_jpy": 0,
+   "external_users": "未確認（店の閲覧は約9件、利用者としては数えられない。KeyRelay 0）",
+   "paying_customers": 0,
+   "sources": "Stripe Charges 0件（2026-11-27 確認）、KeyRelay D1、店の自社計測"
+  }
+ }
+}

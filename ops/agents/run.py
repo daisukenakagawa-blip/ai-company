@@ -29,9 +29,9 @@ RULES = ("あなたは GENHAYL AIカンパニーの社員です。日本語で�
          "渡されたデータに無い数字・実績・利用者の声は作りません。外部への公開・投稿・価格変更は提案に留めます。")
 
 
-def ask(client, role, task, prompt, priority="normal", tools=None, max_searches=0):
+def ask(client, division, role, task, prompt, priority="normal", tools=None, max_searches=0):
     r = ROLES[role]
-    resp = budget.guarded_call(client, purpose=r["purpose"], priority=priority, model=r["model"], max_tokens=r["max_tokens"],
+    resp = budget.guarded_call(client, division=division, purpose=r["purpose"], priority=priority, model=r["model"], max_tokens=r["max_tokens"],
                                task=f"{role}:{task}", system=[{"type": "text", "text": RULES, "cache_control": {"type": "ephemeral"}}],
                                messages=[{"role": "user", "content": prompt}], tools=tools, max_searches=max_searches)
     return "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
@@ -68,7 +68,7 @@ def listing_review(client, slug="preponderant_swift/dataset-merge-dedup", querie
               "(1) 検索に出ない・選ばれない原因の仮説（データの根拠つき）、(2) 題名・説明・SEO 題名・README 冒頭の具体的な書き換え案"
               "（英語、Apify の文字数の目安を守る）、(3) 競合に対する差別化の一文、(4) やってはいけないこと（誇張・他社名の不当な使用）を書いてください。"
               "数字はデータにあるものだけ使ってください。\n\n" + json.dumps(data, ensure_ascii=False)[:20000])
-    text = ask(client, "marketing", "listing_review", prompt, priority="high")
+    text = ask(client, "d1", "marketing", "listing_review", prompt, priority="high")
     return save("listing-review", text, {"job": "listing_review", "slug": slug, "inputs": "Apify public API"})
 
 
@@ -84,7 +84,7 @@ def gap_triage(client):
     prompt = ("GitHub の公開 Issue から機械的に集めた『サービス終了・API 廃止・値上げ・移行先さがし』の手がかりです。"
               "各行を A（有料の外部サービスの変化で、利用者の業務や売上が止まりうる）/B（要確認）/C（雑音：自社コードの内部の話・一覧への追加依頼など）に分け、"
               "A と B だけ、一次資料で確かめるべき点を1行で書いてください。表で出力。\n\n" + json.dumps(rows, ensure_ascii=False))
-    text = ask(client, "research", "gap_triage", prompt, priority="normal")
+    text = ask(client, "d1", "research", "gap_triage", prompt, priority="normal")
     return save("gap-triage", text, {"job": "gap_triage", "source": files[-1]})
 
 

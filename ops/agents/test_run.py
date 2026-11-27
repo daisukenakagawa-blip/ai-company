@@ -34,13 +34,13 @@ class T(unittest.TestCase):
         self.assertTrue(os.path.exists(p))
         self.assertEqual(c.kw["model"], "claude-sonnet-5-5")
         led = budget._ledger()
-        self.assertEqual(led[0]["purpose"], "marketing"); self.assertEqual(led[0]["priority"], "high")
+        self.assertEqual(led[0]["purpose"], "marketing"); self.assertEqual(led[0]["division"], "d1"); self.assertEqual(led[0]["priority"], "high")
 
     def test_all_roles_have_priced_models_and_valid_purposes(self):
         prices = json.load(open(os.path.join(ROOT, "ops", "ai_budget", "pricing.json")))["models"]
-        alloc = json.load(open(os.path.join(ROOT, "ops", "ai_budget", "allocation.json")))["allocation_jpy"]
+        purposes = json.load(open(os.path.join(ROOT, "ops", "ai_budget", "allocation.json")))["purposes"]
         for r in run.ROLES.values():
-            self.assertIn(r["model"], prices); self.assertIn(r["purpose"], alloc)
+            self.assertIn(r["model"], prices); self.assertIn(r["purpose"], purposes)
 
 
 if __name__ == "__main__":

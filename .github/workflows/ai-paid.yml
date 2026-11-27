@@ -34,6 +34,9 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           AI_BUDGET_SHA256: ${{ vars.AI_BUDGET_SHA256 }}
           AI_KILL_SWITCH: ${{ vars.AI_KILL_SWITCH }}
+          AI_KILL_SWITCH_D1: ${{ vars.AI_KILL_SWITCH_D1 }}
+          AI_KILL_SWITCH_D2: ${{ vars.AI_KILL_SWITCH_D2 }}
+          AI_KILL_SWITCH_HQ: ${{ vars.AI_KILL_SWITCH_HQ }}
         run: |
           REQ=$(head -1 ops/ai_budget/run-request.txt)
           case "$REQ" in
@@ -44,12 +47,15 @@ jobs:
               for J in ${REQ#jobs:}; do python3 ops/agents/run.py "$J" || true; done ;;
             *) echo "不明な依頼: $REQ" ;;
           esac
+      - name: Dashboard
+        if: always()
+        run: python3 ops/hq/dashboard.py > /dev/null || true
       - name: Commit ledger and result
         if: always()
         run: |
           git config user.name "ai-paid-bot"
           git config user.email "bot@users.noreply.github.com"
-          for P in ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP ops/agents/out; do [ -e "$P" ] && git add "$P"; done
+          for P in ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP ops/agents/out DASHBOARD.md; do [ -e "$P" ] && git add "$P"; done
           git diff --cached --quiet && exit 0
           git commit -m "ai-paid: 台帳と試験結果"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done

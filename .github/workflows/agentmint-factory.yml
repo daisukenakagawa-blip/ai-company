@@ -41,6 +41,8 @@ jobs:
         run: python3 ventures/agentmint-factory/tracker/track.py
       - name: Published-actor monitor (day 1/3/7/14/30, Store search rank)
         run: python3 ventures/agentmint-factory/tracker/monitor.py > /dev/null || echo "monitor failed（計測不能として扱う）"
+      - name: Company dashboard (DASHBOARD.md)
+        run: python3 ops/hq/dashboard.py > /dev/null || echo "dashboard failed"
       - name: Weekly market scan (Monday JST)
         run: |
           if [ "$(date -u +%u)" = "7" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -68,6 +70,6 @@ jobs:
         run: |
           git config user.name "agentmint-factory-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add ventures/agentmint-factory/data/ledger*.csv ventures/agentmint-factory/data/DASHBOARD.md ventures/agentmint-factory/data/budget-status.json ventures/agentmint-factory/data/pricing-check.json ventures/agentmint-factory/data/monitor.csv ventures/agentmint-factory/data/MONITOR.md ventures/agentmint-factory/data/*-clusters.json 2>/dev/null || true
+          git add ventures/agentmint-factory/data/ledger*.csv ventures/agentmint-factory/data/DASHBOARD.md ventures/agentmint-factory/data/budget-status.json ventures/agentmint-factory/data/pricing-check.json ventures/agentmint-factory/data/monitor.csv ventures/agentmint-factory/data/MONITOR.md DASHBOARD.md ventures/agentmint-factory/data/*-clusters.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "AgentMint Factory: 見張りと損益の記録 $(date -u +%F)"
           git pull --rebase -q && git push || true

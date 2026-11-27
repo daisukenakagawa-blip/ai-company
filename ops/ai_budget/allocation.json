@@ -1,12 +1,16 @@
 {
-  "_note": "用途別の月の配分（円）。AI が実績に応じて変えてよい。ただし合計は limits.json の monthly_budget_jpy と同じでなければ有料 API を止める",
-  "allocation_jpy": {
-    "research": 800,
-    "planning": 700,
-    "development": 1800,
-    "marketing": 600,
-    "qa": 400,
-    "reporting": 200,
+  "_note": "事業部ごとの月の配分（円）。AI 経営本部が実績に応じて変えてよい。ただし合計は limits.json の monthly_budget_jpy（5,000円）と同じでなければ有料 API を止める。reserve は予備で、直接は使わない（配分を変えて使う）。2026-11-27 Ver.2.2 の初期配分",
+  "divisions_jpy": {
+    "d1": 1500,
+    "d2": 2500,
+    "hq": 500,
     "reserve": 500
-  }
+  },
+  "division_names": {
+    "d1": "第1事業部：AI顧客向け事業",
+    "d2": "第2事業部：新規収益事業",
+    "hq": "AI経営本部",
+    "reserve": "予備費"
+  },
+  "purposes": ["research", "planning", "development", "marketing", "qa", "reporting"]
 }

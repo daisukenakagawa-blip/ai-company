@@ -7,7 +7,8 @@
 （契約付属の API クレジットだけを使い、支払い方法・自動チャージなし／ワークスペースの使用上限）で、オーナーが管理する。
 
 安全装置（どれかに当たれば呼び出さない＝Fail Closed）
-- 緊急停止：ops/ai_budget/STOP があるか、環境変数 AI_KILL_SWITCH=1（GitHub の変数から渡す）
+- 緊急停止：全社＝ops/ai_budget/STOP か AI_KILL_SWITCH=1／事業部ごと＝ops/ai_budget/STOP-d1 など か AI_KILL_SWITCH_D1=1（GitHub の変数から渡す）
+- 事業部ごとの配分（allocation.json の divisions_jpy。合計5,000円固定、経営本部が変えてよい）。全事業部で同じ1つの予算・台帳を使う
 - 改ざん防止：budget.py・limits.json・pricing.json をまとめた SHA-256 が、オーナーだけが設定する GitHub の変数
   AI_BUDGET_SHA256 と一致しない → 停止（開発 AI がこの3つを変えると、オーナーが確認するまで有料 API は動かない）
 - 料金表に無いモデル・料金表が古い（pricing_max_age_days 超）→ 停止
@@ -66,10 +67,13 @@ def limits():
 
 
 def allocation(lim):
-    a = _load("allocation.json")["allocation_jpy"]
+    d = _load("allocation.json")
+    a = d["divisions_jpy"]
     if sum(a.values()) != lim["monthly_budget_jpy"]:
-        raise BudgetBlocked(f"用途別の配分の合計 {sum(a.values())} 円が月の予算 {lim['monthly_budget_jpy']} 円と違う")
-    return a
+        raise BudgetBlocked(f"事業部の配分の合計 {sum(a.values())} 円が月の予算 {lim['monthly_budget_jpy']} 円と違う")
+    if any(v < 0 for v in a.values()):
+        raise BudgetBlocked("事業部の配分に負の値がある")
+    return a, set(d.get("purposes", []))
 
 
 def pricing(lim, today=None):
@@ -133,7 +137,7 @@ def spent(entries=None, now=None):
     now = now or utc_now()
     e = entries if entries is not None else _ledger()
     month, year, day = now.strftime("%Y-%m"), now.strftime("%Y"), now.strftime("%Y-%m-%d")
-    out = {"month_jpy": 0.0, "year_jpy": 0.0, "day_jpy": 0.0, "day_calls": 0, "by_purpose": {}}
+    out = {"month_jpy": 0.0, "year_jpy": 0.0, "day_jpy": 0.0, "day_calls": 0, "by_purpose": {}, "by_division": {}}
     for x in e:
         t = x["at_utc"]
         if t.startswith(year):
@@ -141,23 +145,31 @@ def spent(entries=None, now=None):
         if t.startswith(month):
             out["month_jpy"] += x["jpy"]
             out["by_purpose"][x["purpose"]] = out["by_purpose"].get(x["purpose"], 0) + x["jpy"]
+            dv = x.get("division", "?")
+            out["by_division"][dv] = out["by_division"].get(dv, 0) + x["jpy"]
         if t.startswith(day):
             out["day_jpy"] += x["jpy"]
             out["day_calls"] += 1 if x.get("kind") == "reserve" else 0
     return out
 
 
-def check(purpose, priority, est_jpy, lim, now=None):
+def check(purpose, priority, est_jpy, lim, now=None, division=None):
     """呼び出してよいか。だめなら BudgetBlocked"""
     if os.path.exists(STOP_FILE):
         with open(STOP_FILE, encoding="utf-8") as f:
             raise BudgetBlocked("緊急停止中（ops/ai_budget/STOP）: " + f.read()[:200])
-    if os.environ.get("AI_KILL_SWITCH", "").strip().lower() in ("1", "true", "yes", "on"):
+    on = lambda v: os.environ.get(v, "").strip().lower() in ("1", "true", "yes", "on")
+    if on("AI_KILL_SWITCH"):
         raise BudgetBlocked("緊急停止中（AI_KILL_SWITCH）")
-    alloc = allocation(lim)
+    alloc, purposes = allocation(lim)
+    if division not in alloc or division == "reserve":
+        raise BudgetBlocked(f"事業部が不正: {division}")
+    df = os.path.join(HERE, f"STOP-{division}")
+    if os.path.exists(df) or on(f"AI_KILL_SWITCH_{division.upper()}"):
+        raise BudgetBlocked(f"{division} の緊急停止中")
     if priority not in PRIORITIES:
         raise BudgetBlocked(f"優先度が不正: {priority}")
-    if purpose not in alloc or purpose == "reserve":
+    if purpose not in purposes:
         raise BudgetBlocked(f"用途が不正: {purpose}")
     s = spent(now=now)
     m = lim["monthly_budget_jpy"]
@@ -170,7 +182,7 @@ def check(purpose, priority, est_jpy, lim, now=None):
         (s["month_jpy"] + est_jpy > m * lim["hard_stop_ratio"], f"月の予算の {int(lim['hard_stop_ratio']*100)}% に達するため停止（使用 {s['month_jpy']:.0f} 円＋見積もり {est_jpy:.0f} 円）"),
         (s["year_jpy"] + est_jpy > lim["annual_budget_jpy"] * lim["hard_stop_ratio"], "年の予算の上限に達するため停止"),
         (priority == "low" and s["month_jpy"] + est_jpy > m * lim["low_priority_stop_ratio"], f"月の予算の {int(lim['low_priority_stop_ratio']*100)}% 以上のため、優先度 low は止める"),
-        (s["by_purpose"].get(purpose, 0) + est_jpy > alloc[purpose], f"用途「{purpose}」の配分 {alloc[purpose]} 円を超える（使用 {s['by_purpose'].get(purpose, 0):.0f} 円）"),
+        (s["by_division"].get(division, 0) + est_jpy > alloc[division], f"事業部「{division}」の配分 {alloc[division]} 円を超える（使用 {s['by_division'].get(division, 0):.0f} 円）"),
     ]
     for hit, why in rules:
         if hit:
@@ -214,7 +226,7 @@ def record(entry):
         f.flush(); os.fsync(f.fileno())
 
 
-def guarded_call(client, *, purpose, priority, model, system, messages, max_tokens, task="", tools=None, max_searches=0, **kw):
+def guarded_call(client, *, division, purpose, priority, model, system, messages, max_tokens, task="", tools=None, max_searches=0, **kw):
     """予算の確認 → 予約 → 呼び出し → 精算。戻り値は API の応答。止めたときは BudgetBlocked"""
     lim = limits()
     prices = pricing(lim)
@@ -224,9 +236,9 @@ def guarded_call(client, *, purpose, priority, model, system, messages, max_toke
     rate, fx_src = fx_rate(lim)
     k = rate * lim["tax_and_fee_multiplier"] * lim["price_buffer"]  # USD → 円（多めに）
     est_jpy = usd_cost(prices, model, in_est, max_tokens, searches=max_searches) * k
-    base = {"purpose": purpose, "priority": priority, "task": task[:120], "model": model, "jpy_per_usd": round(k, 2), "fx_source": fx_src}
+    base = {"division": division, "purpose": purpose, "priority": priority, "task": task[:120], "model": model, "jpy_per_usd": round(k, 2), "fx_source": fx_src}
     with _locked():
-        check(purpose, priority, est_jpy, lim)
+        check(purpose, priority, est_jpy, lim, division=division)
         _run["calls"] += 1; _run["jpy"] += est_jpy
         record({**base, "kind": "reserve", "jpy": round(est_jpy, 4)})  # 先に予約（切断・例外でもこの額が残る）
         args = dict(model=model, system=system, messages=messages, max_tokens=max_tokens, **kw)
@@ -269,7 +281,11 @@ def status():
             "remaining_jpy_before_hard_stop": round(m * lim["hard_stop_ratio"] - s["month_jpy"], 1),
             "used_ratio": round(s["month_jpy"] / m, 4), "year_jpy": round(s["year_jpy"], 1),
             "today_jpy": round(s["day_jpy"], 1), "today_calls": s["day_calls"],
-            "by_purpose": {k: round(v, 1) for k, v in s["by_purpose"].items()}, "stopped": os.path.exists(STOP_FILE),
+            "by_purpose": {k: round(v, 1) for k, v in s["by_purpose"].items()},
+            "by_division": {k: round(v, 1) for k, v in s["by_division"].items()},
+            "division_budget_jpy": _load("allocation.json")["divisions_jpy"],
+            "stopped": os.path.exists(STOP_FILE),
+            "stopped_divisions": [d for d in ("d1", "d2", "hq") if os.path.exists(os.path.join(HERE, f"STOP-{d}"))],
             "manifest_sha256": manifest_sha256()}
 
 
