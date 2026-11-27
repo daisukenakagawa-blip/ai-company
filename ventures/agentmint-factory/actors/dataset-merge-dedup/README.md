@@ -1,6 +1,12 @@
-# Dataset Merge & Dedup
+# Merge Datasets & Remove Duplicates
 
-Combine the results of several scraper runs into **one clean dataset**: merge any number of Apify datasets, remove duplicates by the fields you choose, filter rows, and reshape fields — in one run. Built for large datasets: it streams items page by page and, in the default mode, keeps only a short hash of each key in memory.
+Combine the results of several scraper runs into **one clean dataset**: merge Apify datasets and CSV / TSV / JSON / JSONL files, remove duplicates by the fields you choose, filter rows and reshape fields — in one run.
+
+- Deduplicate by any field; case, extra spaces and URL tracking parameters can be ignored
+- Keep the first, last or most complete copy
+- Pay per output item — removed duplicates and filtered-out rows are free
+- Limited permissions: usable from AI agents via the Apify MCP server
+- Try it: start with an empty input `{}` to run a built-in 6-item sample
 
 ## For AI agents (machine-readable summary)
 

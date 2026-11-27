@@ -1,5 +1,5 @@
 {
-  "seoTitle": "Merge & Deduplicate Datasets – Remove Duplicates",
+  "seoTitle": "Merge Datasets & Remove Duplicates | Dedup CSV, JSON",
   "seoDescription": "Merge Apify datasets and CSV or JSON files, then remove duplicates by URL, email or any field. Ignores case and UTM tags; filter and reshape.",
   "categories": [
     "DEVELOPER_TOOLS",
