@@ -2,8 +2,8 @@
 
 ## 費用0円の見張り
 
-- 判定：**OK**（2026-11-27T04:18:06+00:00）
-- Apify：プラン FREE、今月の利用 $0.02452782540426538 / 上限 $5（0.0049）
+- 判定：**OK**（2026-11-27T09:44:23+00:00）
+- Apify：プラン FREE、今月の利用 $0.024603323121188236 / 上限 $5（0.0049）
 - GitHub：公開リポジトリ=True
 - 外部への支払い：0円
 
@@ -29,13 +29,13 @@
 
 | Actor | 30日利用者 | 30日実行 | 失敗率 |
 |---|---|---|---|
-| lukaskrivka/dedup-datasets-limited-permissions | 587 | 1836 | 0.648 |
-| humble-echidna/dataset-transform | 106 | 1003 | 0.01 |
+| lukaskrivka/dedup-datasets-limited-permissions | 594 | 1847 | 0.646 |
+| humble-echidna/dataset-transform | 106 | 1005 | 0.01 |
 | rl1987/jq-helper | 70 | 141 | 0.007 |
-| nerolabs/dataset-filter-transform | 61 | 865 | 0.084 |
+| nerolabs/dataset-filter-transform | 60 | 865 | 0.084 |
 | saliga/dataset-merge-dedupe | 56 | 350 | 0.014 |
-| tidydata/merge-dedupe-datasets | 55 | 509 | 0.006 |
-| marielise.dev/image-converter | 104 | 870 | 0.126 |
-| gazidev/base64-file-converter | 30 | 125 | 0.0 |
-| memo23/pdf-text-extractor | 177 | 21540 | 0.001 |
-| automation-lab/pdf-text-extractor | 128 | 1062 | 0.006 |
+| tidydata/merge-dedupe-datasets | 55 | 529 | 0.006 |
+| marielise.dev/image-converter | 109 | 896 | 0.125 |
+| gazidev/base64-file-converter | 30 | 130 | 0.0 |
+| memo23/pdf-text-extractor | 172 | 21546 | 0.001 |
+| automation-lab/pdf-text-extractor | 128 | 1067 | 0.006 |
