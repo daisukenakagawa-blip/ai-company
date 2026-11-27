@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "表を Excel へ — 結合セル・文字化け対応",
+  "short_name": "表をExcelへ",
+  "version": "0.1.0",
+  "description": "Web ページの表を、結合セルを正しく展開して Excel で文字化けしない CSV に保存、または貼り付け用にコピーします。ページの内容は外部に送りません。",
+  "default_locale": "ja",
+  "action": { "default_popup": "src/popup.html", "default_title": "表を Excel へ" },
+  "permissions": ["activeTab", "scripting"],
+  "minimum_chrome_version": "110"
+}

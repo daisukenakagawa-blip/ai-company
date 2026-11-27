@@ -1,18 +1,76 @@
 {
   "_note": "Ver.2.2（2026-11-27 オーナー）複数事業部制。事業・資産の所属と、共通費の配分基準。新しい事業部は、既存と異なる収益源があり独立管理する合理性がある場合だけ提案する",
   "divisions": {
-    "hq": {"name": "AI経営本部", "role": "全社戦略・事業部の予算配分・収益性の比較・リスク管理・オーナーへの報告"},
-    "d1": {"name": "第1事業部：AI顧客向け事業", "role": "Apify Store・AI エージェント向け API／MCP・AI 間取引・AI 向けデータ／インフラ"},
-    "d2": {"name": "第2事業部：新規収益事業", "role": "AI 顧客に限らない、あらゆる市場の自動収益化事業（消費者・企業・個人事業主）"}
+    "hq": {
+      "name": "AI経営本部",
+      "role": "全社戦略・事業部の予算配分・収益性の比較・リスク管理・オーナーへの報告"
+    },
+    "d1": {
+      "name": "第1事業部：AI顧客向け事業",
+      "role": "Apify Store・AI エージェント向け API／MCP・AI 間取引・AI 向けデータ／インフラ"
+    },
+    "d2": {
+      "name": "第2事業部：新規収益事業",
+      "role": "AI 顧客に限らない、あらゆる市場の自動収益化事業（消費者・企業・個人事業主）"
+    }
   },
   "assets": [
-    {"id": "dataset-merge-dedup", "division": "d1", "name": "Dataset Merge & Dedup（Apify Store）", "status": "公開中（2026-11-27）", "revenue_source": "Apify Pay per event（有料プランの利用者のみ、売上の80%−計算費）"},
-    {"id": "image-convert-compress", "division": "d1", "name": "Image Converter & Compressor（Apify）", "status": "非公開・開発停止", "revenue_source": "なし"},
-    {"id": "pdf-text-extract", "division": "d1", "name": "PDF Text Extractor（Apify）", "status": "非公開・開発停止", "revenue_source": "なし"},
-    {"id": "agentmint-mvp", "division": "d1", "name": "旧 AgentMint MVP（Cloudflare Worker・D1 agentmint-db）", "status": "休眠（最終更新 2026-11-08。触らない取り決め）", "revenue_source": "なし（本番の注文1件は未払いで期限切れ）"},
-    {"id": "genhayl-shop", "division": "d2", "name": "GENHAYL SHOP（約60商品、Cloudflare Pages・Stripe）", "status": "販売中・新商品は停止", "revenue_source": "Stripe 買い切り（売上0円）"},
-    {"id": "keyrelay", "division": "d2", "name": "KeyRelay（ライセンスキーの移行先、無料ベータ）", "status": "公開・無料ベータ（〜2026-12-08）", "revenue_source": "なし（有料プラン未作成）"},
-    {"id": "meme-radar-ai", "division": "outside", "name": "meme-radar-ai（Cloudflare Worker・D1）", "status": "稼働中。暗号資産の模擬売買で当社の禁止分野のため事業に含めない（削除もしない）", "revenue_source": "対象外"}
+    {
+      "id": "dataset-merge-dedup",
+      "division": "d1",
+      "name": "Dataset Merge & Dedup（Apify Store）",
+      "status": "公開中（2026-11-27）",
+      "revenue_source": "Apify Pay per event（有料プランの利用者のみ、売上の80%−計算費）"
+    },
+    {
+      "id": "image-convert-compress",
+      "division": "d1",
+      "name": "Image Converter & Compressor（Apify）",
+      "status": "非公開・開発停止",
+      "revenue_source": "なし"
+    },
+    {
+      "id": "pdf-text-extract",
+      "division": "d1",
+      "name": "PDF Text Extractor（Apify）",
+      "status": "非公開・開発停止",
+      "revenue_source": "なし"
+    },
+    {
+      "id": "agentmint-mvp",
+      "division": "d1",
+      "name": "旧 AgentMint MVP（Cloudflare Worker・D1 agentmint-db）",
+      "status": "休眠（最終更新 2026-11-08。触らない取り決め）",
+      "revenue_source": "なし（本番の注文1件は未払いで期限切れ）"
+    },
+    {
+      "id": "genhayl-shop",
+      "division": "d2",
+      "name": "GENHAYL SHOP（約60商品、Cloudflare Pages・Stripe）",
+      "status": "販売中・新商品は停止",
+      "revenue_source": "Stripe 買い切り（売上0円）"
+    },
+    {
+      "id": "keyrelay",
+      "division": "d2",
+      "name": "KeyRelay（ライセンスキーの移行先、無料ベータ）",
+      "status": "公開・無料ベータ（〜2026-12-08）",
+      "revenue_source": "なし（有料プラン未作成）"
+    },
+    {
+      "id": "meme-radar-ai",
+      "division": "outside",
+      "name": "meme-radar-ai（Cloudflare Worker・D1）",
+      "status": "稼働中。暗号資産の模擬売買で当社の禁止分野のため事業に含めない（削除もしない）",
+      "revenue_source": "対象外"
+    },
+    {
+      "id": "d2-table-export",
+      "division": "d2",
+      "name": "試作：Chrome 拡張「表を Excel へ」（結合セル・文字化け対応）",
+      "status": "開発中（手元の試作のみ・未公開）",
+      "revenue_source": "予定：無料版＋Pro（自前の Stripe）。公開には Chrome Web Store の登録（オーナー承認）が必要"
+    }
   ],
   "shared_cost_rule": "共通費（GitHub Actions・Cloudflare・Apify の無料枠、AI 経営本部の AI 費用）は、現在すべて0円または本部の予算。追加支出が出たら、その月の各事業部の AI API 費用の比率で配分する（AI 費用が0の月は均等）"
 }

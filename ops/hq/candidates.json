@@ -1,0 +1,14 @@
+{
+  "_note": "新規事業の候補（2026-11-27 第2事業部の初回調査）。100点満点（需要20/収益15/自動化15/差別化15/獲得10/継続10/AI5/模倣5/費用5）。75点以上は無し。根拠：workspace/research/2026-11-27/d2-market-research.md",
+  "candidates": [
+    {"division": "d2", "name": "Chrome 拡張：Web の表 → Excel/CSV（日本語の結合セル・文字化け対策、無料版＋Pro）", "score": 63, "status": "最有力：試作中（手元のみ）。公開には登録料 $5 の承認が必要", "evidence": "Table Capture 利用者約20万・評価4.1（606件）・Pro は年額課金（Chrome Web Store、2026-11-17 更新）"},
+    {"division": "d2", "name": "Etsy：英語の表計算テンプレート（家計・記録）", "score": 61, "status": "検証待ち（掲載ごと $0.20、2026-10 の AI 規約の確認が必要）", "evidence": "TrackerPro 販売19,729件・評価4.7（1,512件）"},
+    {"division": "d2", "name": "Shopify アプリ：日本の商習慣（配送日時・のし・領収書）", "score": 60, "status": "保留（登録 $19・審査・サポート対応。新しい日本向けアプリはレビュー0件で見つかりにくい）", "evidence": "開発者への支払い2025年 $13億超。配送日時指定 .amp 月$9.80〜19.80・評価4.4（14件）"},
+    {"division": "d2", "name": "TLS 証明書・ドメインの期限監視", "score": 58, "status": "保留（無料の監視が多く、差別化が未確認）", "evidence": "CA/B Forum SC-081v3 で最長有効期間が段階的に47日へ。Cert Spotter 月$15〜500"},
+    {"division": "d2", "name": "入札の監視・通知（小規模事業者向けの低価格版）", "score": 58, "status": "降格（官公需ポータルが無料で地域・品目の RSS を提供、調達ポータルも無料の通知あり。低価格帯は公的サービスが埋めている）", "evidence": "NJSS 有料約8,000社・年約47万円。民間の低価格（月5,000円未満）は確認できず"},
+    {"division": "d1", "name": "Dataset Merge & Dedup の改善（CSV/JSON 入力）", "score": 62, "status": "公開中・改善版は承認待ち", "evidence": "同種の有料競合3本が30日55〜106人"},
+    {"division": "d2", "name": "WordPress プラグイン（無料版＋有料版）", "score": 55, "status": "根拠不足（一次資料の売上データなし）", "evidence": "未確認"},
+    {"division": "d2", "name": "日本語に特化した Web ページ変化の監視", "score": 52, "status": "根拠不足", "evidence": "Visualping 月$14〜350（海外）"},
+    {"division": "d2", "name": "Poki 向けブラウザゲーム", "score": 50, "status": "根拠不足（開発者の取り分が未確認）", "evidence": "Poki 2025年のプレイヤー6.25億人"}
+  ]
+}

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><title>表を Excel へ</title>
+<style>
+body{font:13px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;margin:0;width:340px;color:#1f2937}
+header{padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:600}
+#list{max-height:380px;overflow:auto}
+.t{padding:8px 12px;border-bottom:1px solid #f1f5f9}
+.t .l{font-weight:600;word-break:break-all}.t .m{color:#6b7280;font-size:12px}
+button{font:inherit;margin:4px 6px 0 0;padding:3px 10px;border:1px solid #0f766e;background:#fff;color:#0f766e;border-radius:6px;cursor:pointer}
+button.p{background:#0f766e;color:#fff}
+label{display:block;padding:6px 12px;color:#374151}
+#msg{padding:8px 12px;color:#6b7280}
+</style></head>
+<body>
+<header>このページの表</header>
+<label><input type="checkbox" id="repeat" checked> 結合セルの値をすべてのマスに入れる</label>
+<div id="list"></div>
+<div id="msg">表を探しています…</div>
+<script src="core.js"></script>
+<script src="popup.js"></script>
+</body></html>
