@@ -1,5 +1,6 @@
-jobs: listing_review gap_triage
+jobs: radar_analyze
 # 1行目：smoke＝初回の試験（100円以内）／jobs: listing_review gap_triage＝Phase C の仕事（初回の試験の成功後だけ）。このファイルの push で ai-paid.yml が動く
 # 2026-11-28 オーナーがキー・照合値を設定（Console の組織上限 $25・$12 で通知）。初回の試験を依頼
 # 2026-11-28 オーナー承認（チャット「進めて」）：Phase C の仕事を初めて実行
 # 2026-11-28 再実行：初回は考える工程が上限を使い切り本文が空（費用11.6円）。thinking の設定を直して再実行
+# 2026-11-28 Ver.2.6：Market Change Radar の初回分析（収集145件）

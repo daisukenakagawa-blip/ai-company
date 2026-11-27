@@ -1,0 +1,4 @@
+{"at": "2026-11-27T17:17:01+00:00", "job": "listing_review", "status": "empty_output", "api_calls": 1, "api_errors": 0, "jpy": 11.05, "output": null, "error": "thinking が max_tokens を使い切り本文が空（後から記録）", "seconds": 30.4}
+{"at": "2026-11-27T17:17:32+00:00", "job": "gap_triage", "status": "empty_output", "api_calls": 1, "api_errors": 0, "jpy": 0.55, "output": null, "error": "同上（後から記録）", "seconds": 19.0}
+{"at": "2026-11-27T17:21:16+00:00", "job": "listing_review", "status": "ok", "api_calls": 1, "api_errors": 0, "jpy": 7.64, "output": "ops/agents/out/2026-11-27-listing-review.md", "error": "", "seconds": 19.4}
+{"at": "2026-11-27T17:21:37+00:00", "job": "gap_triage", "status": "ok", "api_calls": 1, "api_errors": 0, "jpy": 0.36, "output": "ops/agents/out/2026-11-27-gap-triage.md", "error": "", "seconds": 11.3}

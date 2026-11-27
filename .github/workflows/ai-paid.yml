@@ -2,8 +2,10 @@ name: AI paid API (budget-gated)
 # 有料の AI API を使ってよい唯一のワークフロー（2026-11-27 Ver.2.0：追加支出は月5,000円まで）。
 # 有料 API は ops/ai_budget/budget.py の guarded_call() を通す。キー・上限の照合値・緊急停止はオーナーが GitHub の Secrets／Variables で管理する。
 # 起動：ops/ai_budget/run-request.txt の push（Claude の GitHub App は手動起動が 403 のため）。1行目が "smoke" なら初回の試験（100円以内）、
-# "jobs: listing_review gap_triage" なら Phase C の仕事（初回の試験が「成功」した後だけ動く）。
+# "jobs: listing_review gap_triage" なら Phase C の仕事（初回の試験が「成功」した後だけ動く）。毎朝の定時は radar の収集と分析（2026-11-28）。
 on:
+  schedule:
+    - cron: "23 20 * * *"   # 毎日 5:23 JST：Market Change Radar（収集は0円。新しい手がかりがある日だけ AI で分析）
   push:
     branches: [main]
     paths: ["ops/ai_budget/run-request.txt"]
@@ -39,6 +41,8 @@ jobs:
           AI_KILL_SWITCH_HQ: ${{ vars.AI_KILL_SWITCH_HQ }}
         run: |
           REQ=$(head -1 ops/ai_budget/run-request.txt)
+          [ "${{ github.event_name }}" = "schedule" ] && REQ="jobs: radar_analyze"
+          case "$REQ" in *radar_analyze*) timeout 600 python3 ventures/_gap/radar.py 3 || echo "::warning::radar の収集に失敗（分析は既存の手がかりで続ける）" ;; esac
           case "$REQ" in
             smoke*) python3 ops/ai_budget/smoke.py ;;
             jobs:*)
@@ -55,7 +59,7 @@ jobs:
         run: |
           git config user.name "ai-paid-bot"
           git config user.email "bot@users.noreply.github.com"
-          for P in ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP ops/agents/out DASHBOARD.md; do [ -e "$P" ] && git add "$P"; done
+          for P in ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP ops/agents/out ops/agents/job-log.jsonl workspace/market-gaps/radar ops/knowledge/data DASHBOARD.md; do [ -e "$P" ] && git add "$P"; done
           git diff --cached --quiet && exit 0
           git commit -m "ai-paid: 台帳と試験結果"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done

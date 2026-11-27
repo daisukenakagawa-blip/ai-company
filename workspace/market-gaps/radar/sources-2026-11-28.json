@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-28",
+ "days": 3,
+ "sources": {
+  "hackernews": {
+   "fetched": 109,
+   "new": 65,
+   "errors": [],
+   "measurable": true
+  },
+  "endoflife": {
+   "fetched": 0,
+   "new": 0,
+   "errors": [
+    "eol:full: URLError"
+   ],
+   "measurable": false
+  },
+  "federalregister": {
+   "fetched": 0,
+   "new": 0,
+   "errors": [
+    "fr:artificial intelligence: URLError",
+    "fr:privacy: URLError",
+    "fr:payments: URLError",
+    "fr:e-commerce: URLError",
+    "fr:data broker: URLError"
+   ],
+   "measurable": false
+  },
+  "github": {
+   "fetched": 80,
+   "new": 80,
+   "errors": [],
+   "measurable": true
+  }
+ },
+ "new_total": 145
+}

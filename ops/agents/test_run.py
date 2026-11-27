@@ -42,6 +42,29 @@ class T(unittest.TestCase):
         for r in run.ROLES.values():
             self.assertIn(r["model"], prices); self.assertIn(r["purpose"], purposes)
 
+    def test_radar_skips_without_new_signals_and_analyzes_with(self):
+        run.RADAR = os.path.join(self.tmp, "radar"); os.makedirs(run.RADAR)
+        run.JOB_LOG = os.path.join(self.tmp, "job-log.jsonl")
+        c = Fake(); rec = run.run_job("radar_analyze", c)
+        self.assertEqual(rec["status"], "skipped"); self.assertEqual(rec["api_calls"], 0); self.assertIsNone(c.kw)
+        today = datetime.date.today().isoformat()
+        sig = {"id": "abc", "category": "api_pricing", "source": "hackernews", "title": "X API no longer free", "url": "https://example.invalid/x", "points": 50, "comments": 10}
+        open(os.path.join(run.RADAR, f"radar-{today}.jsonl"), "w").write(json.dumps(sig) + "\n")
+        answers = iter(['```json\n[{"id":"abc","who_affected":"X を使う開発者","what_they_pay_for":"代替 API","quick_score":8}]\n```',
+                        '分析\n```json\n{"title":"X 代替","scores":{"paying_customers":4,"first_mover":3,"automation":5,"recurring":4,"low_owner_work":5,"moat":2},"verdict":"検証する"}\n```'])
+        class F2(Fake):
+            def create(s2, **kw):
+                r = Fake.create(s2, **kw); r.content[0].text = next(answers); return r
+        run._page_text = lambda url, limit=4000: "本文"; run._hn_comments = lambda i, n=15, limit=3000: ""
+        sys.modules.pop("kb", None)
+        import importlib; sys.path.insert(0, os.path.join(ROOT, "ops", "knowledge")); kb = importlib.import_module("kb"); kb.DATA = os.path.join(self.tmp, "kb")
+        rec = run.run_job("radar_analyze", F2())
+        self.assertEqual(rec["status"], "ok"); self.assertEqual(rec["api_calls"], 2)
+        self.assertIn("X 代替", open(os.path.join(ROOT, rec["output"]) if not os.path.isabs(rec["output"]) else rec["output"], encoding="utf-8").read())
+        self.assertEqual(len(kb.load("opportunity")), 1)
+        rec = run.run_job("radar_analyze", Fake())  # 同じ手がかりには二度払わない
+        self.assertEqual(rec["status"], "skipped")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

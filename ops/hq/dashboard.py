@@ -141,6 +141,44 @@ def main():
     except Exception:
         runs = []
     L += ["", "## AI の最近の作業（実行記録）", ""] + ([r.rstrip() for r in runs] if runs else ["記録なし"])
+    # AI の仕事の費用対効果（ops/agents/job-log.jsonl。2026-11-28 オーナー指示）
+    jobs = []
+    try:
+        jobs = [json.loads(l) for l in open(os.path.join(ROOT, "ops/agents/job-log.jsonl"), encoding="utf-8") if l.strip()]
+    except Exception:
+        pass
+    L += ["", "## AI の仕事の費用対効果（今月）", ""]
+    month = NOW.strftime("%Y-%m")
+    agg = {}
+    for j in jobs:
+        if j.get("at", "")[:7] != month:
+            continue
+        a = agg.setdefault(j["job"], {"runs": 0, "ok": 0, "skipped": 0, "fail": 0, "calls": 0, "errors": 0, "jpy": 0.0, "outputs": 0})
+        a["runs"] += 1; a["calls"] += j.get("api_calls", 0); a["errors"] += j.get("api_errors", 0); a["jpy"] += j.get("jpy", 0)
+        a["ok" if j["status"] == "ok" else "skipped" if j["status"] == "skipped" else "fail"] += 1
+        a["outputs"] += 1 if j.get("output") and j["status"] == "ok" else 0
+    if agg:
+        L += ["| 仕事 | 実行 | 正常完了 | 入力なしで省略 | 失敗・空 | API 呼び出し | API 失敗率 | 費用 | 成果物 | 外部利用者・売上への寄与 |", "|---|---|---|---|---|---|---|---|---|---|"]
+        for k, a in sorted(agg.items()):
+            rate = f"{a['errors'] / a['calls'] * 100:.0f}%" if a["calls"] else "—"
+            L.append(f"| {k} | {a['runs']} | {a['ok']} | {a['skipped']} | {a['fail']} | {a['calls']} | {rate} | {a['jpy']:,.1f}円 | {a['outputs']} | 未確認 |")
+    else:
+        L.append("記録なし（2026-11-28 から記録）")
+    L += ["", "## 市場の変化（Market Change Radar）", ""]
+    try:
+        srcs = sorted(f for f in os.listdir(os.path.join(ROOT, "workspace/market-gaps/radar")) if f.startswith("sources-"))
+        sr = json.load(open(os.path.join(ROOT, "workspace/market-gaps/radar", srcs[-1]), encoding="utf-8"))
+        L.append(f"最新の収集 {sr['date']}：新しい手がかり {sr['new_total']} 件（" + "、".join(
+            f"{k} {v['new']}" + ("（計測不能）" if not v.get("measurable", True) else "") for k, v in sr["sources"].items()) + "）")
+    except Exception:
+        L.append("収集の記録なし")
+    try:
+        sys.path.insert(0, os.path.join(ROOT, "ops", "knowledge")); import kb
+        ops_ = sorted((o for o in kb.load("opportunity") if str(o.get("id", "")).startswith("radar-")), key=lambda o: -(o.get("score") or 0))[:5]
+        if ops_:
+            L += ["", "| 機会（AI の分析・未確認） | 6項目の点 | 判定 |", "|---|---|---|"] + [f"| {o['title']} | {o.get('score', '—')} | {o.get('status')} |" for o in ops_]
+    except Exception:
+        pass
     L += ["", "## 緊急停止（iPhone の GitHub アプリから）", "",
           "- 全社：`ops/ai_budget/STOP` というファイルを作る（中身は理由を1行）。または リポジトリの Settings → Variables の `AI_KILL_SWITCH` を `1`",
           "- 事業部ごと：`ops/ai_budget/STOP-d1`・`STOP-d2`・`STOP-hq` を作る。または `AI_KILL_SWITCH_D1` などを `1`",
