@@ -18,11 +18,11 @@ const srv = http.createServer((req, res) => {
 }).listen(0);
 const port = srv.address().port;
 
-function runWith(input) {
+function runWith(input, allowLocal = true) {
     rmSync(ST, { recursive: true, force: true });
     const kv = join(ST, 'key_value_stores', 'default'); mkdirSync(kv, { recursive: true });
     writeFileSync(join(kv, 'INPUT.json'), JSON.stringify(input));
-    return new Promise((resolve) => execFile('node', ['src/main.js'], { cwd: ROOT, env: { ...process.env, CRAWLEE_STORAGE_DIR: ST, APIFY_LOCAL_STORAGE_DIR: ST } }, (err) => {
+    return new Promise((resolve) => execFile('node', ['src/main.js'], { cwd: ROOT, env: { ...process.env, CRAWLEE_STORAGE_DIR: ST, APIFY_LOCAL_STORAGE_DIR: ST, DMD_TEST_ALLOW_LOCAL: allowLocal ? '1' : '' } }, (err) => {
         let out = [];
         try { const d = join(ST, 'datasets', 'default'); out = readdirSync(d).filter((f) => /^\d+\.json$/.test(f)).sort().map((f) => JSON.parse(readFileSync(join(d, f)))); } catch {}
         let stats = null; try { stats = JSON.parse(readFileSync(join(ST, 'key_value_stores', 'default', 'OUTPUT.json'))); } catch {}
@@ -38,6 +38,10 @@ assert.equal(r.stats.sources.length, 2);
 r = await runWith({ fileUrls: [`http://127.0.0.1:${port}/missing.csv`] });
 assert.ok(!r.ok, '404 fails the run');
 r = await runWith({ fileUrls: ['ftp://x/y.csv'] });
+assert.ok(!r.ok, 'non-http url rejected');
+r = await runWith({ fileUrls: [`http://127.0.0.1:${port}/a.csv`] }, false);
+assert.ok(!r.ok, 'localhost refused without the test switch (SSRF)');
+r = await runWith({ fileUrls: ['http://169.254.169.254/latest/meta-data/'] }, false);
 assert.ok(!r.ok, 'non-http url rejected');
 srv.close();
 rmSync(ST, { recursive: true, force: true });

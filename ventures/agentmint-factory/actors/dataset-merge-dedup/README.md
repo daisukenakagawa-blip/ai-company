@@ -8,7 +8,7 @@ Combine the results of several scraper runs into **one clean dataset**: merge an
 |---|---|
 | Actor ID | `preponderant_swift/dataset-merge-dedup` |
 | Purpose | Merge Apify datasets, CSV / TSV / JSON / JSON Lines files (by URL) or inline JSON items; remove duplicates by chosen fields, filter and reshape. Reads only the data you pass (downloads only the file URLs you list); never crawls websites |
-| Input | `datasetIds` (string[]), `fileUrls` (string[], CSV/TSV/JSON/JSONL, max 100 MB each) and/or `items` (object[]); options below. Full JSON Schema (no token needed): `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default` → `data.inputSchema`. OpenAPI: `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default/openapi.json` |
+| Input | `datasetIds` (string[]), `fileUrls` (string[], CSV/TSV/JSON/JSONL, max 50 MB each) and/or `items` (object[]); options below. Full JSON Schema (no token needed): `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default` → `data.inputSchema`. OpenAPI: `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default/openapi.json` |
 | Output | Default dataset = the kept items (same fields as input after reshaping). Key-value record `OUTPUT` = run summary (counts) |
 | Pricing (Pay per event) | `apify-default-dataset-item` **$0.0002 per output item** ($0.20 / 1,000). `apify-actor-start` **$0.00005** per run (per GB of memory, minimum 1). Platform usage is included (not charged separately). Removed duplicates and filtered rows are free |
 | Cost before running | Upper bound = `0.00005 × max(1, memoryGB) + 0.0002 × (sum of itemCount of all input datasets + rows in the files + number of inline items)`. Get `itemCount` with `GET https://api.apify.com/v2/datasets/{datasetId}`. Actual cost is lower when duplicates or filtered rows are removed |
@@ -49,7 +49,8 @@ Combine the results of several scraper runs into **one clean dataset**: merge an
 | Dataset ID not found or not readable with your token | Apify API error (e.g. record not found) | Pass a dataset ID your token can read |
 | File URL not http(s) | `File URL must start with http:// or https://` | Use a public http(s) link |
 | File not downloadable | `Could not download <url>: HTTP <status>` | Make the link public / check it |
-| File over 100 MB | `File too large` | Split the file or load it into a dataset first |
+| File over 50 MB | `File too large` | Split the file or load it into a dataset first |
+| URL points to a private / local network address | `Refusing to download from a private or local address` | Use a public URL |
 | Broken JSON Lines | `Invalid JSON on line N` | Fix that line |
 
 Not an error: reaching the spending cap (`stoppedAtChargeLimit: true`, status SUCCEEDED).
@@ -129,5 +130,7 @@ Pay per event: you pay only for **items written to the output dataset** (plus Ap
 
 - Only reads the datasets and file URLs you give it; it does not crawl any website
 - Files: CSV delimiter (comma, semicolon, tab, |) and UTF-8 BOM are handled; values from CSV stay strings. Excel: export the sheet as CSV first
+- Files are read into memory: give the run at least 1 GB of memory for files over ~20 MB
+- Security: only public http(s) addresses are downloaded; private, local and cloud-metadata addresses are refused, also after redirects
 - `regex` filters are case-insensitive
 - Comparison normalization never changes the values written to the output

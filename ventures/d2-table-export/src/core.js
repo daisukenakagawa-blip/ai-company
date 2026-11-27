@@ -39,6 +39,8 @@
     const sep = opts.sep || ',';
     const esc = (v) => {
       let s = String(v);
+      // 長い数字（12桁以上）や先頭が0の数字は、Excel が「7.2E+18」や先頭0の消えた数に変えてしまう → ="..." で文字として渡す
+      if (opts.keepDigits !== false && (/^\d{12,}$/.test(s) || /^0\d+$/.test(s) || /^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(s))) return '="' + s + '"';
       // 先頭が = + - @ の値は Excel が式として実行しうる（CSV インジェクション）→ 先頭に ' を付ける
       if (opts.safeFormulas !== false && /^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = "'" + s;
       return /[",\n\r]/.test(s) || s.includes(sep) ? '"' + s.replace(/"/g, '""') + '"' : s;

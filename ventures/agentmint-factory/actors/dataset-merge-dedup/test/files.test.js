@@ -28,3 +28,17 @@ test('format by content type and sniffing', () => {
     assert.deepEqual(parseFile('a,b\n1,2', { url: 'https://h/export?x=1' }), [{ a: '1', b: '2' }]);
     assert.throws(() => parseFile('{"x":1}\nnot json', { url: 'f.jsonl' }), /line 2/);
 });
+import { isPrivateAddress, safeFetch } from '../src/lib.js';
+test('private and metadata addresses are refused', () => {
+    for (const ip of ['127.0.0.1', '10.1.2.3', '172.16.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:127.0.0.1', '224.0.0.1'])
+        assert.equal(isPrivateAddress(ip), true, ip);
+    for (const ip of ['8.8.8.8', '93.184.216.34', '2606:4700::1111']) assert.equal(isPrivateAddress(ip), false, ip);
+});
+test('redirect to a private address is refused', async () => {
+    const lookup = async (h) => [{ address: h === 'good.example' ? '93.184.216.34' : '10.0.0.5' }];
+    const fetchImpl = async (u) => (u.startsWith('https://good.example')
+        ? { status: 302, headers: new Map([['location', 'http://internal.example/secret']]) }
+        : { status: 200, headers: new Map() });
+    await assert.rejects(safeFetch('https://good.example/a.csv', { lookup, fetchImpl }), /private or local/);
+    await assert.rejects(safeFetch('http://169.254.169.254/x', { lookup, fetchImpl }), /private or local/);
+});

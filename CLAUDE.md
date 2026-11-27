@@ -39,8 +39,8 @@
 ## AgentMint Factory Ver.2.0 — 有料 AI API の利用（2026-11-27 オーナー。**元手0円の例外は AI API だけ**）
 - 月5,000円・年60,000円まで AI API の従量課金を許可（税・為替・手数料を含む）。AI API 以外の有料サービス・自動チャージ・無断の増額は禁止
 - 有料 API は必ず `ops/ai_budget/budget.py` の `guarded_call()` を通す（50%通知・80%で低優先度停止・90%で全停止・見積もり・記録・ロック・緊急停止 `ops/ai_budget/STOP`）。試験 `python3 ops/ai_budget/test_budget.py`
-- **`ops/ai_budget/limits.json` と予算管理の安全装置は AI が変更しない**（GitHub の変数 AI_BUDGET_LIMITS_SHA256 と照合）。用途別の配分 `allocation.json` は実績に応じて AI が変えてよい（合計5,000円は固定）
-- 本格運用は、オーナーが ANTHROPIC_API_KEY・AI_BUDGET_LIMITS_SHA256 を設定し、Anthropic Console に月の上限を設けてから。状況：`workspace/ops/ai-budget-2026-11-27.md`
+- **`ops/ai_budget/` の budget.py・limits.json・pricing.json（予算管理の安全装置）は AI が変更しない**（3ファイルまとめた SHA-256 を GitHub の変数 AI_BUDGET_SHA256 と照合。旧名 AI_BUDGET_LIMITS_SHA256 は limits.json だけの照合で、2026-11-27 に廃止。コードは読まない）。用途別の配分 `allocation.json` は実績に応じて AI が変えてよい（合計5,000円は固定）
+- 本格運用は、オーナーが ANTHROPIC_API_KEY・AI_BUDGET_SHA256 を設定し、Anthropic Console に月の上限を設けてから。状況：`workspace/ops/ai-budget-2026-11-27.md`
 - AI 間取引・AI エージェント向け集客を最重要の研究テーマにする。評価は100点満点（需要20・収益性15・自動化15・差別化15・顧客獲得10・継続10・AI親和性5・模倣困難5・費用5）、75点以上でも需要の根拠を確かめてから開発
 - 判断は純利益で。実測値と推定値を分ける。できていない作業を完了と書かない
 

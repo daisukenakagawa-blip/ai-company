@@ -21,7 +21,7 @@
       "title": "Files by URL (CSV, TSV, JSON, JSON Lines)",
       "type": "array",
       "editor": "stringList",
-      "description": "Public links to files to merge, e.g. a CSV export or a JSON file. Downloaded once (max 100 MB each). CSV delimiter (comma, semicolon, tab, |) is detected automatically. For Excel, export the sheet as CSV first."
+      "description": "Public links to files to merge, e.g. a CSV export or a JSON file. Downloaded once (max 50 MB each; use 1 GB+ memory for files over ~20 MB). CSV delimiter (comma, semicolon, tab, |) is detected automatically. For Excel, export the sheet as CSV first."
     },
     "fileFormat": {
       "title": "File format",

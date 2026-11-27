@@ -210,3 +210,36 @@ export function parseFile(text, { url = '', contentType = '', format = 'auto' } 
     if (f === 'csv') return parseCsv(text);
     throw new Error(`Unknown file format "${format}". Use auto, csv, tsv, json or jsonl.`);
 }
+
+// ---- Safe download (SSRF protection) ---------------------------------------------------------------------------
+// Only public http(s) addresses. Private, loopback, link-local (incl. cloud metadata 169.254.169.254), CGNAT,
+// multicast and reserved ranges are refused, also after every redirect (max 5 hops).
+export function isPrivateAddress(ip) {
+    if (ip.includes(':')) {
+        const v = ip.toLowerCase();
+        if (v === '::1' || v === '::' ) return true;
+        if (v.startsWith('::ffff:')) return isPrivateAddress(v.slice(7));
+        return /^(fc|fd|fe8|fe9|fea|feb|ff)/.test(v.replace(/^\[/, ''));
+    }
+    const p = ip.split('.').map(Number);
+    if (p.length !== 4 || p.some((n) => !(n >= 0 && n <= 255))) return true;
+    const [a, b] = p;
+    return a === 0 || a === 10 || a === 127 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254)
+        || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 192 && b === 0) || (a === 198 && (b === 18 || b === 19))
+        || a >= 224;
+}
+
+export async function safeFetch(url, { lookup, fetchImpl = fetch, timeoutMs = 120000, maxRedirects = 5, allowLocal = false } = {}) {
+    let current = url;
+    for (let hop = 0; hop <= maxRedirects; hop++) {
+        const u = new URL(current);
+        if (!/^https?:$/.test(u.protocol)) throw new Error(`File URL must start with http:// or https://: ${current}`);
+        const host = u.hostname.replace(/^\[|\]$/g, '');
+        const addrs = allowLocal ? [] : /^[\d.]+$/.test(host) || host.includes(':') ? [{ address: host }] : await lookup(host, { all: true });
+        if (!allowLocal && (!addrs.length || addrs.some((a) => isPrivateAddress(a.address)))) throw new Error(`Refusing to download from a private or local address: ${current}`);
+        const res = await fetchImpl(current, { redirect: 'manual', signal: AbortSignal.timeout(timeoutMs) });
+        if (res.status >= 300 && res.status < 400 && res.headers.get('location')) { current = new URL(res.headers.get('location'), current).toString(); continue; }
+        return res;
+    }
+    throw new Error(`Too many redirects: ${url}`);
+}

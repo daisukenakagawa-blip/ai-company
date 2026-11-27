@@ -1,5 +1,6 @@
 import { Actor, log } from 'apify';
-import { dedupKey, completeness, passesFilters, validateFilters, reshape, parseFile } from './lib.js';
+import { lookup } from 'node:dns/promises';
+import { dedupKey, completeness, passesFilters, validateFilters, reshape, parseFile, safeFetch } from './lib.js';
 
 // Pricing: the ONLY paid event is Apify's synthetic `apify-default-dataset-item` (one charge per item written to the
 // default dataset, charged by the platform). No custom event is charged from code, so there is no double charging.
@@ -15,7 +16,7 @@ const SAMPLE = [
     { url: 'https://example.com/product/4', name: 'Black Mug', price: 15 },
 ];
 const PAGE = 5000;
-const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100 MB per file (read into memory)
+const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB per file (read into memory; give the run >= 1 GB memory for files over ~20 MB)
 
 await Actor.init();
 try {
@@ -80,8 +81,10 @@ try {
         if (inlineItems.length) yield { id: 'inline', items: inlineItems };
         for (const url of fileUrls) {
             log.info(`Downloading file ${url}`);
-            const res = await fetch(url, { signal: AbortSignal.timeout(120000), redirect: 'follow' });
+            // 手元の試験だけ localhost を許す（Apify 上では常に禁止）
+            const res = await safeFetch(url, { lookup, allowLocal: process.env.DMD_TEST_ALLOW_LOCAL === '1' && !Actor.isAtHome() });
             if (!res.ok) throw new Error(`Could not download ${url}: HTTP ${res.status}`);
+            if (res.status >= 300) throw new Error(`Could not download ${url}: redirect without location`);
             const len = Number(res.headers.get('content-length') || 0);
             if (len > MAX_FILE_BYTES) throw new Error(`File too large (${len} bytes, max ${MAX_FILE_BYTES}): ${url}. Split it or load it into a dataset first.`);
             const buf = Buffer.from(await res.arrayBuffer());
