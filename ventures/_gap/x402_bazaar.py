@@ -16,7 +16,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "workspace", "market-gaps", "x402")
 # 当社の既存機能に近い分野（重複除去・整形・変換）と、その他の分野の見分け
 FIELDS = {
-    "データ整形・重複除去・変換": r"dedup|duplicate|merge|csv|json|xlsx|excel|convert|transform|clean|normaliz|parse|extract|format",
+    "データ整形・重複除去・変換": r"dedup|duplicate|merge|csv|xlsx|excel|spreadsheet|convert|transform|clean|normaliz|table|json to|to json",
     "検索・Web 取得": r"search|scrap|crawl|serp|web page|browse|fetch",
     "金融・暗号資産": r"price|token|crypto|swap|defi|wallet|trading|market data|stock|onchain|on-chain",
     "AI 生成（文章・画像）": r"llm|gpt|image gen|generate|completion|chat|summar|translat",
@@ -30,7 +30,7 @@ def get(url):
         return json.load(r)
 
 
-def fetch_all(limit=100, max_pages=200):
+def fetch_all(limit=100, max_pages=600):
     items, offset = [], 0
     for _ in range(max_pages):
         d = get(API + "?" + urllib.parse.urlencode({"type": "http", "limit": limit, "offset": offset}))
@@ -53,14 +53,25 @@ def field_of(it):
     return "その他"
 
 
+USDC = {"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",  # Base
+        "0x036cbd53842c5426634e7929541ec2318f3dcf7e",  # Base Sepolia（試験網）
+        "epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",  # Solana（小文字化）
+        "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}  # Ethereum
+
+
 def usd(it):
     # v2 は accepts[].amount（USDC は小数6桁）、v1 は maxAmountRequired。USDC 以外・不明は None
     for a in it.get("accepts") or []:
+        asset = str(a.get("asset") or "").lower()
+        if asset and asset not in USDC:
+            continue  # USDC 以外（桁が違う）は金額に換算しない
         v = a.get("amount", a.get("maxAmountRequired"))
         try:
-            return int(v) / 1e6
+            x = int(v) / 1e6
         except (TypeError, ValueError):
             continue
+        if x <= 100:  # 1回100ドル超は異常値として扱わない
+            return x
     return None
 
 
@@ -73,9 +84,11 @@ def summarize(items):
                      "usd": usd(it), "curated": bool(it.get("curated"))})
     agg = {}
     for r in rows:
-        a = agg.setdefault(r["field"], {"services": 0, "with_payers": 0, "calls30": 0, "payers30": 0, "est_usd30": 0.0})
+        a = agg.setdefault(r["field"], {"services": 0, "with_payers": 0, "payers2plus": 0, "payers10plus": 0, "calls30": 0, "payers30": 0, "est_usd30": 0.0})
         a["services"] += 1
         a["with_payers"] += r["payers30"] > 0
+        a["payers2plus"] += r["payers30"] >= 2  # 支払い元1つだけ＝作者自身の試験の可能性が高い
+        a["payers10plus"] += r["payers30"] >= 10
         a["calls30"] += r["calls30"]
         a["payers30"] += r["payers30"]
         if r["usd"] is not None:
@@ -89,10 +102,10 @@ def write(rows, agg, day):
               open(os.path.join(OUT, f"bazaar-{day}.json"), "w"), ensure_ascii=False, indent=1)
     L = [f"# x402 Bazaar の需要（{day}、Coinbase の公開 discovery API）", "",
          f"- 掲載サービス {len(rows)} 件。数字は Coinbase の公表値（直近30日）。推定売上＝1回の価格×呼び出し数（上限の目安。自分への支払い・試験を含む可能性がある）",
-         "- 「支払った相手の数」は別々の支払い元のアドレスの数で、利用者の数・企業の数ではない", "",
-         "| 分野 | サービス数 | 支払いのある数 | 30日の呼び出し | 30日の支払い元 | 推定売上（30日、USD） |", "|---|---|---|---|---|---|"]
+         "- 「支払った相手の数」は別々の支払い元のアドレスの数で、利用者の数・企業の数ではない。支払い元が1つだけのサービスは、作者自身の試験の可能性が高い（推測）", "",
+         "| 分野 | サービス数 | 支払い元1以上 | 2以上 | 10以上 | 30日の呼び出し | 30日の支払い元 | 推定売上（30日、USD、USDC のみ） |", "|---|---|---|---|---|---|---|---|"]
     for k, a in sorted(agg.items(), key=lambda x: -x[1]["payers30"]):
-        L.append(f"| {k} | {a['services']} | {a['with_payers']} | {a['calls30']} | {a['payers30']} | {a['est_usd30']:.2f} |")
+        L.append(f"| {k} | {a['services']} | {a['with_payers']} | {a['payers2plus']} | {a['payers10plus']} | {a['calls30']} | {a['payers30']} | {a['est_usd30']:.2f} |")
     L += ["", "## 支払い元の多い上位20件", "", "| 分野 | サービス | 価格 USD | 30日の呼び出し | 30日の支払い元 | URL |", "|---|---|---|---|---|---|"]
     for r in sorted(rows, key=lambda r: -r["payers30"])[:20]:
         L.append(f"| {r['field']} | {r['service'][:40]} | {r['usd'] if r['usd'] is not None else '不明'} | {r['calls30']} | {r['payers30']} | {r['resource']} |")
