@@ -97,19 +97,25 @@
       if (!o) { o = { name: key, first: r, items: [] }; map.set(key, o); }
       if (r['Lineitem name']) {
         const needs = String(r['Lineitem requires shipping'] || 'true').toLowerCase() !== 'false';
-        if (needs) o.items.push({ name: r['Lineitem name'], qty: Number(r['Lineitem quantity'] || 1), sku: r['Lineitem SKU'] || '' });
+        if (needs) o.items.push({ name: String(r['Lineitem name']).replace(/ - Default Title$/, ''), qty: Number(r['Lineitem quantity'] || 1), sku: r['Lineitem SKU'] || '' });
       }
     }
     return [...map.values()].map((o) => {
       const f = o.first;
-      const pref = prefecture(f['Shipping Province'], f['Shipping Province Name']);
-      const city = (f['Shipping City'] || '').trim();
-      let a1 = (f['Shipping Address1'] || f['Shipping Street'] || '').trim();
+      let pref = prefecture(f['Shipping Province'], f['Shipping Province Name']);
+      let city = (f['Shipping City'] || '').trim();
+      // 実際の書き出しでは「市区町村」の欄に国名（日本）が入り、都道府県の欄が空のことがある（2026-11-27 開発ストアで確認）
+      if (/^(日本|日本国|japan|jp)$/i.test(city)) city = '';
+      const a1 = (f['Shipping Address1'] || f['Shipping Street'] || '').trim();
       const a2 = (f['Shipping Address2'] || '').trim();
       // 住所1に都道府県・市区町村が既に入っている店もあるので、重ねて付けない
+      const lead = PREF.find((x) => a1.startsWith(x));
+      if (!PREF.includes(pref)) pref = lead || '';
       let addr = a1;
-      if (city && !addr.includes(city)) addr = city + addr;
-      if (pref && !addr.startsWith(pref)) addr = pref + addr;
+      if (!lead) {
+        if (city && !addr.includes(city)) addr = city + addr;
+        if (pref && !addr.startsWith(pref)) addr = pref + addr;
+      }
       return { order: o.name, name: (f['Shipping Name'] || f['Billing Name'] || '').trim(), company: (f['Shipping Company'] || '').trim(),
                zip: zip(f['Shipping Zip']), phone: phone(f['Shipping Phone'] || f['Phone'] || f['Billing Phone']), address: addr, building: a2,
                country: (f['Shipping Country'] || '').trim(), items: o.items, cancelled: !!(f['Cancelled at'] || f['Canceled at']),

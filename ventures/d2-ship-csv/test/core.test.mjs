@@ -56,3 +56,12 @@ test('Shift_JIS：髙・半角カナ・記号は変換でき、𠮷 は見つけ
 test('CSV の書き出し：引用符・カンマ', () => {
   assert.equal(C.toCsv([['a,b', 'c"d']], ['x', 'y']), 'x,y\r\n"a,b","c""d"\r\n');
 });
+test('実際の Shopify 書き出し（開発ストア #1001）：市区町村欄の「日本」・空の都道府県・+81 の電話', () => {
+  const real = C.groupOrders(C.parseCsv(readFileSync(new URL('./real-export-devstore.csv', import.meta.url), 'utf8')));
+  assert.equal(real.length, 1);
+  const o = real[0];
+  assert.equal(o.address, '東京都千代田区千代田１－１'); assert.equal(o.building, 'テストマンション１０１');
+  assert.equal(o.phone, '08000000000'); assert.equal(o.zip, '101-0000'); assert.equal(o.items.length, 3);
+  const r = C.toB2(real, S);
+  assert.equal(r.rows.length, 1); assert.equal(r.rows[0][11], '東京都千代田区千代田１－１');
+});
