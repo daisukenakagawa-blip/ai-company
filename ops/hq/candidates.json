@@ -10,8 +10,8 @@
   {
    "division": "d3",
    "name": "x402 の有料エンドポイント（重複除去 1回0.01ドル、Agentic.Market に自動掲載）",
-   "score": 60,
-   "status": "実験候補：先に Bazaar の需要を計測（api.cdp.coinbase.com の許可が必要）。USDC の法務・税務の確認が前提"
+   "score": 54,
+   "status": "監視のみ（2026-11-28 実測：データ整形の分野は30日で約1,600ドル、重複除去は月十数ドル規模。workspace/d3/pilot-b-bazaar-2026-11-28.md）"
   },
   {
    "division": "d3",

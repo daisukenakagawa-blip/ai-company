@@ -3,7 +3,7 @@ name: x402 Bazaar demand (read-only, 0円)
 # 支払い・登録はしない。Claude の実行環境からは api.cdp.coinbase.com に接続できないため、GitHub の標準ランナー（公開リポジトリは無料）で動かす。
 on:
   schedule:
-    - cron: "47 21 * * *"   # 毎日 6:47 JST
+    - cron: "47 21 * * 0"   # 毎週月曜 6:47 JST（600回の読み出しになるため週1回。過負荷を避ける）
   push:
     branches: [main]
     paths: ["workspace/market-gaps/x402/run-request.txt"]
