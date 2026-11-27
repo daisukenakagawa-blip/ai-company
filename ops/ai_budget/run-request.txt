@@ -1,0 +1,2 @@
+smoke
+# 1行目：smoke＝初回の試験（100円以内）／jobs: listing_review gap_triage＝Phase C の仕事（初回の試験の成功後だけ）。このファイルの push で ai-paid.yml が動く

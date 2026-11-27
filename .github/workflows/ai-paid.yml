@@ -1,7 +1,8 @@
 name: AI paid API (budget-gated)
 # 有料の AI API を使ってよい唯一のワークフロー（2026-11-27 Ver.2.0：追加支出は月5,000円まで）。
 # 有料 API は ops/ai_budget/budget.py の guarded_call() を通す。キー・上限の照合値・緊急停止はオーナーが GitHub の Secrets／Variables で管理する。
-# 起動：ops/ai_budget/run-request.txt の push（Claude の GitHub App は手動起動が 403 のため）。今は「初回の試験（100円以内）」だけを行う。
+# 起動：ops/ai_budget/run-request.txt の push（Claude の GitHub App は手動起動が 403 のため）。1行目が "smoke" なら初回の試験（100円以内）、
+# "jobs: listing_review gap_triage" なら Phase C の仕事（初回の試験が「成功」した後だけ動く）。
 on:
   push:
     branches: [main]
@@ -26,18 +27,29 @@ jobs:
         run: python3 -W ignore ops/ai_budget/test_budget.py
       - name: Install SDK
         run: pip install "anthropic>=0.40"
-      - name: First paid test (100円以内)
+      - name: Agent tests (偽の API)
+        run: python3 -W ignore ops/agents/test_run.py
+      - name: Paid run (smoke または jobs)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           AI_BUDGET_SHA256: ${{ vars.AI_BUDGET_SHA256 }}
           AI_KILL_SWITCH: ${{ vars.AI_KILL_SWITCH }}
-        run: python3 ops/ai_budget/smoke.py
+        run: |
+          REQ=$(head -1 ops/ai_budget/run-request.txt)
+          case "$REQ" in
+            smoke*) python3 ops/ai_budget/smoke.py ;;
+            jobs:*)
+              python3 -c "import json,sys;d=json.load(open('ops/ai_budget/smoke-result.json'));sys.exit(0 if d.get('status')=='成功' else 1)" \
+                || { echo "初回の試験が成功していないため、仕事は動かさない"; exit 0; }
+              for J in ${REQ#jobs:}; do python3 ops/agents/run.py "$J" || true; done ;;
+            *) echo "不明な依頼: $REQ" ;;
+          esac
       - name: Commit ledger and result
         if: always()
         run: |
           git config user.name "ai-paid-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP 2>/dev/null || true
+          for P in ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP ops/agents/out; do [ -e "$P" ] && git add "$P"; done
           git diff --cached --quiet && exit 0
           git commit -m "ai-paid: 台帳と試験結果"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done
