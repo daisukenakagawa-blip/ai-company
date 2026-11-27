@@ -63,7 +63,10 @@ def check_github(token, repo):
     bad = []
     for f in glob.glob(os.path.join(ROOT, ".github", "workflows", "*.y*ml")):
         text = open(f, encoding="utf-8").read()
-        for m in PAID_KEYS.finditer(text):
+        # 例外：ai-paid.yml だけは有料 AI のキーを使ってよい（2026-11-27 Ver.2.0、月5,000円まで。ops/ai_budget の予算管理と
+        # 直接呼び出しの検査を通し、concurrency: paid-ai で1本ずつ動く）。Apify の費用0円とは別に管理する
+        gated = os.path.basename(f) == "ai-paid.yml" and "ops/ai_budget/" in text and re.search(r"group:\s*paid-ai", text)
+        for m in ([] if gated else PAID_KEYS.finditer(text)):
             bad.append(f"{os.path.basename(f)}: 有料 API のキー {m.group(1)}")
         for m in re.finditer(r"runs-on:\s*([^\n#]+)", text):
             v = m.group(1).strip().strip("'\"")

@@ -1,20 +1,26 @@
-"""AI API の予算管理（2026-11-27 オーナー指示 Ver.2.0：月5,000円・年60,000円）。
+"""AI API の予算管理（2026-11-27 オーナー指示 Ver.2.0：追加支出は月5,000円・年60,000円まで）。
 
-有料の AI API は、必ずこのモジュールの guarded_call() を通して呼ぶ。直接 client.messages.create を呼ばない。
+有料の AI API は、必ずこのモジュールの guarded_call() を通して呼ぶ。直接 client.messages.create を呼ばない
+（scan_direct_calls.py が検出して止める）。
+
+この仕組みは「内側の歯止め」。外側の歯止め（AI が変えられないもの）は Anthropic Console 側の設定
+（契約付属の API クレジットだけを使い、支払い方法・自動チャージなし／ワークスペースの使用上限）で、オーナーが管理する。
 
 安全装置（どれかに当たれば呼び出さない＝Fail Closed）
-- 緊急停止：ops/ai_budget/STOP があるか、環境変数 AI_KILL_SWITCH=1
-- 上限ファイルの改ざん防止：limits.json の SHA-256 が、オーナーだけが設定できる GitHub の変数 AI_BUDGET_LIMITS_SHA256 と一致しない
-- 料金表に無いモデル・料金表が無い・為替が分からない（保守的な既定値を使う）
-- 呼び出し前の見積もり（上限値）を足すと、月の 90%（hard_stop_ratio）を超える → 全停止
-- 月の 80% 以上では優先度 low の処理を止める。50% で通知（alerts.json → ワークフローが Issue を作る）
-- 年の上限、用途別の配分、1回の上限額、1回の実行・1日の呼び出し回数、出力トークンの上限、再試行の回数
-- 同時実行：ファイルロックの中で「見積もりの予約 → 呼び出し → 実額の記録」。ワークフロー側も concurrency で1本に絞る
-- 応答に使用量（usage）が無い → 見積もりの上限額を使ったものとして記録し、STOP を作って以後止める
+- 緊急停止：ops/ai_budget/STOP があるか、環境変数 AI_KILL_SWITCH=1（GitHub の変数から渡す）
+- 改ざん防止：budget.py・limits.json・pricing.json をまとめた SHA-256 が、オーナーだけが設定する GitHub の変数
+  AI_BUDGET_SHA256 と一致しない → 停止（開発 AI がこの3つを変えると、オーナーが確認するまで有料 API は動かない）
+- 料金表に無いモデル・料金表が古い（pricing_max_age_days 超）→ 停止
+- 呼ぶ前に、見積もりの上限額を台帳に「予約」として書く → 呼ぶ → 実額との差を「精算」として書く。
+  通信の切断・タイムアウト・例外で精算できなかった呼び出しは、予約額をそのまま使ったものとして残る（多めに数える）
+- 自動の再試行はしない（max_retries=0）。同じ実行の中の呼び出し回数・金額、1日の回数・金額に上限
+- 月（UTC の暦月。Anthropic の使用上限は毎月1日にリセット）の 50% で通知、80% で優先度 low を停止、90% で全停止
+- 為替は高め（fx_buffer）、料金は多め（price_buffer）、税・カード手数料（tax_and_fee_multiplier）を上乗せして円にする
+- 応答に使用量（usage）が無い → 予約額のまま記録し、STOP を作って以後止める
+- 同時実行：同じ環境ではファイルロック。GitHub Actions では concurrency グループ "paid-ai" で1本ずつ
 残り10%（90%〜100%）は、為替・未反映の請求・税金の予備として使わない。
-費用は円で記録する：USD × 為替 × tax_and_fee_multiplier（税・カードの為替手数料の上乗せ）。
 """
-import contextlib, datetime, fcntl, hashlib, json, math, os, urllib.request
+import contextlib, datetime, fcntl, hashlib, json, os, time, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LEDGER = os.path.join(HERE, "ledger.jsonl")
@@ -22,8 +28,10 @@ ALERTS = os.path.join(HERE, "alerts.json")
 FX_FILE = os.path.join(HERE, "fx.json")
 STOP_FILE = os.path.join(HERE, "STOP")
 LOCK_FILE = os.path.join(HERE, ".lock")
+PROTECTED = ("budget.py", "limits.json", "pricing.json")
 PRIORITIES = ("high", "normal", "low")
-_run_calls = 0
+_run = {"calls": 0, "jpy": 0.0, "id": (f"gh-{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
+                                      if os.environ.get("GITHUB_RUN_ID") else f"local-{os.getpid()}")}
 
 
 class BudgetBlocked(Exception):
@@ -35,20 +43,26 @@ def _load(name):
         return json.load(f)
 
 
-def jst_now():
-    return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=9)
+def utc_now():
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
+def manifest_sha256():
+    h = hashlib.sha256()
+    for n in PROTECTED:
+        with open(os.path.join(HERE, n), "rb") as f:
+            h.update(n.encode() + b"\0" + f.read() + b"\0")
+    return h.hexdigest()
 
 
 def limits():
-    p = os.path.join(HERE, "limits.json")
-    raw = open(p, "rb").read()
-    want = os.environ.get("AI_BUDGET_LIMITS_SHA256", "").strip().lower()
-    got = hashlib.sha256(raw).hexdigest()
+    want = os.environ.get("AI_BUDGET_SHA256", "").strip().lower()
     if not want:
-        raise BudgetBlocked("AI_BUDGET_LIMITS_SHA256 が未設定（オーナーが GitHub の変数に設定するまで有料 API は使わない）")
+        raise BudgetBlocked("AI_BUDGET_SHA256 が未設定（オーナーが GitHub の変数に設定するまで有料 API は使わない）")
+    got = manifest_sha256()
     if want != got:
-        raise BudgetBlocked(f"limits.json が承認された内容と違う（sha256 {got[:12]}…）。オーナーの確認が必要")
-    return json.loads(raw)
+        raise BudgetBlocked(f"予算管理のファイル（{', '.join(PROTECTED)}）が承認された内容と違う（{got[:12]}…）。オーナーの確認が必要")
+    return _load("limits.json")
 
 
 def allocation(lim):
@@ -58,116 +72,127 @@ def allocation(lim):
     return a
 
 
-def fx_rate(lim, fetch=True):
-    """1ドル何円か。直近のものを使い、取れなければ保守的な既定値（高めの円安）"""
-    now = datetime.datetime.now(datetime.timezone.utc)
-    try:
-        d = json.load(open(FX_FILE))
-        age = (now - datetime.datetime.fromisoformat(d["at"])).total_seconds() / 3600
-        if age <= lim["fx_max_age_hours"]:
-            return max(d["rate"], 1.0), "fx.json"
-    except Exception:
-        pass
-    if fetch:
-        try:  # 欧州中央銀行の参照レート（無料・キー不要）
-            with urllib.request.urlopen("https://api.frankfurter.app/latest?from=USD&to=JPY", timeout=15) as r:
-                rate = float(json.load(r)["rates"]["JPY"])
-            json.dump({"rate": rate, "at": now.isoformat(), "source": "frankfurter.app (ECB)"}, open(FX_FILE, "w"))
-            return max(rate, lim["fx_fallback_jpy_per_usd"] * 0.8), "frankfurter"
-        except Exception:
-            pass
-    return float(lim["fx_fallback_jpy_per_usd"]), "fallback"
-
-
-def price(model, prompt_tokens=0):
-    p = _load("pricing.json")["models"].get(model)
-    if not p:
-        raise BudgetBlocked(f"料金表に無いモデル: {model}")
-    if p.get("long") and prompt_tokens > p.get("long_prompt_tokens", 10**12):
-        return p["long"]
+def pricing(lim, today=None):
+    p = _load("pricing.json")
+    today = today or utc_now().date()
+    age = (today - datetime.date.fromisoformat(p["checked"])).days
+    if age > lim["pricing_max_age_days"]:
+        raise BudgetBlocked(f"料金表が {age} 日前のもの（{lim['pricing_max_age_days']} 日を超えた）。公式の料金を確かめて更新するまで止める")
     return p
 
 
-def usd_cost(model, input_tokens, output_tokens, cache_write=0, cache_read=0, searches=0, batch=False):
-    p = price(model, input_tokens + cache_write + cache_read)
+def fx_rate(lim, fetch=True):
+    """1ドル何円か（高め）。直近の値、取れなければ既定値（円安側）。どちらにも fx_buffer を掛ける"""
+    rate, src = None, "fallback"
+    try:
+        with open(FX_FILE) as f:
+            d = json.load(f)
+        if (utc_now() - datetime.datetime.fromisoformat(d["at"])).total_seconds() / 3600 <= lim["fx_max_age_hours"]:
+            rate, src = float(d["rate"]), "fx.json"
+    except Exception:
+        pass
+    if rate is None and fetch:
+        try:  # 欧州中央銀行の参照レート（無料・キー不要）
+            with urllib.request.urlopen("https://api.frankfurter.app/latest?from=USD&to=JPY", timeout=15) as r:
+                rate, src = float(json.load(r)["rates"]["JPY"]), "frankfurter"
+            with open(FX_FILE, "w") as f:
+                json.dump({"rate": rate, "at": utc_now().isoformat(), "source": "frankfurter.app (ECB)"}, f)
+        except Exception:
+            rate = None
+    if rate is None:
+        rate = float(lim["fx_fallback_jpy_per_usd"]); src = "fallback"
+    return max(rate, lim["fx_fallback_jpy_per_usd"] * 0.8) * lim["fx_buffer"], src
+
+
+def usd_cost(prices, model, input_tokens, output_tokens, cache_write=0, cache_read=0, searches=0, batch=False):
+    p = prices["models"].get(model)
+    if not p:
+        raise BudgetBlocked(f"料金表に無いモデル: {model}")
+    if p.get("long") and input_tokens + cache_write + cache_read > p.get("long_prompt_tokens", 10**12):
+        p = p["long"]
     usd = (input_tokens * p["input"] + output_tokens * p["output"] + cache_write * p["cache_write_5m"] + cache_read * p["cache_read"]) / 1e6
     if batch:
-        usd *= _load("pricing.json")["batch_discount"]
-    return usd + searches * _load("pricing.json")["web_search_usd_per_1000"] / 1000
+        usd *= prices["batch_discount"]
+    return usd + searches * prices["web_search_usd_per_1000"] / 1000
 
 
 def estimate_input_tokens(*texts):
-    """呼び出し前の見積もり（上限寄り）：日本語は1文字≒1トークン以上になりうるので、文字数をそのまま使う"""
+    """呼ぶ前の見積もり（上限寄り）：日本語は1文字≒1トークン以上になりうるので、文字数をそのまま使う"""
     return sum(len(t) for t in texts if t) + 50
 
 
 def _ledger():
     if not os.path.exists(LEDGER):
         return []
-    return [json.loads(l) for l in open(LEDGER, encoding="utf-8") if l.strip()]
+    with open(LEDGER, encoding="utf-8") as f:
+        return [json.loads(l) for l in f if l.strip()]
 
 
 def spent(entries=None, now=None):
-    now = now or jst_now()
+    """UTC の暦月・暦年・日で集計（予約・精算・記録のすべての jpy の合計）"""
+    now = now or utc_now()
     e = entries if entries is not None else _ledger()
-    month = now.strftime("%Y-%m"); year = now.strftime("%Y"); day = now.strftime("%Y-%m-%d")
-    out = {"month_jpy": 0.0, "year_jpy": 0.0, "day_calls": 0, "by_purpose": {}}
+    month, year, day = now.strftime("%Y-%m"), now.strftime("%Y"), now.strftime("%Y-%m-%d")
+    out = {"month_jpy": 0.0, "year_jpy": 0.0, "day_jpy": 0.0, "day_calls": 0, "by_purpose": {}}
     for x in e:
-        t = x["at_jst"]
+        t = x["at_utc"]
         if t.startswith(year):
             out["year_jpy"] += x["jpy"]
         if t.startswith(month):
             out["month_jpy"] += x["jpy"]
             out["by_purpose"][x["purpose"]] = out["by_purpose"].get(x["purpose"], 0) + x["jpy"]
         if t.startswith(day):
-            out["day_calls"] += 1
+            out["day_jpy"] += x["jpy"]
+            out["day_calls"] += 1 if x.get("kind") == "reserve" else 0
     return out
 
 
-def check(purpose, priority, est_jpy, lim=None):
-    """呼び出してよいか。だめなら BudgetBlocked。よければ現状を返す"""
+def check(purpose, priority, est_jpy, lim, now=None):
+    """呼び出してよいか。だめなら BudgetBlocked"""
     if os.path.exists(STOP_FILE):
-        raise BudgetBlocked("緊急停止中（ops/ai_budget/STOP）: " + open(STOP_FILE, encoding="utf-8").read()[:200])
+        with open(STOP_FILE, encoding="utf-8") as f:
+            raise BudgetBlocked("緊急停止中（ops/ai_budget/STOP）: " + f.read()[:200])
     if os.environ.get("AI_KILL_SWITCH", "").strip().lower() in ("1", "true", "yes", "on"):
         raise BudgetBlocked("緊急停止中（AI_KILL_SWITCH）")
-    lim = lim or limits()
     alloc = allocation(lim)
     if priority not in PRIORITIES:
         raise BudgetBlocked(f"優先度が不正: {priority}")
     if purpose not in alloc or purpose == "reserve":
         raise BudgetBlocked(f"用途が不正: {purpose}")
-    s = spent()
+    s = spent(now=now)
     m = lim["monthly_budget_jpy"]
-    if est_jpy > lim["max_cost_per_call_jpy"]:
-        raise BudgetBlocked(f"1回の見積もり {est_jpy:.1f} 円が上限 {lim['max_cost_per_call_jpy']} 円を超える")
-    if _run_calls >= lim["max_calls_per_run"]:
-        raise BudgetBlocked(f"1回の実行の呼び出し回数の上限 {lim['max_calls_per_run']} に到達（無限ループ防止）")
-    if s["day_calls"] >= lim["max_calls_per_day"]:
-        raise BudgetBlocked(f"1日の呼び出し回数の上限 {lim['max_calls_per_day']} に到達")
-    if s["month_jpy"] + est_jpy > m * lim["hard_stop_ratio"]:
-        raise BudgetBlocked(f"月の予算の {int(lim['hard_stop_ratio']*100)}% に達するため停止（使用 {s['month_jpy']:.0f} 円＋見積もり {est_jpy:.0f} 円）")
-    if s["year_jpy"] + est_jpy > lim["annual_budget_jpy"] * lim["hard_stop_ratio"]:
-        raise BudgetBlocked("年の予算の上限に達するため停止")
-    if priority == "low" and s["month_jpy"] + est_jpy > m * lim["low_priority_stop_ratio"]:
-        raise BudgetBlocked(f"月の予算の {int(lim['low_priority_stop_ratio']*100)}% 以上のため、優先度 low の処理は止める")
-    if s["by_purpose"].get(purpose, 0) + est_jpy > alloc[purpose]:
-        raise BudgetBlocked(f"用途「{purpose}」の配分 {alloc[purpose]} 円を超える（使用 {s['by_purpose'].get(purpose, 0):.0f} 円）")
+    rules = [
+        (est_jpy > lim["max_cost_per_call_jpy"], f"1回の見積もり {est_jpy:.1f} 円が上限 {lim['max_cost_per_call_jpy']} 円を超える"),
+        (_run["calls"] >= lim["max_calls_per_run"], f"1回の実行の呼び出し回数の上限 {lim['max_calls_per_run']} に到達（無限ループ防止）"),
+        (_run["jpy"] + est_jpy > lim["max_cost_per_run_jpy"], f"1回の実行の金額の上限 {lim['max_cost_per_run_jpy']} 円に達する"),
+        (s["day_calls"] >= lim["max_calls_per_day"], f"1日の呼び出し回数の上限 {lim['max_calls_per_day']} に到達"),
+        (s["day_jpy"] + est_jpy > lim["max_cost_per_day_jpy"], f"1日の金額の上限 {lim['max_cost_per_day_jpy']} 円に達する"),
+        (s["month_jpy"] + est_jpy > m * lim["hard_stop_ratio"], f"月の予算の {int(lim['hard_stop_ratio']*100)}% に達するため停止（使用 {s['month_jpy']:.0f} 円＋見積もり {est_jpy:.0f} 円）"),
+        (s["year_jpy"] + est_jpy > lim["annual_budget_jpy"] * lim["hard_stop_ratio"], "年の予算の上限に達するため停止"),
+        (priority == "low" and s["month_jpy"] + est_jpy > m * lim["low_priority_stop_ratio"], f"月の予算の {int(lim['low_priority_stop_ratio']*100)}% 以上のため、優先度 low は止める"),
+        (s["by_purpose"].get(purpose, 0) + est_jpy > alloc[purpose], f"用途「{purpose}」の配分 {alloc[purpose]} 円を超える（使用 {s['by_purpose'].get(purpose, 0):.0f} 円）"),
+    ]
+    for hit, why in rules:
+        if hit:
+            raise BudgetBlocked(why)
     return s
 
 
 def _alerts(lim, month_jpy):
-    m = lim["monthly_budget_jpy"]; now = jst_now()
+    m = lim["monthly_budget_jpy"]
     try:
-        a = json.load(open(ALERTS))
+        with open(ALERTS) as f:
+            a = json.load(f)
     except Exception:
         a = {}
-    key = now.strftime("%Y-%m")
+    key = utc_now().strftime("%Y-%m")
     cur = a.get(key, [])
     for name, r in (("50%", lim["notify_ratio"]), ("80%", lim["low_priority_stop_ratio"]), ("90%", lim["hard_stop_ratio"])):
         if month_jpy >= m * r and name not in cur:
             cur.append(name)
     a[key] = cur
-    json.dump(a, open(ALERTS, "w"), ensure_ascii=False, indent=1)
+    with open(ALERTS, "w") as f:
+        json.dump(a, f, ensure_ascii=False, indent=1)
     return cur
 
 
@@ -182,56 +207,70 @@ def _locked():
 
 
 def record(entry):
+    entry.setdefault("at_utc", utc_now().isoformat(timespec="seconds"))
+    entry.setdefault("run", _run["id"])
     with open(LEDGER, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        f.flush(); os.fsync(f.fileno())
 
 
 def guarded_call(client, *, purpose, priority, model, system, messages, max_tokens, task="", tools=None, max_searches=0, **kw):
-    """予算の確認 → 呼び出し → 実額の記録。戻り値は API の応答。止めたときは BudgetBlocked"""
-    global _run_calls
+    """予算の確認 → 予約 → 呼び出し → 精算。戻り値は API の応答。止めたときは BudgetBlocked"""
     lim = limits()
+    prices = pricing(lim)
     max_tokens = min(int(max_tokens), lim["max_output_tokens_cap"])
     text = (system if isinstance(system, str) else json.dumps(system, ensure_ascii=False)) + json.dumps(messages, ensure_ascii=False)
     in_est = estimate_input_tokens(text) * (1 + max_searches)  # 検索結果も入力に入る（上限寄り）
     rate, fx_src = fx_rate(lim)
-    k = rate * lim["tax_and_fee_multiplier"]
-    est_jpy = usd_cost(model, in_est, max_tokens, searches=max_searches) * k
+    k = rate * lim["tax_and_fee_multiplier"] * lim["price_buffer"]  # USD → 円（多めに）
+    est_jpy = usd_cost(prices, model, in_est, max_tokens, searches=max_searches) * k
+    base = {"purpose": purpose, "priority": priority, "task": task[:120], "model": model, "jpy_per_usd": round(k, 2), "fx_source": fx_src}
     with _locked():
-        before = check(purpose, priority, est_jpy, lim)
-        _run_calls += 1
+        check(purpose, priority, est_jpy, lim)
+        _run["calls"] += 1; _run["jpy"] += est_jpy
+        record({**base, "kind": "reserve", "jpy": round(est_jpy, 4)})  # 先に予約（切断・例外でもこの額が残る）
         args = dict(model=model, system=system, messages=messages, max_tokens=max_tokens, **kw)
         if tools:
             args["tools"] = tools
-        resp = client.with_options(max_retries=lim["max_retries"]).messages.create(**args)
+        t0 = time.time()
+        try:
+            resp = client.with_options(max_retries=lim["max_retries"], timeout=lim["request_timeout_sec"]).messages.create(**args)
+        except Exception as e:
+            record({**base, "kind": "error", "jpy": 0, "error": f"{type(e).__name__}: {str(e)[:160]}", "note": "予約額を使ったものとして残す"})
+            raise
+        sec = round(time.time() - t0, 2)
         u = getattr(resp, "usage", None)
-        base = {"at_jst": jst_now().isoformat(timespec="seconds"), "purpose": purpose, "priority": priority, "task": task[:120],
-                "model": model, "fx": round(rate, 2), "fx_source": fx_src, "est_jpy": round(est_jpy, 3)}
         if u is None or getattr(u, "input_tokens", None) is None or getattr(u, "output_tokens", None) is None:
-            record({**base, "jpy": round(est_jpy, 3), "status": "usage_unknown"})
-            open(STOP_FILE, "w", encoding="utf-8").write(f"{base['at_jst']} 使用量が応答に無かったため停止（{model}）。確認後にこのファイルを消す\n")
-            raise BudgetBlocked("使用量が取得できないため停止した")
+            record({**base, "kind": "settle", "jpy": 0, "status": "usage_unknown", "seconds": sec})
+            with open(STOP_FILE, "w", encoding="utf-8") as f:
+                f.write(f"{utc_now().isoformat()} 使用量が応答に無かったため停止（{model}）。確認後にこのファイルを消す\n")
+            raise BudgetBlocked("使用量が取得できないため停止した（予約額のまま記録）")
         st = getattr(u, "server_tool_use", None)
-        searches = getattr(st, "web_search_requests", 0) if st else 0
-        usd = usd_cost(model, u.input_tokens, u.output_tokens, getattr(u, "cache_creation_input_tokens", 0) or 0,
-                       getattr(u, "cache_read_input_tokens", 0) or 0, searches or 0)
+        searches = (getattr(st, "web_search_requests", 0) if st else 0) or 0
+        cw, cr = getattr(u, "cache_creation_input_tokens", 0) or 0, getattr(u, "cache_read_input_tokens", 0) or 0
+        usd = usd_cost(prices, model, u.input_tokens, u.output_tokens, cw, cr, searches)
         jpy = usd * k
-        record({**base, "status": "ok", "input_tokens": u.input_tokens, "output_tokens": u.output_tokens,
-                "cache_write": getattr(u, "cache_creation_input_tokens", 0) or 0, "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0,
-                "searches": searches or 0, "usd": round(usd, 6), "jpy": round(jpy, 3)})
-        _alerts(lim, before["month_jpy"] + jpy)
+        _run["jpy"] += jpy - est_jpy
+        record({**base, "kind": "settle", "jpy": round(jpy - est_jpy, 4), "actual_jpy": round(jpy, 4), "usd": round(usd, 6),
+                "model_returned": getattr(resp, "model", ""), "input_tokens": u.input_tokens, "output_tokens": u.output_tokens,
+                "cache_write": cw, "cache_read": cr, "searches": searches, "seconds": sec, "status": "ok"})
+        _alerts(lim, spent()["month_jpy"])
     return resp
 
 
 def status():
-    """日報・ダッシュボード用の集計（料金を呼ばない）"""
+    """日報・ダッシュボード用の集計（API を呼ばない）"""
     try:
-        lim = json.load(open(os.path.join(HERE, "limits.json")))
+        lim = _load("limits.json")
     except Exception:
         return {"error": "limits.json を読めない"}
     s = spent(); m = lim["monthly_budget_jpy"]
-    return {"month_jpy": round(s["month_jpy"], 1), "remaining_jpy": round(m * lim["hard_stop_ratio"] - s["month_jpy"], 1),
-            "used_ratio": round(s["month_jpy"] / m, 4), "year_jpy": round(s["year_jpy"], 1), "day_calls": s["day_calls"],
-            "by_purpose": {k: round(v, 1) for k, v in s["by_purpose"].items()}, "stopped": os.path.exists(STOP_FILE)}
+    return {"month_utc": utc_now().strftime("%Y-%m"), "month_jpy": round(s["month_jpy"], 1),
+            "remaining_jpy_before_hard_stop": round(m * lim["hard_stop_ratio"] - s["month_jpy"], 1),
+            "used_ratio": round(s["month_jpy"] / m, 4), "year_jpy": round(s["year_jpy"], 1),
+            "today_jpy": round(s["day_jpy"], 1), "today_calls": s["day_calls"],
+            "by_purpose": {k: round(v, 1) for k, v in s["by_purpose"].items()}, "stopped": os.path.exists(STOP_FILE),
+            "manifest_sha256": manifest_sha256()}
 
 
 if __name__ == "__main__":

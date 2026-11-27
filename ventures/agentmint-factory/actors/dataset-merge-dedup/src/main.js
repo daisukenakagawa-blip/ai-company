@@ -1,5 +1,5 @@
 import { Actor, log } from 'apify';
-import { dedupKey, completeness, passesFilters, validateFilters, reshape } from './lib.js';
+import { dedupKey, completeness, passesFilters, validateFilters, reshape, parseFile } from './lib.js';
 
 // Pricing: the ONLY paid event is Apify's synthetic `apify-default-dataset-item` (one charge per item written to the
 // default dataset, charged by the platform). No custom event is charged from code, so there is no double charging.
@@ -15,11 +15,12 @@ const SAMPLE = [
     { url: 'https://example.com/product/4', name: 'Black Mug', price: 15 },
 ];
 const PAGE = 5000;
+const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100 MB per file (read into memory)
 
 await Actor.init();
 try {
     const input = (await Actor.getInput()) ?? {};
-    const sampleMode = !(input.datasetIds || []).length && !(input.items || []).length;
+    const sampleMode = !(input.datasetIds || []).length && !(input.items || []).length && !(input.fileUrls || []).length;
     if (sampleMode) {
         log.warning('No datasets or items were given, so the Actor runs on a built-in 6-item sample (writes 4 items). Pick your datasets in "Datasets to merge" to process your own data.');
         Object.assign(input, { items: SAMPLE, dedupFields: input.dedupFields?.length ? input.dedupFields : ['url'], ignoreUrlTracking: true });
@@ -27,6 +28,8 @@ try {
     const {
         datasetIds = [],
         items: inlineItems = [],
+        fileUrls: rawFileUrls = [],
+        fileFormat = 'auto',
         dedupFields = [],
         keep = 'first',
         normalizeKeys = true,
@@ -40,7 +43,9 @@ try {
         maxItems = 0,
     } = input;
 
-    if (!datasetIds.length && !inlineItems.length) throw new Error('Provide at least one dataset in "datasetIds" (or items in "items").');
+    const fileUrls = rawFileUrls.map((u) => (typeof u === 'string' ? u : u?.url)).filter(Boolean);
+    for (const u of fileUrls) if (!/^https?:\/\//i.test(u)) throw new Error(`File URL must start with http:// or https://: ${u}`);
+    if (!datasetIds.length && !inlineItems.length && !fileUrls.length) throw new Error('Provide at least one dataset in "datasetIds", a file in "fileUrls" or items in "items".');
     if (!['first', 'last', 'mostComplete'].includes(keep)) throw new Error('"keep" must be first, last or mostComplete.');
     validateFilters(filters);
     const norm = { trim: normalizeKeys, lowercase: normalizeKeys, collapseWhitespace: normalizeKeys, stripUrlNoise: ignoreUrlTracking };
@@ -73,6 +78,18 @@ try {
 
     async function* sources() {
         if (inlineItems.length) yield { id: 'inline', items: inlineItems };
+        for (const url of fileUrls) {
+            log.info(`Downloading file ${url}`);
+            const res = await fetch(url, { signal: AbortSignal.timeout(120000), redirect: 'follow' });
+            if (!res.ok) throw new Error(`Could not download ${url}: HTTP ${res.status}`);
+            const len = Number(res.headers.get('content-length') || 0);
+            if (len > MAX_FILE_BYTES) throw new Error(`File too large (${len} bytes, max ${MAX_FILE_BYTES}): ${url}. Split it or load it into a dataset first.`);
+            const buf = Buffer.from(await res.arrayBuffer());
+            if (buf.length > MAX_FILE_BYTES) throw new Error(`File too large (max ${MAX_FILE_BYTES} bytes): ${url}`);
+            const items = parseFile(buf.toString('utf8'), { url, contentType: res.headers.get('content-type') || '', format: fileFormat });
+            log.info(`Read ${items.length} rows from ${url}`);
+            for (let i = 0; i < items.length; i += PAGE) yield { id: url, items: items.slice(i, i + PAGE) };
+        }
         for (const id of datasetIds) {
             const ds = await Actor.openDataset(id, { forceCloud: Actor.isAtHome() });
             const info = await ds.getInfo();

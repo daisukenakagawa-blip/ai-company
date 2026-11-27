@@ -7,11 +7,11 @@ Combine the results of several scraper runs into **one clean dataset**: merge an
 | Key | Value |
 |---|---|
 | Actor ID | `preponderant_swift/dataset-merge-dedup` |
-| Purpose | Merge Apify datasets (or inline JSON items), remove duplicates by chosen fields, filter and reshape. Reads only the data you pass; never accesses websites |
-| Input | `datasetIds` (string[]) and/or `items` (object[]); options below. Full JSON Schema (no token needed): `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default` → `data.inputSchema`. OpenAPI: `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default/openapi.json` |
+| Purpose | Merge Apify datasets, CSV / TSV / JSON / JSON Lines files (by URL) or inline JSON items; remove duplicates by chosen fields, filter and reshape. Reads only the data you pass (downloads only the file URLs you list); never crawls websites |
+| Input | `datasetIds` (string[]), `fileUrls` (string[], CSV/TSV/JSON/JSONL, max 100 MB each) and/or `items` (object[]); options below. Full JSON Schema (no token needed): `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default` → `data.inputSchema`. OpenAPI: `GET https://api.apify.com/v2/acts/preponderant_swift~dataset-merge-dedup/builds/default/openapi.json` |
 | Output | Default dataset = the kept items (same fields as input after reshaping). Key-value record `OUTPUT` = run summary (counts) |
 | Pricing (Pay per event) | `apify-default-dataset-item` **$0.0002 per output item** ($0.20 / 1,000). `apify-actor-start` **$0.00005** per run (per GB of memory, minimum 1). Platform usage is included (not charged separately). Removed duplicates and filtered rows are free |
-| Cost before running | Upper bound = `0.00005 × max(1, memoryGB) + 0.0002 × (sum of itemCount of all input datasets + number of inline items)`. Get `itemCount` with `GET https://api.apify.com/v2/datasets/{datasetId}`. Actual cost is lower when duplicates or filtered rows are removed |
+| Cost before running | Upper bound = `0.00005 × max(1, memoryGB) + 0.0002 × (sum of itemCount of all input datasets + rows in the files + number of inline items)`. Get `itemCount` with `GET https://api.apify.com/v2/datasets/{datasetId}`. Actual cost is lower when duplicates or filtered rows are removed |
 | Hard cost cap | Set `maxTotalChargeUsd` when starting the run (API option) — the Actor stops cleanly at the cap and reports `OUTPUT.stoppedAtChargeLimit: true`. Or set `maxItems` in the input |
 | Typical latency | Seconds for thousands of items (streams 5,000 items per page) |
 | Memory | 256 MB–4 GB. `keep: "first"` needs ~28 bytes per unique key; `last` / `mostComplete` hold one copy per unique item |
@@ -34,6 +34,10 @@ Combine the results of several scraper runs into **one clean dataset**: merge an
 { "items": [{"url": "https://a.com/1?utm_source=x"}, {"url": "https://a.com/1"}], "dedupFields": ["url"], "ignoreUrlTracking": true }
 ```
 
+```json
+{ "fileUrls": ["https://example.com/leads-january.csv", "https://example.com/leads-february.csv"], "dedupFields": ["email"] }
+```
+
 ### Errors (run status FAILED, message in the status message)
 
 | Cause | Message (starts with) | Fix |
@@ -43,12 +47,16 @@ Combine the results of several scraper runs into **one clean dataset**: merge an
 | Unknown filter operator | `Unknown filter op` | Use eq, neq, contains, notContains, exists, notExists, gt, gte, lt, lte, regex |
 | Invalid regular expression | `Invalid regular expression` | Fix the `value` of the regex filter |
 | Dataset ID not found or not readable with your token | Apify API error (e.g. record not found) | Pass a dataset ID your token can read |
+| File URL not http(s) | `File URL must start with http:// or https://` | Use a public http(s) link |
+| File not downloadable | `Could not download <url>: HTTP <status>` | Make the link public / check it |
+| File over 100 MB | `File too large` | Split the file or load it into a dataset first |
+| Broken JSON Lines | `Invalid JSON on line N` | Fix that line |
 
 Not an error: reaching the spending cap (`stoppedAtChargeLimit: true`, status SUCCEEDED).
 
 ## What it does
 
-- **Merge** any number of datasets, in the order you list them
+- **Merge** any number of datasets **and CSV / TSV / JSON / JSON Lines files by URL** (e.g. spreadsheet exports), in the order you list them
 - **Deduplicate** by one or more fields (`url`, or `name` + `address.city`, nested paths supported), or by the whole item
 - **Smart matching**: optionally ignore case and extra spaces (`"ACME Inc "` = `"acme inc"`), and URL tracking noise (`utm_*`, `fbclid`, `gclid`, `#fragment`, trailing `/`, `www.`)
 - **Choose which copy survives**: first seen, last seen, or the **most complete** copy (most non-empty fields)
@@ -119,6 +127,7 @@ Pay per event: you pay only for **items written to the output dataset** (plus Ap
 - Inline `items` are limited by Apify's maximum run input size; use datasets for large data
 - Terms: you must have the right to process the data you pass. The Actor keeps no copy outside your own run storage (Apify's storage retention applies)
 
-- Only reads datasets you give it; it does not access any website
+- Only reads the datasets and file URLs you give it; it does not crawl any website
+- Files: CSV delimiter (comma, semicolon, tab, |) and UTF-8 BOM are handled; values from CSV stay strings. Excel: export the sheet as CSV first
 - `regex` filters are case-insensitive
 - Comparison normalization never changes the values written to the output

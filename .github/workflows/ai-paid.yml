@@ -1,0 +1,44 @@
+name: AI paid API (budget-gated)
+# 有料の AI API を使ってよい唯一のワークフロー（2026-11-27 Ver.2.0：追加支出は月5,000円まで）。
+# 有料 API は ops/ai_budget/budget.py の guarded_call() を通す。キー・上限の照合値・緊急停止はオーナーが GitHub の Secrets／Variables で管理する。
+# 起動：ops/ai_budget/run-request.txt の push（Claude の GitHub App は手動起動が 403 のため）。今は「初回の試験（100円以内）」だけを行う。
+on:
+  push:
+    branches: [main]
+    paths: ["ops/ai_budget/run-request.txt"]
+permissions:
+  contents: write
+concurrency:
+  group: paid-ai
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Direct-call scan (予算管理を通さない呼び出しが無いこと)
+        run: python3 ops/ai_budget/scan_direct_calls.py
+      - name: Budget tests (偽の API で22件)
+        run: python3 -W ignore ops/ai_budget/test_budget.py
+      - name: Install SDK
+        run: pip install "anthropic>=0.40"
+      - name: First paid test (100円以内)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_BUDGET_SHA256: ${{ vars.AI_BUDGET_SHA256 }}
+          AI_KILL_SWITCH: ${{ vars.AI_KILL_SWITCH }}
+        run: python3 ops/ai_budget/smoke.py
+      - name: Commit ledger and result
+        if: always()
+        run: |
+          git config user.name "ai-paid-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add ops/ai_budget/ledger.jsonl ops/ai_budget/alerts.json ops/ai_budget/fx.json ops/ai_budget/smoke-result.json ops/ai_budget/STOP 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "ai-paid: 台帳と試験結果"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done
+          echo "::error::台帳を保存できなかった（次回の実行が使用額を少なく数える恐れ）。ops/ai_budget/STOP を手で置くこと"; exit 1

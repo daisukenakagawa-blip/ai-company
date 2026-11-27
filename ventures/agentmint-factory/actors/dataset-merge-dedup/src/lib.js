@@ -146,3 +146,67 @@ export function reshape(item, { fieldsToKeep, fieldsToOmit, renameFields, flatte
     }
     return flattenNested ? flatten(out) : out;
 }
+
+// ---- Files (CSV / TSV / JSON / JSON Lines) given by URL --------------------------------------------------------
+// CSV follows RFC 4180 (quoted fields, "" escapes, line breaks inside quotes). The delimiter (, ; tab |) is detected
+// from the header line. A UTF-8 BOM is removed. Every value is kept as a string (no guessing of types).
+export function detectDelimiter(headerLine) {
+    let best = ',', n = -1;
+    for (const d of [',', ';', '\t', '|']) {
+        let c = 0, q = false;
+        for (const ch of headerLine) { if (ch === '"') q = !q; else if (!q && ch === d) c++; }
+        if (c > n) { best = d; n = c; }
+    }
+    return best;
+}
+
+export function parseCsv(text, delimiter) {
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+    const firstLine = text.slice(0, Math.max(0, text.search(/\r?\n/)) || text.length);
+    const d = delimiter || detectDelimiter(firstLine);
+    const rows = []; let row = [], field = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (q) {
+            if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+            else field += ch;
+        } else if (ch === '"' && field === '') q = true;
+        else if (ch === d) { row.push(field); field = ''; }
+        else if (ch === '\n' || ch === '\r') {
+            if (ch === '\r' && text[i + 1] === '\n') i++;
+            row.push(field); field = '';
+            if (row.length > 1 || row[0] !== '') rows.push(row);
+            row = [];
+        } else field += ch;
+    }
+    if (field !== '' || row.length) { row.push(field); if (row.length > 1 || row[0] !== '') rows.push(row); }
+    if (!rows.length) return [];
+    const header = rows[0].map((h, i) => (h.trim() || `column${i + 1}`));
+    const seen = {};
+    const keys = header.map((h) => { seen[h] = (seen[h] || 0) + 1; return seen[h] > 1 ? `${h}_${seen[h]}` : h; });
+    return rows.slice(1).map((r) => Object.fromEntries(keys.map((k, i) => [k, r[i] ?? ''])));
+}
+
+export function parseFile(text, { url = '', contentType = '', format = 'auto' } = {}) {
+    const lower = (url.split('?')[0] || '').toLowerCase();
+    let f = format;
+    if (f === 'auto') {
+        if (/json/.test(contentType) && !/ndjson|jsonl/.test(contentType)) f = 'json';
+        else if (/ndjson|jsonl/.test(contentType) || /\.(jsonl|ndjson)$/.test(lower)) f = 'jsonl';
+        else if (/\.json$/.test(lower)) f = 'json';
+        else if (/\.tsv$/.test(lower) || /tab-separated/.test(contentType)) f = 'tsv';
+        else if (/\.csv$/.test(lower) || /csv/.test(contentType)) f = 'csv';
+        else { const t = text.trimStart(); f = t.startsWith('[') || t.startsWith('{') ? (/^\{[^\n]*\}\s*\n\s*\{/.test(t) ? 'jsonl' : 'json') : 'csv'; }
+    }
+    if (f === 'json') {
+        const v = JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
+        const arr = Array.isArray(v) ? v : Array.isArray(v?.items) ? v.items : Array.isArray(v?.data) ? v.data : [v];
+        return arr.filter((x) => x && typeof x === 'object' && !Array.isArray(x));
+    }
+    if (f === 'jsonl') return text.split(/\r?\n/).filter((l) => l.trim()).map((l, i) => {
+        try { return JSON.parse(l); } catch { throw new Error(`Invalid JSON on line ${i + 1} of ${url || 'file'}`); }
+    });
+    if (f === 'tsv') return parseCsv(text, '\t');
+    if (f === 'csv') return parseCsv(text);
+    throw new Error(`Unknown file format "${format}". Use auto, csv, tsv, json or jsonl.`);
+}

@@ -47,5 +47,24 @@
     "Black Mug"
    ]
   }
+ },
+ {
+  "name": "CSV file by URL",
+  "input": {
+   "fileUrls": [
+    "https://raw.githubusercontent.com/daisukenakagawa-blip/ai-company/main/ventures/agentmint-factory/actors/dataset-merge-dedup/test/fixtures/sample.csv"
+   ],
+   "dedupFields": [
+    "email"
+   ]
+  },
+  "memory": 256,
+  "expect": {
+   "field": "name",
+   "values": [
+    "Ann",
+    "Bob"
+   ]
+  }
  }
 ]

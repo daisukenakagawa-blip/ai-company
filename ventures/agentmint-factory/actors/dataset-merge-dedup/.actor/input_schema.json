@@ -17,12 +17,41 @@
       "editor": "json",
       "prefill": []
     },
+    "fileUrls": {
+      "title": "Files by URL (CSV, TSV, JSON, JSON Lines)",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Public links to files to merge, e.g. a CSV export or a JSON file. Downloaded once (max 100 MB each). CSV delimiter (comma, semicolon, tab, |) is detected automatically. For Excel, export the sheet as CSV first."
+    },
+    "fileFormat": {
+      "title": "File format",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "auto",
+        "csv",
+        "tsv",
+        "json",
+        "jsonl"
+      ],
+      "enumTitles": [
+        "Detect automatically",
+        "CSV",
+        "TSV",
+        "JSON",
+        "JSON Lines"
+      ],
+      "default": "auto",
+      "description": "Leave on auto unless detection guesses wrong."
+    },
     "dedupFields": {
       "title": "Deduplicate by fields",
       "type": "array",
       "description": "Two items are duplicates when all of these fields are equal, e.g. [\"url\"] or [\"name\", \"address.city\"]. Dotted paths reach nested fields. Leave empty to compare whole items.",
       "editor": "stringList",
-      "prefill": ["url"],
+      "prefill": [
+        "url"
+      ],
       "sectionCaption": "Deduplication"
     },
     "keep": {
@@ -30,8 +59,16 @@
       "type": "string",
       "description": "first = keep the earliest (fastest, lowest memory). last = keep the newest. mostComplete = keep the copy with the most non-empty fields.",
       "editor": "select",
-      "enum": ["first", "last", "mostComplete"],
-      "enumTitles": ["First seen", "Last seen", "Most complete"],
+      "enum": [
+        "first",
+        "last",
+        "mostComplete"
+      ],
+      "enumTitles": [
+        "First seen",
+        "Last seen",
+        "Most complete"
+      ],
       "default": "first"
     },
     "normalizeKeys": {
