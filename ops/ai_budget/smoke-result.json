@@ -1,5 +1,74 @@
 {
- "status": "未実行",
- "reason": "ANTHROPIC_API_KEY が未設定（オーナーの設定待ち）",
- "at_utc": "2026-11-27T00:09:52+00:00"
+ "status": "成功",
+ "model_requested": "claude-haiku-5-5",
+ "model_returned": "claude-haiku-5-5",
+ "models_available": [
+  "claude-fable-5-2",
+  "claude-haiku-5-5",
+  "claude-sonnet-5-5",
+  "claude-opus-5-5",
+  "claude-fable-5-1",
+  "claude-opus-5",
+  "claude-sonnet-5",
+  "claude-fable-5",
+  "claude-opus-4-8",
+  "claude-opus-4-7",
+  "claude-sonnet-4-6",
+  "claude-opus-4-6",
+  "claude-opus-4-5-20251101",
+  "claude-haiku-4-5-20251001",
+  "claude-sonnet-4-5-20250929"
+ ],
+ "input_tokens": 54,
+ "output_tokens": 12,
+ "usd": 1.1e-05,
+ "jpy_recorded": 0.0024,
+ "jpy_per_usd_used": 208.22,
+ "seconds": 0.92,
+ "result_text": "予算管理の試験は成功",
+ "budget_before": {
+  "month_utc": "2026-11",
+  "month_jpy": 0.0,
+  "remaining_jpy_before_hard_stop": 4500.0,
+  "used_ratio": 0.0,
+  "year_jpy": 0.0,
+  "today_jpy": 0.0,
+  "today_calls": 0,
+  "by_purpose": {},
+  "by_division": {},
+  "division_budget_jpy": {
+   "d1": 1500,
+   "d2": 2500,
+   "hq": 500,
+   "reserve": 500
+  },
+  "stopped": false,
+  "stopped_divisions": [],
+  "manifest_sha256": "d283371a8a01cfcb37f3f91ddd1f546993465ab040e201dc9cda8569bb71d944"
+ },
+ "budget_after": {
+  "month_utc": "2026-11",
+  "month_jpy": 0.0,
+  "remaining_jpy_before_hard_stop": 4500.0,
+  "used_ratio": 0.0,
+  "year_jpy": 0.0,
+  "today_jpy": 0.0,
+  "today_calls": 1,
+  "by_purpose": {
+   "qa": 0.0
+  },
+  "by_division": {
+   "hq": 0.0
+  },
+  "division_budget_jpy": {
+   "d1": 1500,
+   "d2": 2500,
+   "hq": 500,
+   "reserve": 500
+  },
+  "stopped": false,
+  "stopped_divisions": [],
+  "manifest_sha256": "d283371a8a01cfcb37f3f91ddd1f546993465ab040e201dc9cda8569bb71d944"
+ },
+ "at_utc": "2026-11-27T17:05:56+00:00"
 }
