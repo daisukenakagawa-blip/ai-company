@@ -13,15 +13,15 @@ FIELDS = [("issued", "公告日"), ("deadline", "入札書の提出期限"), ("p
 
 
 def search(q, since, until=""):
-    url = "https://www.kkj.go.jp/api/?" + urllib.parse.urlencode({"Query": q, "CFT_Issue_Date": f"{since}/{until}", "Count": 1000})
-    for i in range(3):  # 通信の一時的な切断に備えて、間を空けて3回まで
+    url = "https://www.kkj.go.jp/api/?" + urllib.parse.urlencode({"Query": q, "CFT_Issue_Date": f"{since}/{until}", "Count": 500})
+    for i in range(5):  # 通信の切断・504（相手のサーバーの混雑）に備えて、間を空けて5回まで
         try:
             with urllib.request.urlopen(url, timeout=120) as r:
                 root = ET.fromstring(r.read())
             break
         except Exception:  # 切断・途中で切れた応答（IncompleteRead）など
-            if i == 2: raise
-            time.sleep(10)
+            if i == 4: raise
+            time.sleep(30 * (i + 1))
     for x in root.iter("SearchResult"):
         g = lambda t: (x.findtext(t) or "").strip()
         yield {"key": g("Key"), "name": g("ProjectName"), "org": g("OrganizationName"), "pref": g("PrefectureName"),
@@ -34,14 +34,20 @@ def main():
     days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
     end = datetime.date.today() - datetime.timedelta(days=1)
     start = end - datetime.timedelta(days=days - 1)
-    seen = {}
+    seen, missing = {}, []
     for w in SEGMENTS[seg]:
         for k in range(days):  # 応答が大きいと途中で切れるので、1日ずつ問い合わせる
             d = (start + datetime.timedelta(days=k)).isoformat()
-            for it in search(w, d, d):
+            try:
+                found = list(search(w, d, d))
+            except Exception as e:
+                missing.append(f"{d}（{w}）"); print("取得できない", d, w, e); continue
+            for it in found:
                 if w in it["name"] and start.isoformat() <= it["issued"] <= end.isoformat():
                     seen.setdefault(it["key"] or it["url"], it)
             time.sleep(3)
+    if len(missing) > len(SEGMENTS[seg]) * days // 2:
+        print("取得できない日が多すぎるので作らない:", missing); sys.exit(1)
     rows = sorted(seen.values(), key=lambda i: (i["issued"], i["pref"]), reverse=True)
     out = os.path.join(HERE, "out", f"kkj-{seg}-{start}_{end}")
     os.makedirs(out, exist_ok=True)
@@ -60,6 +66,7 @@ def main():
 内容は各機関の公告が正です。入札に参加する前に、必ず「公告の URL」から各機関の公告・仕様書を確かめてください。
 官公需情報ポータルサイトに載っていない案件は含まれません。件名に該当の語を含まない案件も含まれません。
 提出期限が空欄の案件は、元のデータに期限がないものです。
+{"取得できなかった日（相手のサーバーの混雑）：" + "、".join(missing) if missing else ""}
 
 ファイル：入札_{seg}_{start}_{end}.csv（Excel でそのまま開けます。UTF-8）
 列：{'・'.join(j for _, j in FIELDS)}
