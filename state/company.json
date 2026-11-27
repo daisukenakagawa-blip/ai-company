@@ -1,7 +1,7 @@
 {
   "name": "GENHAYL AIカンパニー",
   "founded": "2026-11-18 19:40",
-  "day": 14,
+  "day": 15,
   "phase": "需要と支払い意思の実証",
   "business": {
     "name": "アイデア工房",
@@ -420,6 +420,18 @@
     {
       "day": 14,
       "text": "14日目: 宣伝する5商品は、検索需要のデータが無いため選ばない"
+    },
+    {
+      "day": 15,
+      "text": "15日目: Dataset Merge & Dedup は外部の利用が付くまで Apify Store・MCP の検索に出ない（公式 11/19 の検索変更）。検索のための分類操作・追加開発はしない"
+    },
+    {
+      "day": 15,
+      "text": "15日目: Last.fm API の有料化（12/1）と Libraries.io API の終了（11/30）は不採用（C）。受け皿が無料で払う主体なし"
+    },
+    {
+      "day": 15,
+      "text": "15日目: 朝の仕事では有料 AI API を使わない。新しい承認依頼は出さない"
     }
   ],
   "history": [
@@ -520,6 +532,13 @@
       "summary": "# 14日目 日報（2026-11-27） ## 今日の結論（3行） - **売上0円・純利益0円・有料顧客0・外部の実利用者0** のままです（Stripe の決済開始の新規0、KeyRelay 0、AgentMint は3商品とも非公開で外部利用0）。 - 11/26 の店の閲覧11件のうち **7件は脆弱性探しのボット**で、人の閲覧は約4件でした。計測を直し、今後は店に実在するページだけを数えます。X の公開済み3投稿から確認できる訪問は0、検索への掲載も当社の検索では確認できず、「まだ見つけてもらえていない」段階です。 - 第三者の売上に一番近いのは、利用者が既にいる **Apify Store に Dataset Merge & Dedup を出すこと**です。公開と料金設定はオーナー承認制のため、承認依頼 #17 にしました（約15分）。 ## 成果物 - `workspace/day-014/cfo/numbers.md` 主要指標 - `workspace/day-014/marketing/channel_search_and_x.md` 検索（IndexNow）と X の実績の確認 - `workspace/day-014/product/metrics_fix.md` 計測の修正（`lib/shop_metrics.js`、試験 29・32項目合格） - `",
       "cost_usd": 0,
       "report": "reports/day-014.md"
+    },
+    {
+      "day": 15,
+      "date": "2026-11-28 06:57",
+      "summary": "# 15日目 日報（2026-11-28） ## 今日の結論（3行） - **売上0円・有料顧客0・外部の実利用者0** のままです。今月の AI API 費用 37円で、純利益は **−37円**（予算5,000円の0.7%）。 - 公開中の Dataset Merge & Dedup は、**Apify Store で自社の題名そのものを検索しても出てきません**。Apify の 11/19 の検索変更（混雑した分類では、利用の少ない Actor を検索に出さない）によるものです。「Store と MCP の検索で見つけてもらう」経路は、外部の利用ゼロのうちは働きません。 - Radar・Gap Engine の上位（Last.fm API の有料化 12/1、Libraries.io API の終了 11/30）は一次資料で確かめましたが、受け皿が無料で払う人がいないため、どちらも不採用（C）です。 ## 成果物 - `workspace/day-015/marketing/apify_search_visibility.md` Apify 検索の経路の評価（実測と公式ブログ） - `workspace/day-015/researcher/market_gaps.md` Gap Engine・Radar の確認、入札朝刊5日目 - `workspace/day-015/cf",
+      "cost_usd": 0,
+      "report": "reports/day-015.md"
     }
   ],
   "owner_messages": [
@@ -601,22 +620,22 @@
     {
       "date": "2026-11-27 08:34",
       "text": "2026-11-27 チャット承認：Dataset Merge & Dedup の README（AI エージェント向けの機械可読の仕様）を公開版に反映してよい。AI エージェント向け自動集客を優先（調査・計測・監視は workspace/acquisition/ai-agent-channels-2026-11-27.md）",
-      "read": false
+      "read": true
     },
     {
       "date": "2026-11-27 08:43",
       "text": "2026-11-27 Ver.2.0：AI API を月5,000円・年60,000円まで許可（予算管理 ops/ai_budget を通すこと）。AI 間取引と AI エージェント向け集客を最重要テーマに。最初は現状調査と予算管理（済）→ オーナー設定後に有料 API で自律運営",
-      "read": false
+      "read": true
     },
     {
       "date": "2026-11-27 09:44",
       "text": "2026-11-27 Ver.2.2：複数事業部制（本部・第1事業部 AI 顧客・第2事業部 新規収益）。予算は全社5,000円を共有（d1 1,500・d2 2,500・hq 500・予備 500）。第2事業部は20以上の収益モデル調査→候補10→上位3の詳細→最有力の需要検証→試作（有料 API は設定完了まで使わない）",
-      "read": false
+      "read": true
     },
     {
       "date": "2026-11-27 19:59",
       "text": "2026-11-27 Ver.2.5：第3事業部（経営システムの販売）は構想のみ。今は販売・宣伝・追加支出をしない。機能の境界と構造化データ（ops/knowledge）を貯め、設立条件8項目を満たしたら提案",
-      "read": false
+      "read": true
     }
   ]
 }

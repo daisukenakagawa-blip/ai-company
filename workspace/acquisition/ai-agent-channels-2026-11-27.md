@@ -80,3 +80,8 @@ README の先頭に「For AI agents (machine-readable summary)」を追加（`ve
 ### #README 反映（2026-11-27 8:36 JST、オーナーがチャットで承認）
 - GitHub Actions（agentmint-deploy）で更新・ビルド・試験実行が成功。既定ビルド 0.1.3（SUCCEEDED）に「For AI agents」の節が入ったことを公開 API で確認。公開のまま・Pay per event のまま
 - 公開統計の実行数は 5（3→5、増えた2回は自社の試験。外部の実行には数えない）
+
+## 追記（2026-11-28 朝）検索に出ない理由
+- 当社の Actor は Store に載っているが、**自社の名前・題名で検索しても結果に出ない**（公開 Store API、7つの検索語）。競合は出る
+- 公式ブログ（2026-11-19「Apify Store search is changing」）：混雑した分類では、利用の少ない Actor は検索・分類ページに出さない。直リンク・API の実行は可能。利用が付けば自動で戻る。基準の数字は記載なし
+- 結論：Store・MCP の検索は、外部の利用ゼロのうちは集客経路にならない。分類の操作・自作の利用者づくりはしない。詳細 `workspace/day-015/marketing/apify_search_visibility.md`
