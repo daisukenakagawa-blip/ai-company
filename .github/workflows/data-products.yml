@@ -1,0 +1,43 @@
+name: Data products for BOOTH (実証C)
+# 2026-11-28 オーナー承認の実証C。公的な公開データから BOOTH 用の週まとめを作る（費用0円・読むだけ）。
+# 商品の CSV は公開リポジトリに入れず、実行結果の成果物（artifact、14日保存）に置く。リポジトリには件数の要約と先頭5行の見本だけを残す。
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # 毎週月曜 12:17 JST（差分データは平日16時ごろ・官公需は随時）
+  push:
+    branches: [main]
+    paths: ["ventures/_data_products/run-request.txt"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Playwright
+        run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: 入札情報 週まとめ（清掃・警備）
+        run: python3 ventures/_data_products/kkj_weekly.py 清掃・警備 7 || echo "::warning::入札の週まとめに失敗"
+      - name: 新設法人 週まとめ
+        run: python3 ventures/_data_products/houjin_new.py 5 || echo "::warning::新設法人の週まとめに失敗"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: booth-data-products
+          path: |
+            ventures/_data_products/out/
+            ventures/_data_products/raw/page.html
+          retention-days: 14
+      - name: Commit summaries only
+        if: always()
+        run: |
+          git config user.name "data-products-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add ventures/_data_products/out/*/summary.md ventures/_data_products/out/*/README.txt ventures/_data_products/out/*/sample.csv 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "data-products: 週まとめの要約"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && exit 0; sleep 7; done

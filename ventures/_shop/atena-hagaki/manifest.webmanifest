@@ -1,0 +1,31 @@
+{
+ "name": "はがきの宛名印刷（縦書き）",
+ "short_name": "はがき宛名",
+ "description": "年賀状・喪中はがきの宛名面を、Excel・CSV の住所録から縦書きで印刷。お試し版は先頭3枚まで印刷できます。",
+ "lang": "ja",
+ "dir": "ltr",
+ "start_url": "/atena-hagaki/?ref=msstore",
+ "scope": "/atena-hagaki/",
+ "id": "/atena-hagaki/",
+ "display": "standalone",
+ "background_color": "#f7f7f5",
+ "theme_color": "#0f766e",
+ "categories": [
+  "productivity",
+  "utilities"
+ ],
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
