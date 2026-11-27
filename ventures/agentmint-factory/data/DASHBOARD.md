@@ -2,8 +2,8 @@
 
 ## 費用0円の見張り
 
-- 判定：**OK**（2026-11-27T00:07:31+00:00）
-- Apify：プラン FREE、今月の利用 $0.018969779641653292 / 上限 $5（0.0038）
+- 判定：**OK**（2026-11-27T04:18:06+00:00）
+- Apify：プラン FREE、今月の利用 $0.02452782540426538 / 上限 $5（0.0049）
 - GitHub：公開リポジトリ=True
 - 外部への支払い：0円
 
@@ -13,7 +13,7 @@
 
 | 商品 | 状態 | 外部の利用者（30日） | 外部の実行（30日） | 自分の実行（30日） | 失敗率 | 有料利用者 | 売上 USD | 手数料 USD | 計算費 USD | 純利益 USD | 自分の試験費 USD（無料枠） |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| preponderant_swift/dataset-merge-dedup | 公開 2026-11-27 8:14 JST（Pay per event $0.20/1,000件、本人確認は審査中） | 0 | 0 | 5 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00073 |
+| preponderant_swift/dataset-merge-dedup | 公開 2026-11-27 8:14 JST（Pay per event $0.20/1,000件、本人確認は審査中） | 0 | 0 | 8 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00121 |
 | preponderant_swift/image-convert-compress | private・開発停止中（2026-11-27 オーナー方針） | 0 | 0 | 2 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.0003 |
 | preponderant_swift/pdf-text-extract | private・開発停止中（2026-11-27 オーナー方針） | 0 | 0 | 1 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00018 |
 
@@ -29,13 +29,13 @@
 
 | Actor | 30日利用者 | 30日実行 | 失敗率 |
 |---|---|---|---|
-| lukaskrivka/dedup-datasets-limited-permissions | 587 | 1913 | 0.642 |
-| humble-echidna/dataset-transform | 106 | 1017 | 0.01 |
-| rl1987/jq-helper | 70 | 142 | 0.007 |
-| nerolabs/dataset-filter-transform | 61 | 1001 | 0.081 |
-| saliga/dataset-merge-dedupe | 56 | 362 | 0.014 |
-| tidydata/merge-dedupe-datasets | 55 | 499 | 0.006 |
-| marielise.dev/image-converter | 103 | 909 | 0.132 |
-| gazidev/base64-file-converter | 30 | 127 | 0.0 |
-| memo23/pdf-text-extractor | 177 | 21592 | 0.001 |
-| automation-lab/pdf-text-extractor | 128 | 1074 | 0.006 |
+| lukaskrivka/dedup-datasets-limited-permissions | 587 | 1836 | 0.648 |
+| humble-echidna/dataset-transform | 106 | 1003 | 0.01 |
+| rl1987/jq-helper | 70 | 141 | 0.007 |
+| nerolabs/dataset-filter-transform | 61 | 865 | 0.084 |
+| saliga/dataset-merge-dedupe | 56 | 350 | 0.014 |
+| tidydata/merge-dedupe-datasets | 55 | 509 | 0.006 |
+| marielise.dev/image-converter | 104 | 870 | 0.126 |
+| gazidev/base64-file-converter | 30 | 125 | 0.0 |
+| memo23/pdf-text-extractor | 177 | 21540 | 0.001 |
+| automation-lab/pdf-text-extractor | 128 | 1062 | 0.006 |
