@@ -25,6 +25,13 @@ ROLES = {
     "qa":        {"purpose": "qa",          "model": "claude-haiku-5-5",  "max_tokens": 2000},
     "finance":   {"purpose": "reporting",   "model": "claude-haiku-5-5",  "max_tokens": 1500},
 }
+# 考える工程（thinking）の設定（2026-11-28：既定では Sonnet・Haiku 5.5 も考える工程が入り、max_tokens を使い切って本文が空になった。
+# 公式資料：Haiku は disabled、Sonnet は between_tools（最初に考えない）、Opus は止められないので effort で抑える）
+THINKING = {
+    "claude-haiku-5-5": {"thinking": {"type": "disabled"}},
+    "claude-sonnet-5-5": {"thinking": {"type": "between_tools"}},
+    "claude-opus-5-5": {"output_config": {"effort": "medium"}},
+}
 RULES = ("あなたは GENHAYL AIカンパニーの社員です。日本語で、事実と推測を分けて書きます。"
          "渡されたデータに無い数字・実績・利用者の声は作りません。外部への公開・投稿・価格変更は提案に留めます。")
 
@@ -33,8 +40,13 @@ def ask(client, division, role, task, prompt, priority="normal", tools=None, max
     r = ROLES[role]
     resp = budget.guarded_call(client, division=division, purpose=r["purpose"], priority=priority, model=r["model"], max_tokens=r["max_tokens"],
                                task=f"{role}:{task}", system=[{"type": "text", "text": RULES, "cache_control": {"type": "ephemeral"}}],
-                               messages=[{"role": "user", "content": prompt}], tools=tools, max_searches=max_searches)
-    return "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
+                               messages=[{"role": "user", "content": prompt}], tools=tools, max_searches=max_searches,
+                               extra_body=THINKING.get(r["model"], {}))
+    text = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
+    if not text.strip():  # 2026-11-28：考える工程（thinking）が max_tokens を使い切り、本文が空だった。原因が分かるよう記録する
+        kinds = [getattr(b, "type", "?") for b in resp.content]
+        text = f"（本文なし：stop_reason={getattr(resp, 'stop_reason', '?')}、応答の部品={kinds}。設定の見直しが必要）"
+    return text
 
 
 def _get(url):

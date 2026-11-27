@@ -125,7 +125,7 @@ class T(unittest.TestCase):
         with self.assertRaises(self.b.BudgetBlocked): self.call()
 
     def test_stale_pricing_stops(self):
-        old = datetime.date.today() - datetime.timedelta(days=self.lim["pricing_max_age_days"] + 1)
+        old = datetime.date.today() - datetime.timedelta(days=self.lim["pricing_max_age_days"] + 2)  # +2：手元（JST）と UTC の日付のずれで境目にならないように
         p = json.load(open(os.path.join(self.tmp, "pricing.json"))); p["checked"] = old.isoformat()
         json.dump(p, open(os.path.join(self.tmp, "pricing.json"), "w"))
         os.environ["AI_BUDGET_SHA256"] = self.b.manifest_sha256()
