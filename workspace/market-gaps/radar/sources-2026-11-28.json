@@ -3,30 +3,22 @@
  "days": 3,
  "sources": {
   "hackernews": {
-   "fetched": 109,
-   "new": 65,
+   "fetched": 115,
+   "new": 12,
    "errors": [],
    "measurable": true
   },
   "endoflife": {
-   "fetched": 0,
+   "fetched": 334,
    "new": 0,
-   "errors": [
-    "eol:full: URLError"
-   ],
-   "measurable": false
+   "errors": [],
+   "measurable": true
   },
   "federalregister": {
-   "fetched": 0,
+   "fetched": 4,
    "new": 0,
-   "errors": [
-    "fr:artificial intelligence: URLError",
-    "fr:privacy: URLError",
-    "fr:payments: URLError",
-    "fr:e-commerce: URLError",
-    "fr:data broker: URLError"
-   ],
-   "measurable": false
+   "errors": [],
+   "measurable": true
   },
   "github": {
    "fetched": 80,
@@ -35,5 +27,5 @@
    "measurable": true
   }
  },
- "new_total": 145
+ "new_total": 92
 }
