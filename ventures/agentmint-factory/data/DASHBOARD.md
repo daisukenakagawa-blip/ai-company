@@ -2,8 +2,8 @@
 
 ## 費用0円の見張り
 
-- 判定：**OK**（2026-11-28T03:56:05+00:00）
-- Apify：プラン FREE、今月の利用 $0.02578577906231764 / 上限 $5（0.0052）
+- 判定：**OK**（2026-11-28T08:57:27+00:00）
+- Apify：プラン FREE、今月の利用 $0.025862370162176997 / 上限 $5（0.0052）
 - GitHub：公開リポジトリ=True
 - 外部への支払い：0円
 
@@ -29,13 +29,13 @@
 
 | Actor | 30日利用者 | 30日実行 | 失敗率 |
 |---|---|---|---|
-| lukaskrivka/dedup-datasets-limited-permissions | 593 | 1842 | 0.655 |
+| lukaskrivka/dedup-datasets-limited-permissions | 603 | 1842 | 0.655 |
 | humble-echidna/dataset-transform | 106 | 1026 | 0.01 |
-| rl1987/jq-helper | 78 | 138 | 0.007 |
+| rl1987/jq-helper | 77 | 138 | 0.007 |
 | nerolabs/dataset-filter-transform | 60 | 810 | 0.093 |
 | saliga/dataset-merge-dedupe | 57 | 350 | 0.014 |
-| tidydata/merge-dedupe-datasets | 55 | 766 | 0.004 |
+| tidydata/merge-dedupe-datasets | 56 | 766 | 0.004 |
 | marielise.dev/image-converter | 109 | 997 | 0.115 |
 | gazidev/base64-file-converter | 30 | 150 | 0.0 |
-| memo23/pdf-text-extractor | 172 | 21513 | 0.001 |
-| automation-lab/pdf-text-extractor | 128 | 1120 | 0.006 |
+| memo23/pdf-text-extractor | 173 | 21513 | 0.001 |
+| automation-lab/pdf-text-extractor | 130 | 1136 | 0.006 |
