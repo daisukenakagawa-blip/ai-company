@@ -1,9 +1,9 @@
-# AgentMint Factory ダッシュボード（2026-11-27）
+# AgentMint Factory ダッシュボード（2026-11-28）
 
 ## 費用0円の見張り
 
-- 判定：**OK**（2026-11-27T09:44:23+00:00）
-- Apify：プラン FREE、今月の利用 $0.024603323121188236 / 上限 $5（0.0049）
+- 判定：**OK**（2026-11-28T03:56:05+00:00）
+- Apify：プラン FREE、今月の利用 $0.02578577906231764 / 上限 $5（0.0052）
 - GitHub：公開リポジトリ=True
 - 外部への支払い：0円
 
@@ -13,7 +13,7 @@
 
 | 商品 | 状態 | 外部の利用者（30日） | 外部の実行（30日） | 自分の実行（30日） | 失敗率 | 有料利用者 | 売上 USD | 手数料 USD | 計算費 USD | 純利益 USD | 自分の試験費 USD（無料枠） |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| preponderant_swift/dataset-merge-dedup | 公開 2026-11-27 8:14 JST（Pay per event $0.20/1,000件、本人確認は審査中） | 0 | 0 | 8 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00121 |
+| preponderant_swift/dataset-merge-dedup | 公開 2026-11-27 8:14 JST（Pay per event $0.20/1,000件、本人確認は審査中） | 0 | 0 | 11 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00164 |
 | preponderant_swift/image-convert-compress | private・開発停止中（2026-11-27 オーナー方針） | 0 | 0 | 2 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.0003 |
 | preponderant_swift/pdf-text-extract | private・開発停止中（2026-11-27 オーナー方針） | 0 | 0 | 1 |  | 未確認 | 未確認 | 未確認 | 未確認 | 未確認 | 0.00018 |
 
@@ -29,13 +29,13 @@
 
 | Actor | 30日利用者 | 30日実行 | 失敗率 |
 |---|---|---|---|
-| lukaskrivka/dedup-datasets-limited-permissions | 594 | 1847 | 0.646 |
-| humble-echidna/dataset-transform | 106 | 1005 | 0.01 |
-| rl1987/jq-helper | 70 | 141 | 0.007 |
-| nerolabs/dataset-filter-transform | 60 | 865 | 0.084 |
-| saliga/dataset-merge-dedupe | 56 | 350 | 0.014 |
-| tidydata/merge-dedupe-datasets | 55 | 529 | 0.006 |
-| marielise.dev/image-converter | 109 | 896 | 0.125 |
-| gazidev/base64-file-converter | 30 | 130 | 0.0 |
-| memo23/pdf-text-extractor | 172 | 21546 | 0.001 |
-| automation-lab/pdf-text-extractor | 128 | 1067 | 0.006 |
+| lukaskrivka/dedup-datasets-limited-permissions | 593 | 1842 | 0.655 |
+| humble-echidna/dataset-transform | 106 | 1026 | 0.01 |
+| rl1987/jq-helper | 78 | 138 | 0.007 |
+| nerolabs/dataset-filter-transform | 60 | 810 | 0.093 |
+| saliga/dataset-merge-dedupe | 57 | 350 | 0.014 |
+| tidydata/merge-dedupe-datasets | 55 | 766 | 0.004 |
+| marielise.dev/image-converter | 109 | 997 | 0.115 |
+| gazidev/base64-file-converter | 30 | 150 | 0.0 |
+| memo23/pdf-text-extractor | 172 | 21513 | 0.001 |
+| automation-lab/pdf-text-extractor | 128 | 1120 | 0.006 |

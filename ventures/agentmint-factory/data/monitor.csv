@@ -1,2 +1,3 @@
 date,slug,day,external_users30,external_runs30,users_all,paying_users,revenue_usd,net_profit_usd,reviews,rating,bookmarks,ranks,top_competitor,ai_or_human,status
 2026-11-27,preponderant_swift/dataset-merge-dedup,0,0,0,1,未確認,未確認,未確認,0,0,0,merge datasets=圏外; deduplicate dataset=圏外; dataset dedup=圏外; remove duplicates=圏外; merge dedup=圏外,,不明（公開統計では区別できない）,ok
+2026-11-28,preponderant_swift/dataset-merge-dedup,1,0,0,1,未確認,未確認,未確認,0,0,0,merge datasets=圏外; deduplicate dataset=圏外; dataset dedup=圏外; remove duplicates=圏外; merge dedup=圏外,,不明（公開統計では区別できない）,ok
